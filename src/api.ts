@@ -31,6 +31,8 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const api = {
   searchProperties: (params: URLSearchParams) =>
     request<{ data: Property[]; total: number }>(`/explore/search?${params}`),
+  getFeaturedProperties: (limit = 8) =>
+    request<{ data: Property[] }>(`/explore/featured?limit=${limit}`).then((result) => result.data || []),
   getProperty: (id: string) => request<Property>(`/explore/${id}`),
   getProfile: () => request<Profile>('/auth/profile'),
   getMyBookings: () => request<{ data: Booking[]; total: number }>('/bookings/my'),
