@@ -1,76 +1,106 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import {
-  ArrowRight, Building2, CalendarDays, Check, ChevronDown, Compass,
-  Home, LogIn, MapPin, Menu, Search, ShieldCheck, Sparkles, UserRound,
+  ArrowRight, Building2, Check, ChevronDown, MapPin, Menu, Search, ShieldCheck,
+  Ticket, UserRound, UtensilsCrossed, Wrench, X,
 } from 'lucide-react';
-import { Link, Navigate, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api, getSession, setSession } from './api';
+import { formatPrice, periodLabel, primaryImage } from './format';
+import HomePage from './HomePage';
 import type { Booking, HostProfile, HostRequirementReview, Profile, Property, Transaction } from './types';
-
-const services = [
-  { title: 'Accommodation', text: 'Find a place that feels like yours.', icon: Home, active: true, path: '/explore' },
-  { title: 'Food', text: 'Discover food worth travelling for.', icon: Sparkles, active: false, path: '/food' },
-  { title: 'Events', text: 'Make room for something memorable.', icon: CalendarDays, active: false, path: '/events' },
-  { title: 'Service providers', text: 'Find trusted help wherever you are.', icon: ShieldCheck, active: false, path: '/services' },
-];
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const [session, setCurrentSession] = useState(getSession());
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [accountOpen, setAccountOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const signOut = () => { setSession(null); setCurrentSession(null); navigate('/'); };
+  const [scrolled, setScrolled] = useState(false);
+  const isHome = pathname === '/';
+  const overlay = isHome && !scrolled && !menuOpen;
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  // Pick up sign-in/sign-out from other pages and close menus on navigation.
+  useEffect(() => { setCurrentSession(getSession()); setAccountOpen(false); setMenuOpen(false); }, [pathname]);
+  const signOut = () => { setSession(null); setCurrentSession(null); setAccountOpen(false); setMenuOpen(false); navigate('/'); };
+  const navLinks = <>
+    <NavLink to="/explore">Stays</NavLink>
+    <NavLink to="/food">Food <span className="soon">Soon</span></NavLink>
+    <NavLink to="/events">Events <span className="soon">Soon</span></NavLink>
+    <NavLink to="/services">Services <span className="soon">Soon</span></NavLink>
+  </>;
   return (
     <div className="app-shell">
-      <header className="site-header">
-        <Link className="brand" to="/"><span className="brand-mark">L</span> lotnis</Link>
-        <nav className="main-nav">
-          <Link to="/explore">Find a stay</Link>
-          <Link to="/food">Food</Link>
-          <Link to="/events">Events</Link>
-          <Link to="/services">Services</Link>
-          {session && <Link to="/trips">My trips</Link>}
-          {session && <Link to="/transactions">Transactions</Link>}
-        </nav>
-        <div className="header-actions">
-          {!session ? <Link className="button button-quiet" to="/auth"><LogIn size={16} /> Sign in</Link> :
-            <button className="profile-pill" onClick={() => setMenuOpen(!menuOpen)}><UserRound size={17} /> Account <ChevronDown size={14} /></button>}
-          <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)}><Menu /></button>
-          {menuOpen && session && <div className="account-menu"><Link to="/profile" onClick={() => setMenuOpen(false)}>Profile</Link><Link to="/host" onClick={() => setMenuOpen(false)}>Host dashboard</Link><button onClick={signOut}>Sign out</button></div>}
+      <header className={['site-header', isHome && 'site-header-home', overlay && 'site-header-overlay', menuOpen && 'site-header-open'].filter(Boolean).join(' ')}>
+        <div className="site-header-inner">
+          <Link className="brand" to="/"><span className="brand-mark">L</span>lotnis</Link>
+          <nav className="main-nav" aria-label="Main">{navLinks}</nav>
+          <div className="header-actions">
+            <Link className="header-link" to="/host">{session ? 'Host dashboard' : 'Become a host'}</Link>
+            {!session
+              ? <Link className="header-signin" to="/auth"><UserRound size={16} /> Sign in</Link>
+              : <button className="profile-pill" aria-expanded={accountOpen} onClick={() => setAccountOpen(!accountOpen)}><UserRound size={16} /> Account <ChevronDown size={14} /></button>}
+            <button className="mobile-menu" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
+            {accountOpen && session && <div className="account-menu"><Link to="/trips">My trips</Link><Link to="/transactions">Transactions</Link><Link to="/host">Host dashboard</Link><hr /><button onClick={signOut}>Sign out</button></div>}
+          </div>
         </div>
+        {menuOpen && <nav className="mobile-panel" aria-label="Mobile">
+          {navLinks}
+          <Link to="/host">{session ? 'Host dashboard' : 'Become a host'}</Link>
+          {session ? <>
+            <Link to="/trips">My trips</Link>
+            <Link to="/transactions">Transactions</Link>
+            <button onClick={signOut}>Sign out</button>
+          </> : <Link className="header-signin" to="/auth"><UserRound size={16} /> Sign in</Link>}
+        </nav>}
       </header>
       <main>{children}</main>
       <footer className="site-footer">
-        <div><span className="brand"><span className="brand-mark">L</span> lotnis</span><p>Places, people, and experiences that make a trip feel personal.</p></div>
-        <div className="footer-links">
-          <Link to="/explore">Accommodation</Link>
-          <Link to="/food">Food</Link>
-          <Link to="/events">Events</Link>
-          <Link to="/services">Services</Link>
-          <Link to="/host">Become a host</Link>
+        <div className="site-footer-inner">
+          <div className="footer-soon">
+            <h2>Coming soon to Lotnis</h2>
+            <div className="footer-soon-list">
+              <Link to="/food"><UtensilsCrossed size={16} /> Food</Link>
+              <Link to="/events"><Ticket size={16} /> Events</Link>
+              <Link to="/services"><Wrench size={16} /> Service providers</Link>
+            </div>
+          </div>
+          <div className="footer-grid">
+            <div><Link className="brand" to="/"><span className="brand-mark">L</span>lotnis</Link><p>Places, people and experiences that make a trip feel personal.</p></div>
+            <div><h3>Explore</h3><ul><li><Link to="/explore">All stays</Link></li><li><Link to="/explore?query=Accra">Accra</Link></li><li><Link to="/explore?query=Kumasi">Kumasi</Link></li><li><Link to="/explore?query=Cape%20Coast">Cape Coast</Link></li></ul></div>
+            <div><h3>Hosting</h3><ul><li><Link to="/host">Become a host</Link></li><li><Link to="/host">Host dashboard</Link></li></ul></div>
+            <div><h3>Your account</h3><ul>{!session && <li><Link to="/auth">Sign in</Link></li>}<li><Link to="/trips">My trips</Link></li><li><Link to="/transactions">Transactions</Link></li></ul></div>
+          </div>
+          <div className="footer-bottom">© {new Date().getFullYear()} Lotnis</div>
         </div>
       </footer>
     </div>
   );
 }
 
-function HomePage() {
-  return <>
-    <section className="hero"><div className="hero-copy"><span className="eyebrow">A better way to arrive</span><h1>Stay somewhere <em>worth remembering.</em></h1><p>Search trusted places, reserve with confidence, and discover more of the places you visit.</p><SearchBox /></div><div className="hero-art"><div className="hero-card hero-card-top"><MapPin size={17} /><span>Accra, Ghana</span></div><div className="hero-card hero-card-bottom"><span className="rating">★ 4.9</span><strong>Stays chosen by people</strong></div></div></section>
-    <section className="section"><div className="section-heading"><div><span className="eyebrow">One platform, four ways to experience more</span><h2>Made for the whole journey.</h2></div></div><div className="service-grid">{services.map(({ title, text, icon: Icon, active, path }) => <Link className={`service-card ${active ? 'service-active' : ''}`} key={title} to={path}><Icon size={26} /><h3>{title}</h3><p>{text}</p><span>{active ? 'Explore now' : 'Coming soon'} <ArrowRight size={15} /></span></Link>)}</div></section>
-    <section className="section host-cta"><div><span className="eyebrow">Have a place, service, or event to offer?</span><h2>Become a Lotnis host.</h2><p>List your property, add your services, and manage every booking and payout from one dashboard.</p><Link className="button button-primary" to="/host">Start hosting <ArrowRight size={16} /></Link></div></section>
-  </>;
-}
-
 function SearchBox() {
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
-  return <form className="search-box" onSubmit={(event) => { event.preventDefault(); navigate(`/explore?query=${encodeURIComponent(query)}`); }}><Search size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Where do you want to stay?" /><button className="button button-primary">Search</button></form>;
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('query') || '');
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    const params = new URLSearchParams(searchParams);
+    if (query.trim()) params.set('query', query.trim()); else params.delete('query');
+    navigate(`/explore?${params}`);
+  };
+  return <form className="search-box" onSubmit={submit}><Search size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Where do you want to stay?" /><button className="button button-primary">Search</button></form>;
 }
 
 function PropertyCard({ property }: { property: Property }) {
-  const image = property.property_images?.[0]?.public_url;
-  return <Link className="property-card" to={`/stays/${property.id}`}><div className="property-image" style={image ? { backgroundImage: `url("${image}")` } : undefined}><span className="image-label">{property.verified ? 'Verified stay' : 'Lotnis stay'}</span></div><div className="property-card-body"><div className="property-title-row"><h3>{property.name}</h3><span>★ {property.rating?.toFixed(1) || 'New'}</span></div><p><MapPin size={14} /> {property.city || 'Location'}, {property.country || ''}</p><strong>{property.currency || 'GHS'} {property.price?.toLocaleString() || 'Price on request'} <small>/ {property.pricing_period || 'night'}</small></strong></div></Link>;
+  const image = primaryImage(property);
+  return <Link className="property-card" to={`/stays/${property.id}`}><div className="property-image" style={image ? { backgroundImage: `url("${image}")` } : undefined}><span className="image-label">{property.verified ? 'Verified stay' : 'Lotnis stay'}</span></div><div className="property-card-body"><div className="property-title-row"><h3>{property.name}</h3><span>★ {property.rating?.toFixed(1) || 'New'}</span></div><p><MapPin size={14} /> {property.city || 'Location'}, {property.country || ''}</p><strong>{formatPrice(property.currency, property.price)} {property.price != null && <small>/ {periodLabel(property.pricing_period)}</small>}</strong></div></Link>;
 }
+
+const periodTitles: Record<string, string> = { day: 'Short stays', month: 'Monthly stays', year: 'Long lets' };
 
 function ExplorePage() {
   const [searchParams] = useSearchParams();
@@ -78,8 +108,16 @@ function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const query = searchParams.get('query') || '';
-  useEffect(() => { setLoading(true); const params = new URLSearchParams({ page: '1', limit: '24' }); if (query) params.set('query', query); api.searchProperties(params).then((result) => setProperties(result.data || [])).catch((err) => setError(err.message)).finally(() => setLoading(false)); }, [query]);
-  return <section className="section explore-page"><div className="explore-header"><div><span className="eyebrow">Explore accommodation</span><h1>{query ? `Places matching “${query}”` : 'Find your next place.'}</h1></div><SearchBox /></div>{loading ? <div className="empty-state">Finding places for you…</div> : error ? <div className="error-state">{error}<p>Check that the backend is running and VITE_API_URL is configured.</p></div> : properties.length ? <div className="property-grid">{properties.map((property) => <PropertyCard key={property.id} property={property} />)}</div> : <div className="empty-state">No approved stays match this search yet.</div>}</section>;
+  const pricingPeriod = searchParams.get('pricingPeriod') || '';
+  const filterKey = searchParams.toString();
+  useEffect(() => {
+    setLoading(true); setError('');
+    const params = new URLSearchParams({ page: '1', limit: '24' });
+    for (const key of ['query', 'pricingPeriod', 'minPrice', 'maxPrice']) { const value = searchParams.get(key); if (value) params.set(key, value); }
+    api.searchProperties(params).then((result) => setProperties(result.data || [])).catch((err) => setError(err.message)).finally(() => setLoading(false));
+  }, [filterKey]);
+  const heading = query ? `Places matching “${query}”` : periodTitles[pricingPeriod] || 'Find your next place.';
+  return <section className="section explore-page"><div className="explore-header"><div><span className="eyebrow">Explore accommodation</span><h1>{heading}</h1></div><SearchBox key={query} /></div>{loading ? <div className="empty-state">Finding places for you…</div> : error ? <div className="error-state">{error}<p>Check that the backend is running and VITE_API_URL is configured.</p></div> : properties.length ? <div className="property-grid">{properties.map((property) => <PropertyCard key={property.id} property={property} />)}</div> : <div className="empty-state">No approved stays match this search yet.</div>}</section>;
 }
 
 function StayPage() {
