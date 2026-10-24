@@ -23,7 +23,8 @@ const url = (loc, { priority = '0.6', changefreq = 'weekly', lastmod = today, im
 async function listings() {
   const all = [];
   for (let page = 1; page <= 50; page += 1) {
-    const res = await fetch(`${API}/explore/search?page=${page}&limit=100`);
+    // A sleeping free-tier API can take a while to wake; never let that hold up a deploy.
+    const res = await fetch(`${API}/explore/search?page=${page}&limit=100`, { signal: AbortSignal.timeout(20_000) });
     if (!res.ok) throw new Error(`API responded ${res.status}`);
     const body = await res.json();
     all.push(...(body.data ?? []));
