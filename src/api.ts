@@ -13,8 +13,41 @@ export function setSession(user: AuthUser | null) {
   else localStorage.removeItem(SESSION_KEY);
 }
 
-export async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export const decodeExp = (token: string): number => {
+  try { return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000; } catch { return Number.MAX_SAFE_INTEGER; }   // not a decodable JWT: don't guess, let the server say
+};
+
+let refreshing: Promise<boolean> | null = null;
+/** Swap the refresh token for a new access token. One call at a time, however many requests are waiting on it. */
+function refreshSession(): Promise<boolean> {
+  if (refreshing) return refreshing;
   const session = getSession();
+  if (!session?.refreshToken) return Promise.resolve(false);
+  refreshing = fetch(`${API_URL}/auth/refresh`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: session.refreshToken }) })
+    .then(async (response) => {
+      const body = await response.json().catch(() => null);
+      if (!response.ok || !body?.data?.access_token) return false;
+      setSession({ ...session, accessToken: body.data.access_token, refreshToken: body.data.refresh_token || session.refreshToken });
+      return true;
+    })
+    .catch(() => false)
+    .finally(() => { refreshing = null; });
+  return refreshing;
+}
+
+/** The session is truly over: forget it and take the person to sign in, then back to where they were. */
+function endSession() {
+  setSession(null);
+  const here = `${window.location.pathname}${window.location.search}`;
+  if (!window.location.pathname.startsWith('/auth')) window.location.assign(`/auth?expired=1&next=${encodeURIComponent(here)}`);
+}
+
+export async function request<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
+  let session = getSession();
+  // Renew a token that is about to expire before using it, instead of letting the request fail.
+  if (session?.accessToken && decodeExp(session.accessToken) - Date.now() < 60_000) {
+    if (await refreshSession()) session = getSession(); else if (decodeExp(session.accessToken) < Date.now()) { endSession(); throw new Error('Your session has expired. Please sign in again.'); }
+  }
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
@@ -24,6 +57,11 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
     },
   });
   const body = await response.json().catch(() => null);
+  if (response.status === 401 && session?.accessToken && !retried && path !== '/auth/refresh') {
+    if (await refreshSession()) return request<T>(path, init, true);
+    endSession();
+    throw new Error('Your session has expired. Please sign in again.');
+  }
   if (!response.ok) {
     const error = new Error(body?.error || `Request failed (${response.status})`) as Error & { code?: string; status?: number };
     error.code = body?.code; error.status = response.status;

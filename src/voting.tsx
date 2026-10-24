@@ -129,7 +129,7 @@ export function VoteCheckout({ eventId, lines, onClear }: { eventId: string; lin
         <label className="fld">Name <small>optional</small><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" /></label>
       </div>
       {!session && <div className="notice"><span>No account needed. <Link to="/auth">Sign in</Link> to keep your receipts together.</span></div>}
-      <label className="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> <span>I understand votes are final once paid and are only refunded if voting is cancelled.</span></label>
+      <label className="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> <span>I understand votes are final once paid and are only refunded if voting is cancelled. See the <Link to="/ticket-terms#voting" target="_blank">voting terms</Link>.</span></label>
       {error && <div className="form-error" role="alert">{error}</div>}
       <div className="bk-actions">
         <button className="button button-primary button-lg" disabled={busy || !quote} onClick={pay}>{busy ? 'Working…' : quote ? `Pay ${cedis(quote.total, quote.currency)}` : 'Pay'} <ArrowRight size={18} /></button>

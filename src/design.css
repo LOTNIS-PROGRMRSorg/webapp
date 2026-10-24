@@ -398,3 +398,29 @@ html{scroll-behavior:smooth}
 .ll-faq details{border-top:1px solid var(--line);padding:16px 0}.ll-faq summary{cursor:pointer;font-weight:600}.ll-faq p{margin:10px 0 0;color:var(--ink-2);line-height:1.7;max-width:76ch}
 .ll-others{display:flex;gap:10px;flex-wrap:wrap}.ll-others a{padding:11px 18px;border-radius:99px;background:#fff;border:1px solid var(--line);font-weight:600;font-size:.9rem}.ll-others a:hover{border-color:var(--ink)}
 @media(max-width:900px){.ll-hero,.ll-provider{grid-template-columns:1fr}}
+
+/* ── Explore filters: sidebar on desktop, side drawer on tablets, bottom sheet on phones ─────────── */
+.ex-panel *{min-width:0}
+.ex-panel select,.ex-panel input[type=text],.ex-panel input[inputmode]{max-width:100%}
+.ex-active{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.ex-active::-webkit-scrollbar{display:none}.ex-chip{flex:none}
+.ex-bar-tools{flex-wrap:wrap;justify-content:flex-end}
+@media(min-width:1001px) and (max-width:1200px){.ex-layout{grid-template-columns:268px minmax(0,1fr);gap:28px}}
+@media(max-width:1000px){
+  .ex-filters{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .ex-panel{min-height:100%;grid-template-rows:auto 1fr auto;align-content:start}
+}
+@media(max-width:640px){
+  .ex-bar{align-items:stretch}.ex-bar>strong{width:100%}.ex-bar-tools{width:100%;justify-content:space-between}
+  .ex-sort select{max-width:150px}
+  .ex-filters{inset:auto 0 0 0;width:100%;max-height:88dvh;border-radius:24px 24px 0 0;transform:translateY(105%);box-shadow:0 -10px 40px rgba(10,24,22,.25)}
+  .ex-filters-open{transform:none}
+  .ex-filters::before{content:'';display:block;width:42px;height:4px;border-radius:4px;background:#cfdad6;margin:10px auto 0}
+  .ex-panel-foot{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  .ex-head h1{font-size:2rem}
+}
+@media(prefers-reduced-motion:reduce){.ex-filters{transition:none}}
+
+/* Plus Jakarta Sans needs less negative tracking than the old display face */
+.page h1,.host-page h1,.explore-header h1,.dashboard-page h1,.form-page h1,.placeholder-page h1,.auth-card h1,.ev-hero-text h1,.section h1,.stay-content h1,.ex-head h1,.legal h1{letter-spacing:-.03em}
+.page h2,.host-page h2,.section h2{letter-spacing:-.02em}
+.hm-hero h1{letter-spacing:-.032em;max-width:20ch}

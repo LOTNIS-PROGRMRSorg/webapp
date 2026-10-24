@@ -106,6 +106,8 @@ const patch = <T>(path: string, body?: unknown) => request<T>(path, { method: 'P
 const del = <T>(path: string) => request<T>(path, { method: 'DELETE' });
 
 // ── Payouts (shared by every service) ───────────────────────────────────────────
+export type PayoutMethod = { id: string; kind: 'momo' | 'bank'; provider: string; account_number: string; account_number_masked: string; account_name: string; is_default: boolean };
+export type PayoutOptions = { momo_networks: string[]; banks: string[] };
 export type PayoutBucket = 'awaiting_release' | 'due' | 'on_hold' | 'processing' | 'paid';
 export type PayoutTotals = Record<PayoutBucket, number>;
 export type PayoutSummary = {
@@ -115,7 +117,7 @@ export type PayoutSummary = {
 };
 export type PayoutItem = {
   id: string; service: string; service_label: string; kind: string; amount: number; gross: number | null; commission: number; refunded_amount: number; currency: string;
-  status: string; bucket: PayoutBucket | null; release_at: string | null; on_hold: boolean; hold_reason: string | null; paid_at: string | null; title: string; detail: string | null; provider_reference: string | null;
+  status: string; created_at?: string; bucket: PayoutBucket | null; release_at: string | null; on_hold: boolean; hold_reason: string | null; paid_at: string | null; title: string; detail: string | null; provider_reference: string | null;
 };
 
 export const eventApi = {
@@ -182,6 +184,12 @@ export const eventApi = {
   payouts: {
     summary: () => request<PayoutSummary>('/payouts/summary'),
     items: (p: Record<string, string | number | undefined> = {}) => request<Paged<PayoutItem>>(`/payouts/items${qs(p)}`),
+    methodOptions: () => request<PayoutOptions>('/payouts/methods/options'),
+    methods: () => request<PayoutMethod[]>('/payouts/methods'),
+    addMethod: (body: { kind: 'momo' | 'bank'; provider: string; account_number: string; account_name: string }) => post<PayoutMethod>('/payouts/methods', body),
+    updateMethod: (id: string, body: { account_number?: string; account_name?: string }) => patch<PayoutMethod>(`/payouts/methods/${id}`, body),
+    makeDefaultMethod: (id: string) => post<PayoutMethod>(`/payouts/methods/${id}/default`),
+    removeMethod: (id: string) => del(`/payouts/methods/${id}`),
     batches: () => request<Array<{ id: string; amount: number; currency: string; status: string; reference?: string | null; paid_at?: string | null; created_at: string; destination: any; items_total: number; adjustments_total: number }>>('/payouts/batches'),
   },
   reportStayIssue: (bookingId: string, body: { category: string; description: string }) => post(`/bookings/my/${bookingId}/report-issue`, body),

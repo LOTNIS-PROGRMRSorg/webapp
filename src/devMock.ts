@@ -71,6 +71,7 @@ import { handleEvents } from './devMockEvents';
 function handle(path: string, method: string, init?: RequestInit): Response | undefined {
   const events = handleEvents(path, method, init);
   if (events) return events;
+  if (path === '/explore/featured') return new Response(JSON.stringify({ data: [property, roomsProperty, { ...property, id: 'p3', name: 'Tema Warehouse', sub_type: 'warehouse', city: 'Tema', price: 9000, verified: true }, { ...property, id: 'p4', name: 'Kumasi Office Suite', sub_type: 'office', city: 'Kumasi', price: 2000, pricing_period: 'month' }, { ...property, id: 'p5', name: 'Aburi Garden Villa', sub_type: 'villa', city: 'Aburi', price: 450, pricing_period: 'day' }] }), { headers: { 'content-type': 'application/json' } });
   if (path === '/explore/mock-rooms') return new Response(JSON.stringify(roomsProperty), { headers: { 'content-type': 'application/json' } });
   if (path === '/bookings/quote' && String(init?.body).includes('mock-rooms')) return new Response(JSON.stringify(quoteFor(JSON.parse(String(init?.body)))), { headers: { 'content-type': 'application/json' } });
   if (path === '/host/me/access') return ok(access[state] ?? access.verified);

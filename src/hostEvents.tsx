@@ -32,8 +32,10 @@ export function HostEvents() {
       {error ? <div className="error-state">{error}</div> : !events ? <div className="empty-state">Loading…</div> : events.length ? (
         <div className="space-list">{events.map((e) => (
           <Link key={e.id} to={`/host/events/${e.id}`} className="space-row ev-hostrow">
-            <div><strong>{e.title}</strong><p>{fmtDateTime(e.starts_at)} · {e.venue_name}, {e.city}</p>
-              <small>{e.stats.tickets_sold} sold · {e.stats.tickets_scanned} scanned · {cedis(e.stats.gross, e.currency)} gross{e.stats.votes_total ? ` · ${e.stats.votes_total.toLocaleString()} votes` : ''}{e.stats.refund_requests_pending ? ` · ${e.stats.refund_requests_pending} refund request(s)` : ''}</small></div>
+            <div className="host-rowmain">
+              {e.cover_image_url ? <img className="host-thumb" src={e.cover_image_url} alt={e.title} loading="lazy" /> : <span className="host-thumb host-thumb-ph"><CalendarClock size={22} /></span>}
+              <div><strong>{e.title}</strong><p>{fmtDateTime(e.starts_at)} · {e.venue_name}, {e.city}</p>
+              <small>{e.stats.tickets_sold} sold · {e.stats.tickets_scanned} scanned · {cedis(e.stats.gross, e.currency)} gross{e.stats.votes_total ? ` · ${e.stats.votes_total.toLocaleString()} votes` : ''}{e.stats.refund_requests_pending ? ` · ${e.stats.refund_requests_pending} refund request(s)` : ''}</small></div></div>
             <EventStatusPill status={e.status} />
             <span className="button button-secondary">Manage</span>
           </Link>))}</div>
@@ -775,8 +777,10 @@ export function HostEarnings() {
       <PageHeader eyebrow="Earnings" title="What you're owed" />
       {error ? <div className="error-state">{error}</div> : !summary ? <div className="empty-state">Loading…</div> : <>
         <div className="metric-grid metric-grid-4">{(Object.keys(BUCKET_LABEL) as PayoutBucket[]).map((k) => <Stat key={k} label={BUCKET_LABEL[k]} value={cedis(summary.totals[k], c)} sub={k === 'awaiting_release' && summary.next_release_at ? `next ${fmtDate(summary.next_release_at)}` : undefined} />)}</div>
+        <div className="bk-callout"><Wallet size={22} /><div><b>Paid to</b>
+          <p>{d ? (d.method === 'bank' ? `${d.bank_name} · ${'•'.repeat(4)}${String(d.account_number).slice(-4)}` : `${d.provider} · ${'•'.repeat(6)}${String(d.number).slice(-4)}`) : 'No payout account yet — add one so Lotnis can pay you.'} <Link to="/host/payout-settings">{d ? 'Change or add accounts' : 'Add a payout account'}</Link></p></div></div>
         {summary.adjustments !== 0 && <div className="notice"><span>Refunds after a payout are netted off your next one: {cedis(summary.adjustments, c)}.</span></div>}
-        <div className="bk-callout"><Wallet size={22} /><div><b>How you're paid</b><p><b>Stays:</b> 24–48 hours after check-in (guests can report a problem until then). <b>Event tickets:</b> 48 hours after the event ends. <b>Votes:</b> 48 hours after voting closes. Lotnis then sends the money to {d ? (d.method === 'bank' ? `${d.bank_name} ····${String(d.account_number).slice(-4)}` : `${d.provider} ${d.number}`) : 'your payout account — add one in your host profile'}.</p></div></div>
+        <div className="bk-callout"><Wallet size={22} /><div><b>How you're paid</b><p><b>Stays:</b> 24–48 hours after check-in (guests can report a problem until then). <b>Event tickets:</b> 48 hours after the event ends. <b>Votes:</b> 48 hours after voting closes. Lotnis then sends the money to your default payout account.</p></div></div>
         {summary.by_service.length > 1 && <div className="booking-list">{summary.by_service.map((s) => <div className="booking-row" key={s.service}><div><strong>{s.label}</strong><p>{cedis(s.awaiting_release, c)} waiting · {cedis(s.due, c)} ready</p></div><span /><strong>{cedis(s.paid, c)} paid</strong></div>)}</div>}
         <h2 className="subsection-heading">Payments</h2>
         <div className="notif-toolbar">{[['', 'All'], ...(Object.keys(BUCKET_LABEL) as PayoutBucket[]).map((k) => [k, BUCKET_LABEL[k]])].map(([v, l]) => <button key={v} className={`chip ${bucket === v ? 'chip-active' : ''}`} onClick={() => setBucket(v)}>{l}</button>)}

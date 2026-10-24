@@ -6,7 +6,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { api } from './api';
 import { CancelDialog } from './cancel';
 import { HostGate } from './hostGate';
-import { money, periodLabel } from './format';
+import { money, periodLabel, primaryImage } from './format';
 import { NotificationsPage } from './notifications';
 import { TransactionRows } from './shared';
 import type { Booking, Property, Transaction } from './types';
@@ -93,7 +93,7 @@ const PageHeader = ({ eyebrow, title, children }: { eyebrow: string; title: stri
 
 // ── Booking requests (host must accept/decline within 48h) ────────────────────
 
-function BookingRequests({ bookings, onChange }: { bookings: Booking[]; onChange: () => void }) {
+export function BookingRequests({ bookings, onChange }: { bookings: Booking[]; onChange: () => void }) {
   const pending = bookings.filter((b) => b.reservation_stage === 'awaiting_host_acceptance' && b.status === 'pending');
   const [busyId, setBusyId] = useState('');
   const [error, setError] = useState('');
@@ -129,37 +129,6 @@ function BookingRequests({ bookings, onChange }: { bookings: Booking[]; onChange
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
-export function HostOverview() {
-  const { bookings, error, reload } = useHostBookings();
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loadError, setLoadError] = useState('');
-  useEffect(() => {
-    Promise.all([api.getMyProperties(), api.getHostTransactions()])
-      .then(([items, tx]) => { setProperties(items || []); setTransactions(tx || []); })
-      .catch((e) => setLoadError(e.message));
-  }, []);
-  const upcoming = bookings.filter((b) => b.status === 'confirmed').length;
-  const requests = bookings.filter((b) => b.reservation_stage === 'awaiting_host_acceptance' && b.status === 'pending').length;
-  return (
-    <section className="host-page">
-      <PageHeader eyebrow="Overview" title="Welcome back.">
-        <Link className="button button-primary" to="/host/accommodation/new">Add a space <ArrowRight size={16} /></Link>
-      </PageHeader>
-      {(error || loadError) ? <div className="error-state">{error || loadError}</div> : <>
-        <div className="metric-grid metric-grid-4">
-          <div><span>Listings</span><strong>{properties.length}</strong></div>
-          <div><span>Requests to answer</span><strong>{requests}</strong></div>
-          <div><span>Upcoming stays</span><strong>{upcoming}</strong></div>
-          <div><span>Earnings</span><strong>{money('GHS', transactions.reduce((sum, t) => sum + t.host_payout, 0))}</strong></div>
-        </div>
-        <BookingRequests bookings={bookings} onChange={reload} />
-        {requests === 0 && <div className="notice"><Check size={16} /><span>You're all caught up — no requests are waiting on you.</span></div>}
-      </>}
-    </section>
-  );
-}
-
 const APPROVAL_LABEL: Record<string, string> = {
   pending: 'Awaiting approval', under_review: 'Under review', approved: 'Live', rejected: 'Needs changes', suspended: 'Suspended',
 };
@@ -181,10 +150,13 @@ export function HostAccommodation() {
             const rooms = (p.rooms || []).filter((r) => !r.deleted_at);
             return (
               <div className="space-row" key={p.id}>
-                <div>
-                  <strong>{p.name}</strong>
-                  <p>{[p.sub_type, p.city].filter(Boolean).join(' · ')}</p>
-                  <small>{MODE_LABEL[mode]}{rooms.length ? ` · ${rooms.length} room${rooms.length === 1 ? '' : 's'}` : ''}{p.price != null ? ` · ${money(p.currency, p.price)} / ${periodLabel(p.pricing_period)}` : ''}</small>
+                <div className="host-rowmain">
+                  {primaryImage(p) ? <img className="host-thumb" src={primaryImage(p)} alt={p.name} loading="lazy" /> : <span className="host-thumb host-thumb-ph"><Building2 size={22} /></span>}
+                  <div>
+                    <strong>{p.name}</strong>
+                    <p>{[p.sub_type, p.city].filter(Boolean).join(' · ')}</p>
+                    <small>{MODE_LABEL[mode]}{rooms.length ? ` · ${rooms.length} room${rooms.length === 1 ? '' : 's'}` : ''}{p.price != null ? ` · ${money(p.currency, p.price)} / ${periodLabel(p.pricing_period)}` : ''}</small>
+                  </div>
                 </div>
                 <span className={`status status-${p.approval_status === 'approved' ? 'confirmed' : p.approval_status === 'rejected' || p.approval_status === 'suspended' ? 'cancelled' : 'pending'}`}>
                   {APPROVAL_LABEL[p.approval_status || 'pending'] || p.approval_status}
@@ -256,21 +228,6 @@ export function HostBookings() {
       ) : <div className="empty-state">Nothing here yet.</div>}
       {cancelling && <CancelDialog bookingId={cancelling.id} role="host" propertyName={cancelling.property?.name || 'Reservation'}
         onClose={() => setCancelling(null)} onDone={() => { setCancelling(null); reload(); }} />}
-    </section>
-  );
-}
-
-export function HostTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [error, setError] = useState('');
-  useEffect(() => { api.getHostTransactions().then((t) => setTransactions(t || [])).catch((e) => setError(e.message)); }, []);
-  const total = transactions.reduce((sum, t) => sum + t.host_payout, 0);
-  return (
-    <section className="host-page">
-      <PageHeader eyebrow="Transactions" title="Earnings and payouts" />
-      <p className="lead">Every payment across your services. Accommodation payouts are released after the guest checks in.</p>
-      <div className="metric-grid"><div><span>Total earnings</span><strong>{money('GHS', total)}</strong></div><div><span>Transactions</span><strong>{transactions.length}</strong></div></div>
-      {error ? <div className="error-state">{error}</div> : <TransactionRows transactions={transactions} hostView />}
     </section>
   );
 }

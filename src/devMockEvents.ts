@@ -110,6 +110,8 @@ export function handleEvents(path: string, method: string, init?: RequestInit): 
   if (path.endsWith('/refunds')) return json([{ id: 'r1', status: 'pending', amount: 150, trigger: 'buyer_request', reason: 'Cannot make it', created_at: at(-1), ticket_ids: ['k3'] }, { id: 'r2', status: 'processed', amount: 75, trigger: 'buyer_request', created_at: at(-3), refund_reference: 'RF-0042', ticket_ids: ['k9'] }]);
   const vp = path.match(/^\/events\/[^/]+\/vote\/([^/]+)(?:\/([^/]+))?$/); if (vp) return json(votePage(vp[1], vp[2]));
   if (/^\/events\/[^/]+$/.test(path) && method === 'GET') return json(detail);
+  if (path === '/payouts/methods/options') return json({ momo_networks: ['MTN', 'TELECEL', 'AIRTELTIGO'], banks: ['Absa Bank Ghana', 'CalBank', 'Ecobank Ghana', 'GCB Bank', 'Stanbic Bank Ghana'] });
+  if (path === '/payouts/methods' && method === 'GET') return json([{ id: 'm1', kind: 'momo', provider: 'MTN', account_number: '0542343325', account_number_masked: '••••••3325', account_name: 'Ama Owusu', is_default: true }, { id: 'm2', kind: 'bank', provider: 'GCB Bank', account_number: '1234567890123', account_number_masked: '•••••••••0123', account_name: 'Ama Owusu', is_default: false }]);
   if (path === '/payouts/summary') return json(earnings);
   if (path === '/payouts/items') return json({ data: items, total: items.length, page: 1, limit: 60 });
   if (path === '/payouts/batches') return json([{ id: 'b1', amount: 12400, currency: 'GHS', status: 'paid', reference: 'MOMO-88213', paid_at: at(-18), created_at: at(-19), destination: { method: 'mobile_money', provider: 'MTN MoMo', number: '0244 123 456' }, items_total: 12400, adjustments_total: 0 }]);

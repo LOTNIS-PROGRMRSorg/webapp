@@ -85,6 +85,15 @@ export function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [panelOpen, setPanelOpen] = useState(false);
+  // On phones and tablets the filters are a drawer: stop the page scrolling behind it and let Escape close it.
+  useEffect(() => {
+    if (!panelOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setPanelOpen(false); };
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = previous; window.removeEventListener('keydown', onKey); };
+  }, [panelOpen]);
   const [text, setText] = useState(filters.query);
   const [min, setMin] = useState(filters.minPrice);
   const [max, setMax] = useState(filters.maxPrice);
@@ -251,7 +260,7 @@ export function ExplorePage() {
       </nav>
 
       <div className="ex-layout">
-        <aside className={`ex-filters ${panelOpen ? 'ex-filters-open' : ''}`} aria-label="Filters">{filterPanel}</aside>
+        <aside className={`ex-filters ${panelOpen ? 'ex-filters-open' : ''}`} aria-label="Filters" role={panelOpen ? 'dialog' : undefined} aria-modal={panelOpen || undefined}>{filterPanel}</aside>
         {panelOpen && <div className="ex-scrim" onClick={() => setPanelOpen(false)} role="presentation" />}
 
         <section className="ex-results" aria-live="polite" aria-busy={loading}>

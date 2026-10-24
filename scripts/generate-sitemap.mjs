@@ -38,7 +38,7 @@ const entries = [
   url('/explore', { priority: '0.9', changefreq: 'daily' }),
   ...TYPES.map((t) => url(`/rent/${t}`, { priority: '0.8', changefreq: 'daily' })),
   ...UNITS.map((u) => url(`/explore?pricingPeriod=${u}`, { priority: '0.6', changefreq: 'daily' })),
-  url('/refund-policy', { priority: '0.5', changefreq: 'monthly' }), url('/terms', { priority: '0.4', changefreq: 'monthly' }),
+  url('/refund-policy', { priority: '0.5', changefreq: 'monthly' }), url('/ticket-terms', { priority: '0.5', changefreq: 'monthly' }), url('/terms', { priority: '0.4', changefreq: 'monthly' }),
   url('/privacy', { priority: '0.4', changefreq: 'monthly' }), url('/host-agreement', { priority: '0.5', changefreq: 'monthly' }),
   url('/food', { priority: '0.3', changefreq: 'monthly' }), url('/events', { priority: '0.8', changefreq: 'daily' }), url('/services', { priority: '0.3', changefreq: 'monthly' }),
 ];

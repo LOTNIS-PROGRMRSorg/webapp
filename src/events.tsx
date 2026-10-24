@@ -307,7 +307,7 @@ function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boolean }) {
                   <input placeholder="Name on ticket (optional)" value={holders[i]?.name || ''} onChange={(e) => setHolders({ ...holders, [i]: { email: holders[i]?.email || '', name: e.target.value } })} />
                 </div>))}</div>}
               <details className="policy-detail" open><summary>Refunds &amp; changes for this event</summary><ul>{ev.refund_summary.map((l) => <li key={l}>{l}</li>)}</ul></details>
-              <label className="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> <span>I've read the refund policy and the organiser's terms, and agree to Lotnis's <Link to="/terms" target="_blank">Terms</Link>.</span></label>
+              <label className="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> <span>I've read the refund policy and the organiser's terms, and agree to Lotnis's <Link to="/ticket-terms" target="_blank">ticket terms</Link> and <Link to="/terms" target="_blank">Terms of Use</Link>.</span></label>
               {error && <div className="form-error" role="alert">{error}</div>}
               <button className="button button-primary button-lg button-wide" onClick={checkout} disabled={busy}>{busy ? 'Working…' : quote.total === 0 ? 'Get my free tickets' : pending ? `Retry payment · ${cedis(quote.total, quote.currency)}` : `Pay ${cedis(quote.total, quote.currency)}`} <ArrowRight size={18} /></button>
               <p className="muted-inline">{POLICY_ICON} Secured by Paystack. Lotnis never sees your card or PIN.</p>

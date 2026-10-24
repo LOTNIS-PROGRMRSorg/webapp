@@ -26,6 +26,17 @@ export const LINES: Line[] = [
     seo: { title: 'Rent spaces in Ghana', description: 'Rent rooms, homes, villas, offices, shops, garages and warehouses across Ghana by the night, week, month or year.' }, faqs: [],
   },
   {
+    key: 'events', label: 'Events', status: 'live', path: '/events', browseCta: 'Find events',
+    tagline: 'Find it, buy tickets, walk in.',
+    summary: 'Concerts, parties, workshops and awards nights across Ghana. Pay with mobile money or card — no account needed — and your ticket is in your inbox in seconds. Organisers sell tickets, run paid voting and scan guests in at the gate.',
+    examples: ['A rooftop brunch', 'An awards night with voting', 'A two-day workshop', 'A pop-up market'],
+    categoriesTitle: 'What\'s on', categories: ['Concerts & music', 'Parties & nightlife', 'Festivals', 'Conferences', 'Workshops', 'Awards & pageants', 'Faith & community', 'Food & drink'],
+    steps: [['Find an event', 'Browse by city, date or category.'], ['Pick tickets', 'Several at once, to one email or a different email for each.'], ['Pay securely', 'Mobile money or card. The full price is shown first.'], ['Show your QR', 'Scanned once at the gate. Refunds follow the organiser\'s policy.']],
+    providerTitle: 'Organise an event', providerText: 'Create an event, set ticket types and prices in cedis, add gates for your scanners, even run paid voting. You\'re paid after the event, with every number in your dashboard.', providerCta: 'Host an event',
+    seo: { title: 'Events and tickets in Ghana', description: 'Find concerts, parties, workshops, festivals and awards nights across Ghana. Buy tickets with mobile money or card — no account needed — and get them instantly by email.' },
+    faqs: [{ question: 'Do I need an account to buy tickets?', answer: 'No. You only need an email address for your tickets and receipt. Signing in just keeps all your tickets in one place.' }, { question: 'Can I send tickets to friends?', answer: 'Yes. When you buy several tickets you can send each one to a different email address.' }, { question: 'Can I get a refund?', answer: 'Each organiser sets their own refund policy, shown before you pay. Cancelled events are always refunded in full, and postponed events follow the organiser\'s postponement policy.' }, { question: 'How do organisers get paid?', answer: 'After the event. Lotnis holds ticket money until the event is over, then pays the organiser, so cancelled events can always be refunded.' }],
+  },
+  {
     key: 'food', label: 'Food', status: 'soon', path: '/food',
     tagline: 'Order from the cooks and kitchens near you.',
     summary: 'Home cooks, local restaurants, bakers and caterers in one place. Browse menus, order for now or later, and pay with mobile money.',
@@ -46,17 +57,6 @@ export const LINES: Line[] = [
     providerTitle: 'Offer your service', providerText: 'If you can do it, you can list it. Plumber, guide, photographer, tutor — set your rates and get booked by people nearby.', providerCta: 'Offer my service', providerMail: 'Offer my service on Lotnis',
     seo: { title: 'Book trusted service providers in Ghana — coming soon', description: 'Find and book plumbers, electricians, tour guides, photographers, drivers, tutors and more. Any service, from anyone who can provide it. Coming soon to Lotnis.' },
     faqs: [{ question: 'What kinds of services can I book or offer?', answer: 'Anything a person can do for someone else: home repairs, cleaning, tour guiding, photography and video, driving and moving, tutoring, beauty, design, and more. If it isn\'t listed, you can still offer it.' }, { question: 'How will providers be checked?', answer: 'Providers go through the same verification as hosts — ID, selfie and contact checks — and customers can rate the work, so you know who is coming to your door.' }, { question: 'When does it launch?', answer: 'Services are launching after food. Tell us you\'re interested to be first in line.' }],
-  },
-  {
-    key: 'events', label: 'Events', status: 'live', path: '/events', browseCta: 'Find events',
-    tagline: 'Find it, buy tickets, walk in.',
-    summary: 'Concerts, parties, workshops and awards nights across Ghana. Pay with mobile money or card — no account needed — and your ticket is in your inbox in seconds. Organisers sell tickets, run paid voting and scan guests in at the gate.',
-    examples: ['A rooftop brunch', 'An awards night with voting', 'A two-day workshop', 'A pop-up market'],
-    categoriesTitle: 'What\'s on', categories: ['Concerts & music', 'Parties & nightlife', 'Festivals', 'Conferences', 'Workshops', 'Awards & pageants', 'Faith & community', 'Food & drink'],
-    steps: [['Find an event', 'Browse by city, date or category.'], ['Pick tickets', 'Several at once, to one email or a different email for each.'], ['Pay securely', 'Mobile money or card. The full price is shown first.'], ['Show your QR', 'Scanned once at the gate. Refunds follow the organiser\'s policy.']],
-    providerTitle: 'Organise an event', providerText: 'Create an event, set ticket types and prices in cedis, add gates for your scanners, even run paid voting. You\'re paid after the event, with every number in your dashboard.', providerCta: 'Host an event',
-    seo: { title: 'Events and tickets in Ghana', description: 'Find concerts, parties, workshops, festivals and awards nights across Ghana. Buy tickets with mobile money or card — no account needed — and get them instantly by email.' },
-    faqs: [{ question: 'Do I need an account to buy tickets?', answer: 'No. You only need an email address for your tickets and receipt. Signing in just keeps all your tickets in one place.' }, { question: 'Can I send tickets to friends?', answer: 'Yes. When you buy several tickets you can send each one to a different email address.' }, { question: 'Can I get a refund?', answer: 'Each organiser sets their own refund policy, shown before you pay. Cancelled events are always refunded in full, and postponed events follow the organiser\'s postponement policy.' }, { question: 'How do organisers get paid?', answer: 'After the event. Lotnis holds ticket money until the event is over, then pays the organiser, so cancelled events can always be refunded.' }],
   },
 ];
 
