@@ -1,13 +1,64 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GH">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotnis — Rent spaces, order food, book services &amp; organise events in Ghana</title>
+    <meta name="description" content="Rent spaces today — rooms, homes, offices, garages and warehouses — with food, trusted service providers (plumbers, tour guides, photographers and more) and events coming next. One account, mobile-money payments, verified hosts across Ghana." />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <link rel="canonical" href="https://lotnis.com/" />
     <meta name="theme-color" content="#0e2f2b" />
-    <title>Lotnis — stay somewhere worth remembering</title>
+    <meta name="application-name" content="Lotnis" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/og-default.jpg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+    <!-- Fonts load from Google; open the connections early so text paints sooner. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Social previews and crawlers that don't run JavaScript read these defaults;
+         each page then sets its own via the Seo component. -->
+    <meta property="og:site_name" content="Lotnis" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_GH" />
+    <meta property="og:title" content="Lotnis — Rent spaces, order food, book services &amp; organise events in Ghana" />
+    <meta property="og:description" content="Spaces, food, services and events in one place — verified providers, clear prices, mobile-money payments." />
+    <meta property="og:url" content="https://lotnis.com/" />
+    <meta property="og:image" content="https://lotnis.com/og-default.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A sunlit terracotta hallway — Lotnis, rent space in Ghana" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Lotnis — Rent spaces, order food, book services &amp; organise events in Ghana" />
+    <meta name="twitter:description" content="Spaces, food, services and events in one place — verified providers, clear prices, mobile-money payments." />
+    <meta name="twitter:image" content="https://lotnis.com/og-default.jpg" />
+
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@graph":[
+        {"@type":"Organization","@id":"https://lotnis.com/#organization","name":"Lotnis","url":"https://lotnis.com","logo":"https://lotnis.com/favicon.svg","areaServed":{"@type":"Country","name":"Ghana"}},
+        {"@type":"WebSite","@id":"https://lotnis.com/#website","url":"https://lotnis.com","name":"Lotnis","inLanguage":"en-GH","publisher":{"@id":"https://lotnis.com/#organization"},
+         "potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://lotnis.com/explore?query={search_term_string}"},"query-input":"required name=search_term_string"}}
+      ]}
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Shown to crawlers and before JavaScript loads: real content, not an empty div. -->
+      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:12vh auto;padding:0 24px;color:#173b37">
+        <h1>Lotnis — spaces, food, services and events in Ghana</h1>
+        <p>Rent rooms, homes, offices, garages and warehouses today; order food, book plumbers, tour guides and photographers, and organise events — launching next. Verified providers, clear prices, pay with mobile money.</p>
+        <nav aria-label="Browse">
+          <a href="/explore">Browse spaces</a> · <a href="/food">Food</a> · <a href="/services">Services</a> · <a href="/events">Events</a> ·
+          <a href="/rent/apartment">Apartments</a> · <a href="/rent/house">Houses</a> · <a href="/rent/villa">Villas</a> ·
+          <a href="/rent/room">Rooms</a> · <a href="/rent/office">Offices</a> · <a href="/rent/garage">Garages</a> · <a href="/rent/warehouse">Warehouses</a> ·
+          <a href="/in/accra">Accra</a> · <a href="/in/kumasi">Kumasi</a> · <a href="/refund-policy">Refund policy</a>
+        </nav>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

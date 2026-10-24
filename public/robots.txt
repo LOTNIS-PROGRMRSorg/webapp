@@ -1,0 +1,19 @@
+# Lotnis — public pages are open to search engines; private areas are not.
+User-agent: *
+Allow: /
+Disallow: /host/
+Disallow: /host$
+Disallow: /trips
+Disallow: /pay/
+Disallow: /reserve/
+Disallow: /booked/
+Disallow: /moveouts/
+Disallow: /notifications
+Disallow: /transactions
+Disallow: /auth
+Disallow: /*?*sort=
+Disallow: /*?*page=
+Disallow: /*?*minPrice=
+Disallow: /*?*maxPrice=
+
+Sitemap: https://lotnis.com/sitemap.xml

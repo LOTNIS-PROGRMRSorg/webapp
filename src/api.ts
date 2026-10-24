@@ -1,4 +1,4 @@
-import type { AuthUser, Booking, HostProfile, HostRequirementReview, HostStatusHistory, Profile, Property, Transaction } from './types';
+import type { AppNotification, ExitCaseDetail, ExitCaseSummary, ExitSettlement, AuthUser, Booking, CancellationPreview, CatalogOptions, HostAccess, HostProfile, HostRequirementReview, HostStatusHistory, Profile, Property, StayQuote, Transaction } from './types';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api').replace(/\/$/, '');
 const SESSION_KEY = 'lotnis_web_session';
@@ -37,7 +37,7 @@ export const api = {
   getProfile: () => request<Profile>('/auth/profile'),
   getMyBookings: () => request<{ data: Booking[]; total: number }>('/bookings/my'),
   getMyBooking: (id: string) => request<Booking>(`/bookings/my/${id}`),
-  getHostBookings: () => request<{ data: Booking[]; total: number }>('/bookings/host'),
+  getHostBookings: () => request<{ data: Booking[]; total: number }>('/bookings/host?limit=100'),
   getHostTransactions: () => request<Transaction[]>('/bookings/host/transactions'),
   getTransactions: () => request<Transaction[]>('/bookings/my/transactions'),
   getMyProperties: () => request<Property[]>('/property/mine'),
@@ -59,6 +59,70 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ reason }),
     }),
+  quoteStay: (payload: { property_id: string; room_id?: string; start_date: string; end_date: string }) =>
+    request<StayQuote>('/bookings/quote', { method: 'POST', body: JSON.stringify(payload) }),
+  getCatalog: () => request<CatalogOptions>('/catalog/options'),
+
+  // ── Cancellation & refunds ──────────────────────────────────────────────
+  previewTripCancellation: (bookingId: string) =>
+    request<CancellationPreview>(`/bookings/my/${bookingId}/cancellation-preview`),
+  cancelTrip: (bookingId: string, reason?: string) =>
+    request<Booking>(`/bookings/my/${bookingId}/cancel`, { method: 'POST', body: JSON.stringify({ reason }) }),
+  previewHostCancellation: (bookingId: string) =>
+    request<CancellationPreview>(`/bookings/host/${bookingId}/cancellation-preview`),
+  hostCancelBooking: (bookingId: string, reason: string) =>
+    request<Booking>(`/bookings/host/${bookingId}/cancel`, { method: 'POST', body: JSON.stringify({ reason }) }),
+
+  // ── Move-outs ───────────────────────────────────────────────────────────
+  previewExit: (bookingId: string, departure: string) =>
+    request<ExitSettlement>(`/exits/preview?booking_id=${bookingId}&departure=${departure}`),
+  giveNotice: (payload: { booking_id: string; planned_checkout: string; reason_category?: string; reason?: string }) =>
+    request<ExitCaseSummary>('/exits', { method: 'POST', body: JSON.stringify(payload) }),
+  getMyExits: () => request<ExitCaseSummary[]>('/exits/mine'),
+  getHostExits: () => request<ExitCaseSummary[]>('/exits/host'),
+  getExit: (id: string) => request<ExitCaseDetail>(`/exits/${id}`),
+  withdrawExit: (id: string) => request<ExitCaseDetail>(`/exits/${id}/withdraw`, { method: 'POST' }),
+  hostRespondExit: (id: string, payload: { response?: string; relet_from?: string | null; concede_fault?: boolean }) =>
+    request<ExitCaseDetail>(`/exits/${id}/host-response`, { method: 'POST', body: JSON.stringify(payload) }),
+  confirmMoveOut: (id: string, actualCheckout?: string) =>
+    request<ExitCaseDetail>(`/exits/${id}/move-out`, { method: 'POST', body: JSON.stringify({ actual_checkout: actualCheckout }) }),
+  startCheckout: (bookingId: string) =>
+    request<ExitCaseDetail>('/exits/checkout', { method: 'POST', body: JSON.stringify({ booking_id: bookingId }) }),
+  proposeDeduction: (id: string, payload: { amount: number; reason: string; evidence_urls: string[] }) =>
+    request<unknown>(`/exits/${id}/deductions`, { method: 'POST', body: JSON.stringify(payload) }),
+  respondToDeduction: (id: string, deductionId: string, payload: { response: 'accept' | 'dispute'; comment?: string }) =>
+    request<ExitCaseDetail>(`/exits/${id}/deductions/${deductionId}/respond`, { method: 'POST', body: JSON.stringify(payload) }),
+  uploadExitEvidence: (id: string, file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return request<{ url: string }>(`/exits/${id}/evidence`, { method: 'POST', body: form });
+  },
+
+  // ── Notifications (guest + host feed) ───────────────────────────────────
+  getNotifications: (params: { audience?: 'user' | 'host'; unread?: boolean; before?: string } = {}) => {
+    const query = new URLSearchParams({ limit: '30' });
+    if (params.audience) query.set('audience', params.audience);
+    if (params.unread) query.set('unread', '1');
+    if (params.before) query.set('before', params.before);
+    return request<AppNotification[]>(`/notifications?${query}`);
+  },
+  getUnreadCount: () => request<{ count: number }>('/notifications/unread-count').then((r) => r.count),
+  markNotificationsRead: (ids: string[]) =>
+    request<{ ok: boolean }>('/notifications/read', { method: 'POST', body: JSON.stringify({ ids }) }),
+  markAllNotificationsRead: () =>
+    request<{ ok: boolean }>('/notifications/read-all', { method: 'POST', body: JSON.stringify({}) }),
+
+  // ── Host dashboard gate ─────────────────────────────────────────────────
+  getHostAccess: () => request<HostAccess>('/host/me/access'),
+  nudgeHostReview: () => request<HostAccess>('/host/me/nudge', { method: 'POST' }),
+
+  uploadPropertyPhoto: (propertyId: string, file: File, roomId?: string) => {
+    const form = new FormData();
+    form.append('propertyId', propertyId);
+    if (roomId) form.append('roomId', roomId);
+    form.append('file', file);
+    return request<{ publicUrl: string; storagePath: string }>('/property/image/upload', { method: 'POST', body: form });
+  },
   publishProperty: (payload: unknown) =>
     request<Property>('/property/publish', { method: 'POST', body: JSON.stringify(payload) }),
 
