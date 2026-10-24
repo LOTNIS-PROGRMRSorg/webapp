@@ -6,3 +6,18 @@ vite.config.d.ts
 
 .env
 .env.local
+
+# ── Environment files: secrets live here, never in git ─────────────────────
+.env
+.env.*
+!.env.example
+*.env.local
+
+# ── Keys and certificates ───────────────────────────────────────────────────
+*.p8
+*.pem
+*.key
+*.p12
+*.jks
+AuthKey_*
+serviceAccount*.json
