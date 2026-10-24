@@ -66,7 +66,11 @@ function quoteFor(body: { start_date: string; end_date: string; room_id?: string
   return { unit: 'month', quantity: months, stay_label: `${months} month${months === 1 ? '' : 's'}`, price_per_unit: price, currency: 'GHS', stay_total: total, property_amount: total, discount_label: null, guest_service_fee: fee, security_deposit: 1500, final_amount: total + fee + 1500, min_stay: 1, max_stay: null, requires_host_acceptance: false, cancellation_policy: { code: 'standard', name: 'Standard', tiers: [{ days_before_start: 7, refund_percentage: 100 }, { days_before_start: 3, refund_percentage: 50 }, { days_before_start: 0, refund_percentage: 0 }] } };
 }
 
+import { handleEvents } from './devMockEvents';
+
 function handle(path: string, method: string, init?: RequestInit): Response | undefined {
+  const events = handleEvents(path, method, init);
+  if (events) return events;
   if (path === '/explore/mock-rooms') return new Response(JSON.stringify(roomsProperty), { headers: { 'content-type': 'application/json' } });
   if (path === '/bookings/quote' && String(init?.body).includes('mock-rooms')) return new Response(JSON.stringify(quoteFor(JSON.parse(String(init?.body)))), { headers: { 'content-type': 'application/json' } });
   if (path === '/host/me/access') return ok(access[state] ?? access.verified);

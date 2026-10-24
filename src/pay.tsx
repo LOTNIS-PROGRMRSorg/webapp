@@ -6,7 +6,7 @@ import { BookingProgress, Photo, sortedImages } from './bookingUi';
 import { money } from './format';
 import type { Booking } from './types';
 
-function loadPaystackScript(): Promise<void> {
+export function loadPaystackScript(): Promise<void> {
   if ((window as any).PaystackPop) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const existing = document.getElementById('paystack-inline-js');
@@ -120,6 +120,7 @@ export function BookedPage() {
         <ul className="done-next">
           <li><CalendarCheck size={18} /><div><b>Your trip is in My trips</b><span>Dates, price breakdown and host details live there.</span></div></li>
           <li><ShieldCheck size={18} /><div><b>Plans change? You're covered</b><span>Cancel before check-in for a refund under the listing's policy. Once you've moved in, give notice from My trips.</span></div></li>
+          <li><ShieldCheck size={18} /><div><b>Something not right? Tell us early</b><span>After you check in, you have 24–48 hours to report a problem from My trips and we'll pause your host's payout while we look into it. After that the host is paid and any issue is taken up with them — we still help.</span></div></li>
           <li><CheckCircle2 size={18} /><div><b>Deposit comes back</b><span>Any security deposit is returned after move-out, less itemised deductions you can review.</span></div></li>
         </ul>
         <div className="bk-actions bk-actions-center"><Link className="button button-primary" to="/trips">Go to my trips <ArrowRight size={16} /></Link><Link className="button button-quiet" to="/explore">Keep exploring</Link></div>

@@ -9,6 +9,7 @@ export type Line = {
   categoriesTitle: string; categories: string[];
   steps: Array<[string, string]>;
   providerTitle: string; providerText: string; providerCta: string; providerMail?: string;
+  browseCta?: string;
   seo: { title: string; description: string };
   faqs: Array<{ question: string; answer: string }>;
 };
@@ -47,15 +48,15 @@ export const LINES: Line[] = [
     faqs: [{ question: 'What kinds of services can I book or offer?', answer: 'Anything a person can do for someone else: home repairs, cleaning, tour guiding, photography and video, driving and moving, tutoring, beauty, design, and more. If it isn\'t listed, you can still offer it.' }, { question: 'How will providers be checked?', answer: 'Providers go through the same verification as hosts — ID, selfie and contact checks — and customers can rate the work, so you know who is coming to your door.' }, { question: 'When does it launch?', answer: 'Services are launching after food. Tell us you\'re interested to be first in line.' }],
   },
   {
-    key: 'events', label: 'Events', status: 'soon', path: '/events',
-    tagline: 'Organise it, sell tickets, fill the room.',
-    summary: 'Plan weddings, concerts, workshops and gatherings: find the venue, hire the vendors, sell tickets and manage guests — all in one place.',
-    examples: ['A rooftop brunch', 'A wedding for 200', 'A two-day workshop', 'A pop-up market'],
-    categoriesTitle: 'What you can organise', categories: ['Weddings', 'Concerts & parties', 'Conferences', 'Workshops', 'Birthdays', 'Community & faith', 'Pop-ups & markets', 'Corporate retreats'],
-    steps: [['Create your event', 'Date, place, price and tickets.'], ['Book what you need', 'Venues from Spaces, caterers from Food, crew from Services.'], ['Sell tickets', 'Guests pay by mobile money and get their tickets instantly.'], ['Run the day', 'Check people in and get paid after the event.']],
-    providerTitle: 'Organise an event', providerText: 'Putting something on? Sell tickets, take bookings and bring your venue, food and service providers together on Lotnis.', providerCta: 'Tell us you\'re interested', providerMail: 'Organise an event on Lotnis',
-    seo: { title: 'Organise events and sell tickets in Ghana — coming soon', description: 'Plan weddings, concerts, workshops and gatherings: book venues, hire vendors, sell tickets and manage guests. Coming soon to Lotnis.' },
-    faqs: [{ question: 'Can I book a venue for my event today?', answer: 'Yes — Spaces is live. Browse venues, halls and event-friendly properties now; full event tools (tickets, guest lists) are coming.' }, { question: 'Will I be able to sell tickets?', answer: 'Yes. Organisers will be able to create events, sell tickets by mobile money and card, and check guests in on the day.' }],
+    key: 'events', label: 'Events', status: 'live', path: '/events', browseCta: 'Find events',
+    tagline: 'Find it, buy tickets, walk in.',
+    summary: 'Concerts, parties, workshops and awards nights across Ghana. Pay with mobile money or card — no account needed — and your ticket is in your inbox in seconds. Organisers sell tickets, run paid voting and scan guests in at the gate.',
+    examples: ['A rooftop brunch', 'An awards night with voting', 'A two-day workshop', 'A pop-up market'],
+    categoriesTitle: 'What\'s on', categories: ['Concerts & music', 'Parties & nightlife', 'Festivals', 'Conferences', 'Workshops', 'Awards & pageants', 'Faith & community', 'Food & drink'],
+    steps: [['Find an event', 'Browse by city, date or category.'], ['Pick tickets', 'Several at once, to one email or a different email for each.'], ['Pay securely', 'Mobile money or card. The full price is shown first.'], ['Show your QR', 'Scanned once at the gate. Refunds follow the organiser\'s policy.']],
+    providerTitle: 'Organise an event', providerText: 'Create an event, set ticket types and prices in cedis, add gates for your scanners, even run paid voting. You\'re paid after the event, with every number in your dashboard.', providerCta: 'Host an event',
+    seo: { title: 'Events and tickets in Ghana', description: 'Find concerts, parties, workshops, festivals and awards nights across Ghana. Buy tickets with mobile money or card — no account needed — and get them instantly by email.' },
+    faqs: [{ question: 'Do I need an account to buy tickets?', answer: 'No. You only need an email address for your tickets and receipt. Signing in just keeps all your tickets in one place.' }, { question: 'Can I send tickets to friends?', answer: 'Yes. When you buy several tickets you can send each one to a different email address.' }, { question: 'Can I get a refund?', answer: 'Each organiser sets their own refund policy, shown before you pay. Cancelled events are always refunded in full, and postponed events follow the organiser\'s postponement policy.' }, { question: 'How do organisers get paid?', answer: 'After the event. Lotnis holds ticket money until the event is over, then pays the organiser, so cancelled events can always be refunded.' }],
   },
 ];
 

@@ -40,7 +40,7 @@ const entries = [
   ...UNITS.map((u) => url(`/explore?pricingPeriod=${u}`, { priority: '0.6', changefreq: 'daily' })),
   url('/refund-policy', { priority: '0.5', changefreq: 'monthly' }), url('/terms', { priority: '0.4', changefreq: 'monthly' }),
   url('/privacy', { priority: '0.4', changefreq: 'monthly' }), url('/host-agreement', { priority: '0.5', changefreq: 'monthly' }),
-  url('/food', { priority: '0.3', changefreq: 'monthly' }), url('/events', { priority: '0.3', changefreq: 'monthly' }), url('/services', { priority: '0.3', changefreq: 'monthly' }),
+  url('/food', { priority: '0.3', changefreq: 'monthly' }), url('/events', { priority: '0.8', changefreq: 'daily' }), url('/services', { priority: '0.3', changefreq: 'monthly' }),
 ];
 
 try {
@@ -50,6 +50,13 @@ try {
       .map((i) => ({ url: i.public_url, title: p.name }));
     entries.push(url(`/stays/${p.id}`, { priority: p.featured ? '0.9' : '0.7', changefreq: 'weekly', images }));
   }
+  // Upcoming events are optional: a missing events table must not break the sitemap.
+  try {
+    const res = await fetch(`${API}/events?limit=48`, { signal: AbortSignal.timeout(20_000) });
+    const upcoming = res.ok ? ((await res.json()).data?.data ?? []) : [];
+    for (const e of upcoming) entries.push(url(`/events/${e.slug}`, { priority: '0.7', changefreq: 'daily', images: e.cover_image_url ? [{ url: e.cover_image_url, title: e.title }] : [] }));
+    if (upcoming.length) console.log(`[sitemap] ${upcoming.length} upcoming events`);
+  } catch (err) { console.warn(`[sitemap] events skipped (${err.message})`); }
   const places = new Set([...CITIES, ...stays.map((p) => slug(p.city)).filter(Boolean)]);
   for (const place of places) entries.push(url(`/in/${place}`, { priority: '0.8', changefreq: 'daily' }));
   console.log(`[sitemap] ${stays.length} listings + ${entries.length - stays.length} static/landing pages`);

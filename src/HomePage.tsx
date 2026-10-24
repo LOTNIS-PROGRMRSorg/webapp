@@ -33,7 +33,7 @@ const SPACE_LINKS: Record<string, string> = { Rooms: 'room', Apartments: 'apartm
 const FAQS = [
   { id: 'faq-what', question: 'What is Lotnis?', answer: 'Lotnis is one place for the things people need done: rent a space (rooms, homes, offices, garages, warehouses), order food from local vendors, book any service provider — plumbers, tour guides, photographers and more — and organise events. One account, one payment method, verified providers. Spaces is live today; food, services and events are launching next.' },
   { id: 'faq-services', question: 'What kinds of services can I book or offer?', answer: 'Anything a person can do for someone else: home repairs, cleaning, tour guiding, photography and video, driving and moving, tutoring, beauty, design and more. If you can do it, you can offer it — and if you need it, you can ask for it.' },
-  { id: 'faq-events', question: 'Can I organise an event on Lotnis?', answer: 'Event tools — tickets, guest lists, check-in — are coming. You can already book a venue for your event through Spaces, and soon add caterers from Food and crew from Services in the same place.' },
+  { id: 'faq-events', question: 'Can I organise an event on Lotnis?', answer: 'Yes. Create an event, sell tickets in cedis, run paid voting for awards nights, and scan guests in at the gate. You can also book a venue for it through Spaces.' },
   { id: 'faq-offer', question: 'How do I offer food, a service or an event?', answer: 'Hosts, cooks, service providers and organisers all use one verified Lotnis account. Spaces hosting is open now. For food, services and events, tell us you\'re interested at partners@lotnis.com and we\'ll bring you in as each line launches.' },
   { id: 'faq-when-pay', question: 'When do I pay?', answer: 'If a space confirms instantly, you pay right after you reserve (your dates are held for a short window). If the host reviews requests first, you pay only after they accept — and you have up to 72 hours from then to complete payment. Nothing is charged before that.' },
   { id: 'faq-mobile-money', question: 'Can I pay with mobile money?', answer: 'Yes. Checkout runs through Paystack, which accepts MTN, Telecel and AirtelTigo mobile money as well as Visa and Mastercard.' },
@@ -187,7 +187,7 @@ function LinesGrid() {
             <h3>{l.label}</h3>
             <p>{l.tagline}</p>
             <ul>{l.examples.slice(0, 3).map((e) => <li key={e}>{e}</li>)}</ul>
-            <span className="lp-line-go">{l.status === 'live' ? 'Browse spaces' : 'See what\'s coming'} <ArrowRight size={15} /></span>
+            <span className="lp-line-go">{l.status === 'live' ? (l.browseCta ?? 'Browse spaces') : 'See what\'s coming'} <ArrowRight size={15} /></span>
           </Link>); })}
       </div>
     </section>
@@ -207,7 +207,7 @@ function LineBlock({ line, flip, visual, children, id }: { line: Line; flip?: bo
           <div className="lp-cats-title">{line.categoriesTitle}</div>
           <ul className="lp-chips">{line.categories.map((c) => <li key={c}>{line.key === 'spaces' && SPACE_LINKS[c] ? <Link to={`/rent/${SPACE_LINKS[c]}`}>{c}</Link> : c}</li>)}</ul>
           <div className="lp-btn-row">
-            <Link className="lp-btn lp-btn-dark" to={line.path}>{line.status === 'live' ? 'Browse spaces' : `About ${line.label.toLowerCase()}`} <ArrowRight size={16} /></Link>
+            <Link className="lp-btn lp-btn-dark" to={line.path}>{line.status === 'live' ? (line.browseCta ?? 'Browse spaces') : `About ${line.label.toLowerCase()}`} <ArrowRight size={16} /></Link>
             {line.status === 'soon' && <a className="lp-btn lp-btn-outline" href={partnerMailto(line.providerMail ?? line.providerTitle)}>{line.providerCta}</a>}
             {line.status === 'live' && <Link className="lp-btn lp-btn-outline" to="/host">{line.providerTitle}</Link>}
           </div>

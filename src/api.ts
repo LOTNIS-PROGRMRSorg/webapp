@@ -13,7 +13,7 @@ export function setSession(user: AuthUser | null) {
   else localStorage.removeItem(SESSION_KEY);
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const session = getSession();
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
@@ -24,7 +24,11 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     },
   });
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(body?.error || `Request failed (${response.status})`);
+  if (!response.ok) {
+    const error = new Error(body?.error || `Request failed (${response.status})`) as Error & { code?: string; status?: number };
+    error.code = body?.code; error.status = response.status;
+    throw error;
+  }
   return body?.success ? body.data : body;
 }
 

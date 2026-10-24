@@ -11,6 +11,7 @@ import { CancelDialog } from './cancel';
 import { STATUS_LABEL } from './exitLabels';
 import { NotificationBell, NotificationsPage } from './notifications';
 import { PayPage, BookedPage } from './pay';
+import { ReportIssueDialog } from './reportIssue';
 import { ReservePage } from './reserve';
 import { ExplorePage } from './explore';
 import { LineLanding } from './lineLanding';
@@ -31,6 +32,18 @@ const HostBookings = lazyNamed(() => import('./hostWorkspace'), 'HostBookings');
 const HostTransactions = lazyNamed(() => import('./hostWorkspace'), 'HostTransactions');
 const HostNotifications = lazyNamed(() => import('./hostWorkspace'), 'HostNotifications');
 const HostComingSoon = lazyNamed(() => import('./hostWorkspace'), 'HostComingSoon');
+const EventPage = lazyNamed(() => import('./events'), 'EventPage');
+const EventsPage = lazyNamed(() => import('./events'), 'EventsPage');
+const MyTicketsPage = lazyNamed(() => import('./events'), 'MyTicketsPage');
+const OrderPage = lazyNamed(() => import('./events'), 'OrderPage');
+const TicketPage = lazyNamed(() => import('./events'), 'TicketPage');
+const CategoryPage = lazyNamed(() => import('./voting'), 'CategoryPage');
+const NomineePage = lazyNamed(() => import('./voting'), 'NomineePage');
+const ScanPage = lazyNamed(() => import('./scan'), 'ScanPage');
+const HostEvents = lazyNamed(() => import('./hostEvents'), 'HostEvents');
+const HostEventForm = lazyNamed(() => import('./hostEvents'), 'HostEventForm');
+const HostEventManage = lazyNamed(() => import('./hostEvents'), 'HostEventManage');
+const HostEarnings = lazyNamed(() => import('./hostEvents'), 'HostEarnings');
 const NewPropertyPage = lazyNamed(() => import('./newProperty'), 'NewPropertyPage');
 const HostMoveOuts = lazyNamed(() => import('./exits'), 'HostMoveOuts');
 const ExitCasePage = lazyNamed(() => import('./exits'), 'ExitCasePage');
@@ -48,6 +61,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isHome = pathname === '/';
+  if (pathname.startsWith('/scan/')) return <>{children}</>;
   const overlay = isHome && !scrolled && !menuOpen;
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -83,7 +97,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
     <NavLink to="/explore">Spaces</NavLink>
     <NavLink to="/food">Food <span className="soon">Soon</span></NavLink>
     <NavLink to="/services">Services <span className="soon">Soon</span></NavLink>
-    <NavLink to="/events">Events <span className="soon">Soon</span></NavLink>
+    <NavLink to="/events">Events</NavLink>
   </>;
   return (
     <div className="app-shell">
@@ -98,7 +112,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
               ? <Link className="header-signin" to="/auth"><UserRound size={16} /> Sign in</Link>
               : <button className="profile-pill" aria-expanded={accountOpen} onClick={() => setAccountOpen(!accountOpen)}><UserRound size={16} /> Account <ChevronDown size={14} /></button>}
             <button className="mobile-menu" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
-            {accountOpen && session && <div className="account-menu"><Link to="/trips">My trips</Link><Link to="/notifications">Notifications</Link><Link to="/transactions">Transactions</Link><Link to="/host">Host dashboard</Link><hr /><button onClick={signOut}>Sign out</button></div>}
+            {accountOpen && session && <div className="account-menu"><Link to="/trips">My trips</Link><Link to="/my-tickets">My tickets</Link><Link to="/notifications">Notifications</Link><Link to="/transactions">Transactions</Link><Link to="/host">Host dashboard</Link><hr /><button onClick={signOut}>Sign out</button></div>}
           </div>
         </div>
         {menuOpen && <nav className="mobile-panel" aria-label="Mobile">
@@ -106,6 +120,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
           <Link to="/host">{session ? 'Host dashboard' : 'Become a host'}</Link>
           {session ? <>
             <Link to="/trips">My trips</Link>
+            <Link to="/my-tickets">My tickets</Link>
             <Link to="/notifications">Notifications</Link>
             <Link to="/transactions">Transactions</Link>
             <button onClick={signOut}>Sign out</button>
@@ -119,7 +134,6 @@ function AppShell({ children }: { children: React.ReactNode }) {
             <h2>Coming soon to Lotnis</h2>
             <div className="footer-soon-list">
               <Link to="/food"><UtensilsCrossed size={16} /> Food</Link>
-              <Link to="/events"><Ticket size={16} /> Events</Link>
               <Link to="/services"><Wrench size={16} /> Service providers</Link>
             </div>
           </div>
@@ -203,6 +217,7 @@ const REFUND_COPY: Record<string, string> = {
 function TripsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]); const [error, setError] = useState('');
   const [cancelling, setCancelling] = useState<Booking | null>(null);
+  const [reporting, setReporting] = useState<Booking | null>(null);
   const [notice, setNotice] = useState('');
   const [exits, setExits] = useState<Record<string, ExitCaseSummary>>({});
   const todayAccra = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Accra' });
@@ -211,7 +226,7 @@ function TripsPage() {
     api.getMyExits().then((list) => setExits(Object.fromEntries(list.map((x) => [x.booking_id, x])))).catch(() => {});
   };
   useEffect(() => { load(); }, []);
-  return <section className="section dashboard-page"><span className="eyebrow">Your travel</span><h1>My trips</h1>{notice && <div className="notice"><Check size={16} /><span>{notice}</span></div>}{error ? <div className="error-state">{error}</div> : bookings.length ? <div className="booking-list">{bookings.map((booking) => { const needsPayment = booking.reservation_stage === 'awaiting_payment' || (!booking.reservation_stage && booking.status === 'pending' && !booking.payment_reference); const started = booking.start_date <= todayAccra; const exit = exits[booking.id]; const canCancel = booking.status === 'pending' || (booking.status === 'confirmed' && !started); const canLeave = (booking.status === 'confirmed' || booking.status === 'active') && started && !exit; return <div className="booking-row" key={booking.id}><div><strong>{booking.property?.name || 'Accommodation reservation'}</strong><p>{booking.start_date} → {booking.end_date}</p><small>{booking.platform_fee != null ? `Includes ${booking.currency_snapshot} ${booking.platform_fee.toLocaleString()} Lotnis service fee` : 'Price confirmed at checkout'}</small>{booking.refund && <small className="refund-line">{money(booking.refund.currency, booking.refund.refund_amount)} · {REFUND_COPY[booking.refund.status]}{booking.refund.refund_reference ? ` (ref ${booking.refund.refund_reference})` : ''}</small>}{booking.status === 'cancelled' && booking.cancellation_reason && <small>Reason: {booking.cancellation_reason}</small>}</div><span className={`status status-${booking.status}`}>{booking.reservation_stage === 'awaiting_host_acceptance' ? 'Awaiting host' : booking.status}</span><strong>{booking.currency_snapshot} {booking.final_amount.toLocaleString()}</strong><div className="form-actions">{needsPayment && <Link className="button button-secondary" to={`/pay/${booking.id}`}>Pay now</Link>}{canCancel && <button className="button button-quiet" onClick={() => setCancelling(booking)}>Cancel</button>}{canLeave && <Link className="button button-quiet" to={`/trips/${booking.id}/leave`}>Leave early</Link>}{exit && <Link className="button button-secondary" to={`/moveouts/${exit.id}`}>Move-out: {STATUS_LABEL[exit.status]}</Link>}</div></div>; })}</div> : <div className="empty-state">Your reservations will appear here.</div>}{cancelling && <CancelDialog bookingId={cancelling.id} role="guest" propertyName={cancelling.property?.name || 'Your reservation'} onClose={() => setCancelling(null)} onDone={() => { setCancelling(null); setNotice('Booking cancelled. If a refund is due you will see it here and get a notification when it is sent.'); load(); }} />}</section>;
+  return <section className="section dashboard-page"><span className="eyebrow">Your travel</span><h1>My trips</h1>{notice && <div className="notice"><Check size={16} /><span>{notice}</span></div>}{error ? <div className="error-state">{error}</div> : bookings.length ? <div className="booking-list">{bookings.map((booking) => { const needsPayment = booking.reservation_stage === 'awaiting_payment' || (!booking.reservation_stage && booking.status === 'pending' && !booking.payment_reference); const started = booking.start_date <= todayAccra; const exit = exits[booking.id]; const canCancel = booking.status === 'pending' || (booking.status === 'confirmed' && !started); const canLeave = (booking.status === 'confirmed' || booking.status === 'active') && started && !exit; const daysSince = (Date.parse(todayAccra) - Date.parse(booking.start_date)) / 86_400_000; const canReport = (booking.status === 'confirmed' || booking.status === 'active') && started && daysSince <= 2; return <div className="booking-row" key={booking.id}><div><strong>{booking.property?.name || 'Accommodation reservation'}</strong><p>{booking.start_date} → {booking.end_date}</p><small>{booking.platform_fee != null ? `Includes ${booking.currency_snapshot} ${booking.platform_fee.toLocaleString()} Lotnis service fee` : 'Price confirmed at checkout'}</small>{booking.refund && <small className="refund-line">{money(booking.refund.currency, booking.refund.refund_amount)} · {REFUND_COPY[booking.refund.status]}{booking.refund.refund_reference ? ` (ref ${booking.refund.refund_reference})` : ''}</small>}{booking.status === 'cancelled' && booking.cancellation_reason && <small>Reason: {booking.cancellation_reason}</small>}</div><span className={`status status-${booking.status}`}>{booking.reservation_stage === 'awaiting_host_acceptance' ? 'Awaiting host' : booking.status}</span><strong>{booking.currency_snapshot} {booking.final_amount.toLocaleString()}</strong><div className="form-actions">{needsPayment && <Link className="button button-secondary" to={`/pay/${booking.id}`}>Pay now</Link>}{canCancel && <button className="button button-quiet" onClick={() => setCancelling(booking)}>Cancel</button>}{canReport && <button className="button button-quiet" onClick={() => setReporting(booking)}>Report a problem</button>}{canLeave && <Link className="button button-quiet" to={`/trips/${booking.id}/leave`}>Leave early</Link>}{exit && <Link className="button button-secondary" to={`/moveouts/${exit.id}`}>Move-out: {STATUS_LABEL[exit.status]}</Link>}</div></div>; })}</div> : <div className="empty-state">Your reservations will appear here.</div>}{reporting && <ReportIssueDialog bookingId={reporting.id} propertyName={reporting.property?.name || 'Your stay'} onClose={() => setReporting(null)} onDone={() => { setReporting(null); setNotice('Thanks — we\'ve paused your host\'s payout and our team will review your report. We\'ll notify you of the outcome.'); load(); }} />}{cancelling && <CancelDialog bookingId={cancelling.id} role="guest" propertyName={cancelling.property?.name || 'Your reservation'} onClose={() => setCancelling(null)} onDone={() => { setCancelling(null); setNotice('Booking cancelled. If a refund is due you will see it here and get a notification when it is sent.'); load(); }} />}</section>;
 }
 
 function TransactionsPage() {
@@ -242,6 +257,13 @@ export default function App() {
     <Route path="/in/:city" element={<ExplorePage />} />
     <Route path="/stays/:id" element={<StayPage />} />
     <Route path="/stays/:id/photos" element={<PhotosPage />} />
+    <Route path="/events/:slug/vote/:categoryId/:nomineeId" element={<NomineePage />} />
+    <Route path="/events/:slug/vote/:categoryId" element={<CategoryPage />} />
+    <Route path="/events/:slug" element={<EventPage />} />
+    <Route path="/orders/:id" element={<OrderPage />} />
+    <Route path="/tickets/:code" element={<TicketPage />} />
+    <Route path="/my-tickets" element={<Protected title="My tickets"><MyTicketsPage /></Protected>} />
+    <Route path="/scan/:token" element={<ScanPage />} />
     <Route path="/auth" element={<AuthPage />} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route path="/trips" element={<Protected title="My trips"><TripsPage /></Protected>} />
@@ -263,7 +285,11 @@ export default function App() {
       <Route path="move-outs" element={<HostMoveOuts />} />
       <Route path="transactions" element={<HostTransactions />} />
       <Route path="notifications" element={<HostNotifications />} />
-      <Route path="events" element={<HostComingSoon title="Events" text="Host ticketed events and venues on Lotnis." />} />
+      <Route path="events" element={<HostEvents />} />
+      <Route path="events/new" element={<HostEventForm />} />
+      <Route path="events/:id" element={<HostEventManage />} />
+      <Route path="events/:id/edit" element={<HostEventForm />} />
+      <Route path="earnings" element={<HostEarnings />} />
       <Route path="food" element={<HostComingSoon title="Food" text="Sell meals and food experiences to Lotnis guests." />} />
       <Route path="services" element={<HostComingSoon title="Services" text="Offer your skills — cleaning, transport, tours and more." />} />
     </Route>
@@ -272,7 +298,7 @@ export default function App() {
     <Route path="/refund-policy" element={<RefundPolicyPage />} />
     <Route path="/host-agreement" element={<HostAgreementPage />} />
     <Route path="/food" element={<LineLanding lineKey="food" />} />
-    <Route path="/events" element={<LineLanding lineKey="events" />} />
+    <Route path="/events" element={<EventsPage />} />
     <Route path="/services" element={<LineLanding lineKey="services" />} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes></Suspense></AppShell>;

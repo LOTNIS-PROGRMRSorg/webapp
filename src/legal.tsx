@@ -27,7 +27,7 @@ const TERMS: Doc = {
   sections: [
     { id: 'about', title: '1. About Lotnis', body: <>
       <P>Lotnis is a marketplace that connects people who need space with people who have it — rooms, houses, villas, apartments, hotels and hostels, offices, shops, garages, warehouses and venues. Lotnis is not the owner or landlord of listed spaces and is not a party to the agreement between a guest and a host, but it runs the booking, payment, refund and dispute process described here.</P>
-      <P>Lotnis is also planning Events, Food and Service-provider offerings. These terms apply to space rental today; extra terms will be published before any new service launches.</P></> },
+      <P>Lotnis also sells event tickets and paid votes (see section 12a), and is planning Food and Service-provider offerings. Extra terms will be published before any new service launches.</P></> },
     { id: 'accounts', title: '2. Your account', body: <>
       <L items={['You must be 18 or over and give accurate information. You are responsible for activity on your account.', 'You sign in with Google. Keep access to that account secure and tell us at once if you think it has been misused.', 'Your phone number lets hosts and Lotnis reach you about a booking. Keep it up to date.', 'We may suspend or close accounts that break these terms, commit fraud, or put others at risk.']} /></> },
     { id: 'booking', title: '3. How booking works', body: <>
@@ -80,7 +80,15 @@ const TERMS: Doc = {
     { id: 'conduct', title: '11. Conduct and reviews', body: <>
       <L items={['Treat the space, the host and neighbours with respect, and follow the house rules on the listing.', 'Don\'t exceed the stated number of guests, run events, sublet, or use the space for anything unlawful.', 'Reviews must be honest and based on your own stay. We remove reviews that are abusive, fake or off-topic.', 'You\'re responsible for damage you or your guests cause beyond normal wear.']} /></> },
     { id: 'disputes', title: '12. Problems and disputes', body: <>
-      <P>If something goes wrong, tell your host and contact Lotnis support as early as you can. For cancellations, notices, deposits and refunds, Lotnis acts as the decision-maker between guest and host and records every decision and reason on your case. If you still disagree, Ghanaian law governs these terms and the courts of Ghana have jurisdiction, without limiting any rights you have under consumer-protection law.</P></> },
+      <P>If something goes wrong, tell your host and contact Lotnis support as early as you can. For cancellations, notices, deposits and refunds, Lotnis acts as the decision-maker between guest and host and records every decision and reason on your case. If you still disagree, Ghanaian law governs these terms and the courts of Ghana have jurisdiction, without limiting any rights you have under consumer-protection law.</P>
+      <P><b>Report a problem after you check in.</b> If something is not as described, tell us from My trips within <b>24–48 hours of checking in</b>. A report pauses your host's payout while Lotnis looks into it. After that window the host is paid, and any later problem is between you and your host — Lotnis support will still help you resolve it.</P>
+    </> },
+    { id: 'events', title: '12a. Events, tickets and voting', body: <>
+      <P><b>Tickets.</b> You can buy event tickets with only an email address; signing in is optional but keeps your tickets together. Each ticket has its own QR code and works once. You can send each ticket to a different email address. Keep your ticket private — whoever scans it first gets in.</P>
+      <P><b>What you pay.</b> The price shown is the ticket price. Depending on the organiser, Lotnis's service fee is either already inside that price or added on top and shown as a separate line. A payment-processing fee, charged by our payment provider, is always added at checkout and is <b>not refundable</b>.</P>
+      <P><b>Refunds.</b> Each organiser chooses their refund policy and it is shown before you pay. If you ask for a refund your ticket is paused straight away and cannot be scanned; Lotnis reviews the request and, if approved, the ticket is cancelled and the money is sent back to you. A scanned ticket cannot be refunded. If an event is <b>cancelled</b> you are refunded the ticket price in full. If it is <b>postponed</b>, the organiser's postponement policy applies: your ticket carries over, you may be offered a refund for a limited time, or everyone is refunded automatically — the policy is shown before you buy.</P>
+      <P><b>Voting.</b> Votes are paid, final once confirmed, and are only refunded if voting is cancelled. Lotnis may remove votes that are found to be fraudulent.</P>
+      <P><b>Organisers.</b> Events are run by independent organisers, not by Lotnis. Lotnis holds ticket money until after the event so cancelled events can be refunded, then pays the organiser.</P></> },
     { id: 'liability', title: '13. Responsibility', body: <>
       <P>Hosts are responsible for the accuracy of their listings and the condition and safety of their spaces. Lotnis verifies host identity and reviews listings, but we can't guarantee every detail. To the extent the law allows, Lotnis isn't liable for losses caused by a host, another guest, or events outside our control, and our total liability for any booking is limited to the amount you paid for it. Nothing in these terms limits liability that can't be limited by law.</P></> },
     { id: 'changes', title: '14. Changes to these terms', body: <>
@@ -175,7 +183,7 @@ const PRIVACY: Doc = {
       <L items={['Ask for a copy of the personal data we hold about you.', 'Ask us to correct anything inaccurate — hosts can edit details until an application is under review.', 'Ask us to delete your account and data, subject to records we must keep by law.', 'Turn off non-essential notifications where offered.', 'Complain to us, or to Ghana\'s Data Protection Commission.']} /><P>Email <a href="mailto:privacy@lotnis.com">privacy@lotnis.com</a> to use these rights.</P></> },
     { id: 'security', title: '7. Security', body: <><P>We use encrypted connections, private storage for sensitive documents, role-based access for staff and audit logs for important actions. No system is perfectly secure, so please use a strong password on the Google account you sign in with.</P></> },
     { id: 'children', title: '8. Children', body: <><P>Lotnis is for people 18 and over. We don't knowingly collect data from children.</P></> },
-    { id: 'changes', title: '9. Changes', body: <><P>We'll update this policy as we add services such as Events, Food and Service providers, and tell you about important changes.</P></> },
+    { id: 'changes', title: '9. Changes', body: <><P>We'll update this policy as we add services such as Food and Service providers, and tell you about important changes.</P></> },
   ],
 };
 
@@ -185,7 +193,7 @@ const PRIVACY: Doc = {
 const HOSTS: Doc = {
   path: '/host-agreement', label: 'Host agreement', title: 'Host Agreement', icon: UserCheck,
   intro: 'What Lotnis expects from hosts, and what hosts can expect from us: verification, listings, bookings, payouts, cancellations and deposits.',
-  keyPoints: ['Every host is verified before the dashboard unlocks.', 'You choose your refund policy from the options Lotnis offers.', 'Respond to booking requests within 48 hours.', 'You\'re paid after the guest checks in, minus Lotnis\'s commission.', 'Deposit deductions need evidence; Lotnis decides disputes.'],
+  keyPoints: ['Every host is verified before the dashboard unlocks.', 'You choose your refund policy from the options Lotnis offers.', 'Respond to booking requests within 48 hours.', 'Stays are paid 24–48 hours after check-in; event money is paid after the event. Lotnis\'s commission is taken first.', 'Deposit deductions need evidence; Lotnis decides disputes.'],
   sections: [
     { id: 'verify', title: '1. Becoming a host', body: <>
       <P>To host you apply with your identity, contact, address, payout details (and business details if you operate as a business). The application is a step-by-step form; you can leave and return, and you can preview each document you upload.</P>
@@ -200,14 +208,23 @@ const HOSTS: Doc = {
     { id: 'bookings', title: '3. Handling bookings', body: <>
       <L items={['If you require approval, reply to each request within 48 hours. Requests you don\'t answer expire and count against your reliability.', 'Once a guest has paid, honour the booking. Cancelling a confirmed booking gives the guest a full refund, cancels your payout for it, and may lead to penalties.', 'Keep your calendar accurate. Don\'t take bookings off-platform for dates already booked on Lotnis.']} /></> },
     { id: 'fees', title: '4. Fees and payouts', body: <>
-      <L items={['Lotnis charges the guest a service fee and takes a commission from your stay price (currently 3%). The percentages in force when a booking is made apply to that booking.', 'You\'re paid after the guest checks in, to the mobile-money number or bank account you gave us. Payouts are adjusted automatically if the stay is shortened or cancelled.', 'Deposits are never part of your payout; they are held for the guest and only reduced by approved deductions.']} /></> },
+      <L items={['Lotnis charges the guest a service fee and takes a commission from your stay price (currently 3%). The percentages in force when a booking is made apply to that booking.', 'You\'re paid 24–48 hours after the guest checks in, to the mobile-money number or bank account you gave us. During that window guests can report a problem, which pauses your payout until Lotnis reviews it. Payouts are adjusted automatically if the stay is shortened or cancelled.', 'Deposits are never part of your payout; they are held for the guest and only reduced by approved deductions.']} /></> },
     { id: 'exits', title: '5. Guests leaving early', body: <>
       <L items={['When a guest gives notice you\'re notified, and can reply, confirm the move-out, and say if you\'ve re-let the space.', 'Guests owe the nights stayed plus any of the 7-night notice they didn\'t give, never past the booking end. Nights you re-let during the notice period are credited back to the guest.', 'If the space was unlivable or you broke the agreement, no notice charge applies.']} /></> },
     { id: 'deposits', title: '6. Deposit deductions', body: <>
       <L items={['After move-out you may list deductions, each with an amount, a reason and photo or receipt evidence — never more than the deposit.', 'Normal wear and tear isn\'t a valid deduction.', 'The guest can accept or dispute each one. Lotnis rules on disputes (uphold, reduce or waive) with a written reason.', 'Deductions without evidence will be waived.']} /></> },
     { id: 'conduct', title: '7. Standards and enforcement', body: <>
       <L items={['Follow the law, including any permits, safety, tax and tenancy rules that apply to your space.', 'Treat guests fairly and without discrimination.', 'Lotnis may suspend listings or accounts for false information, safety risks, repeated cancellations or abuse, and will give a reason. You can appeal by contacting support.']} /></> },
-    { id: 'more', title: '8. More services', body: <><P>Lotnis plans to add Events, Food and Service-provider hosting to the same host account. Extra terms will be published before they launch.</P></> },
+    { id: 'events-host', title: '8a. Hosting events', body: <>
+      <L items={[
+        'Events are submitted for review before they go on sale. After a first completed event, hosts with a clean record publish automatically; Lotnis can still pause or remove any event.',
+        'You set ticket types and prices in cedis, how many of each (or unlimited), your refund policy and what happens if you postpone. Buyers see these before paying and they are locked once tickets are sold.',
+        'Lotnis takes its commission (shown in your dashboard and set by Lotnis) from every ticket and vote. You choose whether it comes out of your price or is added on top for buyers — Lotnis receives the same amount either way. Payment-processing fees are always paid by the buyer.',
+        'You are paid <b>after</b> the event: 48 hours after it ends for tickets and 48 hours after voting closes for votes, minus refunds. Lotnis can hold a payout while a dispute, refund request or investigation is open.',
+        'If you cancel an event, every buyer is refunded in full and your payout for it is cancelled. If you postpone, your payout moves to the new date.',
+        'You are responsible for the event itself: licences, safety, capacity and what you promised. Share gate links only with people you trust; you can switch any gate off at any time.',
+      ].map((t, i) => <span key={i} dangerouslySetInnerHTML={{ __html: t }} />)} /></> },
+    { id: 'more', title: '8. More services', body: <><P>Events are live (see 8a). Lotnis plans to add Food and Service-provider hosting to the same host account; extra terms will be published before they launch.</P></> },
   ],
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  ArrowRight, Bell, Building2, CalendarCheck, Check, LayoutDashboard, LogOut, Ticket, UtensilsCrossed, Wallet, Wrench,
+  ArrowRight, Bell, Building2, CalendarCheck, Check, LayoutDashboard, LogOut, Receipt, Ticket, UtensilsCrossed, Wallet, Wrench,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { api } from './api';
@@ -21,13 +21,14 @@ import type { Booking, Property, Transaction } from './types';
 const NAV = [
   { to: '/host', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/host/accommodation', label: 'Accommodation', icon: Building2 },
+  { to: '/host/events', label: 'Events', icon: Ticket },
   { to: '/host/bookings', label: 'Bookings', icon: CalendarCheck },
   { to: '/host/move-outs', label: 'Move-outs', icon: LogOut },
-  { to: '/host/transactions', label: 'Transactions', icon: Wallet },
+  { to: '/host/earnings', label: 'Earnings', icon: Wallet },
+  { to: '/host/transactions', label: 'Transactions', icon: Receipt },
   { to: '/host/notifications', label: 'Notifications', icon: Bell, badge: true },
 ];
 const UPCOMING = [
-  { to: '/host/events', label: 'Events', icon: Ticket },
   { to: '/host/food', label: 'Food', icon: UtensilsCrossed },
   { to: '/host/services', label: 'Services', icon: Wrench },
 ];
