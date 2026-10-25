@@ -1,4 +1,21 @@
-import type { AppNotification, ExitCaseDetail, ExitCaseSummary, ExitSettlement, AuthUser, Booking, CancellationPreview, CatalogOptions, HostAccess, HostProfile, HostRequirementReview, HostStatusHistory, Profile, Property, StayQuote, Transaction } from '@/types';
+import type {
+  AppNotification,
+  ExitCaseDetail,
+  ExitCaseSummary,
+  ExitSettlement,
+  AuthUser,
+  Booking,
+  CancellationPreview,
+  CatalogOptions,
+  HostAccess,
+  HostProfile,
+  HostRequirementReview,
+  HostStatusHistory,
+  Profile,
+  Property,
+  StayQuote,
+  Transaction,
+} from '@/types';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api').replace(/\/$/, '');
 const SESSION_KEY = 'lotnis_web_session';
@@ -14,7 +31,11 @@ export function setSession(user: AuthUser | null) {
 }
 
 export const decodeExp = (token: string): number => {
-  try { return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000; } catch { return Number.MAX_SAFE_INTEGER; }   // not a decodable JWT: don't guess, let the server say
+  try {
+    return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000;
+  } catch {
+    return Number.MAX_SAFE_INTEGER;
+  } // not a decodable JWT: don't guess, let the server say
 };
 
 let refreshing: Promise<boolean> | null = null;
@@ -23,15 +44,25 @@ function refreshSession(): Promise<boolean> {
   if (refreshing) return refreshing;
   const session = getSession();
   if (!session?.refreshToken) return Promise.resolve(false);
-  refreshing = fetch(`${API_URL}/auth/refresh`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: session.refreshToken }) })
+  refreshing = fetch(`${API_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: session.refreshToken }),
+  })
     .then(async (response) => {
       const body = await response.json().catch(() => null);
       if (!response.ok || !body?.data?.access_token) return false;
-      setSession({ ...session, accessToken: body.data.access_token, refreshToken: body.data.refresh_token || session.refreshToken });
+      setSession({
+        ...session,
+        accessToken: body.data.access_token,
+        refreshToken: body.data.refresh_token || session.refreshToken,
+      });
       return true;
     })
     .catch(() => false)
-    .finally(() => { refreshing = null; });
+    .finally(() => {
+      refreshing = null;
+    });
   return refreshing;
 }
 
@@ -39,14 +70,19 @@ function refreshSession(): Promise<boolean> {
 function endSession() {
   setSession(null);
   const here = `${window.location.pathname}${window.location.search}`;
-  if (!window.location.pathname.startsWith('/auth')) window.location.assign(`/auth?expired=1&next=${encodeURIComponent(here)}`);
+  if (!window.location.pathname.startsWith('/auth'))
+    window.location.assign(`/auth?expired=1&next=${encodeURIComponent(here)}`);
 }
 
 export async function request<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
   let session = getSession();
   // Renew a token that is about to expire before using it, instead of letting the request fail.
   if (session?.accessToken && decodeExp(session.accessToken) - Date.now() < 60_000) {
-    if (await refreshSession()) session = getSession(); else if (decodeExp(session.accessToken) < Date.now()) { endSession(); throw new Error('Your session has expired. Please sign in again.'); }
+    if (await refreshSession()) session = getSession();
+    else if (decodeExp(session.accessToken) < Date.now()) {
+      endSession();
+      throw new Error('Your session has expired. Please sign in again.');
+    }
   }
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
@@ -63,8 +99,12 @@ export async function request<T>(path: string, init: RequestInit = {}, retried =
     throw new Error('Your session has expired. Please sign in again.');
   }
   if (!response.ok) {
-    const error = new Error(body?.error || `Request failed (${response.status})`) as Error & { code?: string; status?: number };
-    error.code = body?.code; error.status = response.status;
+    const error = new Error(body?.error || `Request failed (${response.status})`) as Error & {
+      code?: string;
+      status?: number;
+    };
+    error.code = body?.code;
+    error.status = response.status;
     throw error;
   }
   return body?.success ? body.data : body;
@@ -83,19 +123,14 @@ export const api = {
   getHostTransactions: () => request<Transaction[]>('/bookings/host/transactions'),
   getTransactions: () => request<Transaction[]>('/bookings/my/transactions'),
   getMyProperties: () => request<Property[]>('/property/mine'),
-  createBooking: (payload: {
-    property_id: string;
-    room_id?: string;
-    start_date: string;
-    end_date: string;
-  }) => request<Booking>('/bookings', { method: 'POST', body: JSON.stringify(payload) }),
+  createBooking: (payload: { property_id: string; room_id?: string; start_date: string; end_date: string }) =>
+    request<Booking>('/bookings', { method: 'POST', body: JSON.stringify(payload) }),
   confirmBooking: (bookingId: string, paystackReference: string) =>
     request<Booking>(`/bookings/internal/${bookingId}/confirm`, {
       method: 'POST',
       body: JSON.stringify({ paystack_reference: paystackReference }),
     }),
-  hostAcceptBooking: (bookingId: string) =>
-    request<Booking>(`/bookings/host/${bookingId}/accept`, { method: 'POST' }),
+  hostAcceptBooking: (bookingId: string) => request<Booking>(`/bookings/host/${bookingId}/accept`, { method: 'POST' }),
   hostRejectBooking: (bookingId: string, reason: string) =>
     request<Booking>(`/bookings/host/${bookingId}/reject`, {
       method: 'POST',
@@ -127,13 +162,23 @@ export const api = {
   hostRespondExit: (id: string, payload: { response?: string; relet_from?: string | null; concede_fault?: boolean }) =>
     request<ExitCaseDetail>(`/exits/${id}/host-response`, { method: 'POST', body: JSON.stringify(payload) }),
   confirmMoveOut: (id: string, actualCheckout?: string) =>
-    request<ExitCaseDetail>(`/exits/${id}/move-out`, { method: 'POST', body: JSON.stringify({ actual_checkout: actualCheckout }) }),
+    request<ExitCaseDetail>(`/exits/${id}/move-out`, {
+      method: 'POST',
+      body: JSON.stringify({ actual_checkout: actualCheckout }),
+    }),
   startCheckout: (bookingId: string) =>
     request<ExitCaseDetail>('/exits/checkout', { method: 'POST', body: JSON.stringify({ booking_id: bookingId }) }),
   proposeDeduction: (id: string, payload: { amount: number; reason: string; evidence_urls: string[] }) =>
     request<unknown>(`/exits/${id}/deductions`, { method: 'POST', body: JSON.stringify(payload) }),
-  respondToDeduction: (id: string, deductionId: string, payload: { response: 'accept' | 'dispute'; comment?: string }) =>
-    request<ExitCaseDetail>(`/exits/${id}/deductions/${deductionId}/respond`, { method: 'POST', body: JSON.stringify(payload) }),
+  respondToDeduction: (
+    id: string,
+    deductionId: string,
+    payload: { response: 'accept' | 'dispute'; comment?: string },
+  ) =>
+    request<ExitCaseDetail>(`/exits/${id}/deductions/${deductionId}/respond`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
   uploadExitEvidence: (id: string, file: File) => {
     const form = new FormData();
     form.append('file', file);
@@ -163,17 +208,25 @@ export const api = {
     form.append('propertyId', propertyId);
     if (roomId) form.append('roomId', roomId);
     form.append('file', file);
-    return request<{ publicUrl: string; storagePath: string }>('/property/image/upload', { method: 'POST', body: form });
+    return request<{ publicUrl: string; storagePath: string }>('/property/image/upload', {
+      method: 'POST',
+      body: form,
+    });
   },
   publishProperty: (payload: unknown) =>
     request<Property>('/property/publish', { method: 'POST', body: JSON.stringify(payload) }),
 
   // ── Host application (identity/business verification) ──────────────────
   getHostProfile: async (): Promise<HostProfile | null> => {
-    try { return await request<HostProfile>('/host/me'); }
-    catch (err) { if (err instanceof Error && err.message.includes('not found')) return null; throw err; }
+    try {
+      return await request<HostProfile>('/host/me');
+    } catch (err) {
+      if (err instanceof Error && err.message.includes('not found')) return null;
+      throw err;
+    }
   },
-  saveHostProfile: (payload: unknown) => request<HostProfile>('/host/me', { method: 'PUT', body: JSON.stringify(payload) }),
+  saveHostProfile: (payload: unknown) =>
+    request<HostProfile>('/host/me', { method: 'PUT', body: JSON.stringify(payload) }),
   uploadHostDocument: (slot: string, file: File) => {
     const form = new FormData();
     form.append('file', file);
@@ -182,7 +235,10 @@ export const api = {
   submitHostApplication: () => request<HostProfile>('/host/submit', { method: 'POST' }),
   getHostStatusHistory: () => request<HostStatusHistory[]>('/host/me/history'),
   getHostRequirementReviews: async (): Promise<HostRequirementReview[]> => {
-    try { return await request<HostRequirementReview[]>('/host/me/requirements'); }
-    catch { return []; }
+    try {
+      return await request<HostRequirementReview[]>('/host/me/requirements');
+    } catch {
+      return [];
+    }
   },
 };

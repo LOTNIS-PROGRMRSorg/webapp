@@ -260,16 +260,35 @@ export type StayQuote = {
 
 export type CatalogOptions = {
   services: Array<{ key: string; label: string; status: 'active' | 'coming_soon' }>;
-  property_types: Array<{ id: string; name: string; slug: string; category: 'residential' | 'hospitality' | 'commercial'; applicable_fields: Record<string, boolean> }>;
-  rental_units: Array<{ code: 'hour' | 'day' | 'week' | 'month' | 'year'; label: string; per: string; quantity: string; bookable: boolean }>;
-  cancellation_policies: Array<{ id: string; code: string; name: string; description?: string | null; tiers: PolicyTier[]; summary: string[] }>;
+  property_types: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    category: 'residential' | 'hospitality' | 'commercial';
+    applicable_fields: Record<string, boolean>;
+  }>;
+  rental_units: Array<{
+    code: 'hour' | 'day' | 'week' | 'month' | 'year';
+    label: string;
+    per: string;
+    quantity: string;
+    bookable: boolean;
+  }>;
+  cancellation_policies: Array<{
+    id: string;
+    code: string;
+    name: string;
+    description?: string | null;
+    tiers: PolicyTier[];
+    summary: string[];
+  }>;
   locations: { country: string; regions: string[]; cities: CatalogCity[] };
 };
 
 export type CatalogCity = { name: string; slug: string; region: string; lat: number; lng: number; aliases: string[] };
 
 export type HostAccessState =
-  | 'not_applied' | 'draft' | 'action_required' | 'submitted' | 'in_review' | 'verified' | 'suspended';
+  'not_applied' | 'draft' | 'action_required' | 'submitted' | 'in_review' | 'verified' | 'suspended';
 
 export type HostAccess = {
   state: HostAccessState;
@@ -334,19 +353,39 @@ export type ExitDeduction = {
 };
 
 export type ExitEvent = {
-  id: string; actor_role: 'guest' | 'host' | 'admin' | 'system'; actor_name?: string | null;
-  event: string; note?: string | null; data: Record<string, unknown>; created_at: string;
+  id: string;
+  actor_role: 'guest' | 'host' | 'admin' | 'system';
+  actor_name?: string | null;
+  event: string;
+  note?: string | null;
+  data: Record<string, unknown>;
+  created_at: string;
 };
 
 export type ExitCaseSummary = {
-  id: string; booking_id: string; kind: 'early_departure' | 'checkout'; status: ExitStatus;
-  planned_checkout: string; actual_checkout?: string | null; notice_given_at: string;
-  reason?: string | null; reason_category?: string | null;
-  host_response?: string | null; relet_from?: string | null; host_at_fault: boolean;
-  total_refund?: number | null; rent_refund?: number | null; deposit_returned?: number | null;
-  admin_override_reason?: string | null; created_at: string;
+  id: string;
+  booking_id: string;
+  kind: 'early_departure' | 'checkout';
+  status: ExitStatus;
+  planned_checkout: string;
+  actual_checkout?: string | null;
+  notice_given_at: string;
+  reason?: string | null;
+  reason_category?: string | null;
+  host_response?: string | null;
+  relet_from?: string | null;
+  host_at_fault: boolean;
+  total_refund?: number | null;
+  rent_refund?: number | null;
+  deposit_returned?: number | null;
+  admin_override_reason?: string | null;
+  created_at: string;
   booking: {
-    id: string; start_date: string; end_date: string; currency_snapshot: string; security_deposit?: number | null;
+    id: string;
+    start_date: string;
+    end_date: string;
+    currency_snapshot: string;
+    security_deposit?: number | null;
     property?: { id: string; name: string; city?: string };
     room?: { id: string; room_label?: string } | null;
   };

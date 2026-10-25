@@ -14,12 +14,17 @@ import { sortedImages } from '@/features/stays/bookingUi';
 // • Private pages (account, host dashboard, payment, move-outs) are noindex.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const SITE_URL = ((import.meta.env.VITE_SITE_URL as string | undefined) || 'https://lotnis.com').replace(/\/$/, '');
+export const SITE_URL = ((import.meta.env.VITE_SITE_URL as string | undefined) || 'https://lotnis.com').replace(
+  /\/$/,
+  '',
+);
 export const SITE_NAME = 'Lotnis';
 export const DEFAULT_IMAGE = `${SITE_URL}/og-default.jpg`;
-export const DEFAULT_DESCRIPTION = 'Rent spaces today — rooms, homes, offices, garages and warehouses — with food, trusted service providers and events coming next. One account, mobile-money payments, verified hosts across Ghana.';
+export const DEFAULT_DESCRIPTION =
+  'Rent spaces today — rooms, homes, offices, garages and warehouses — with food, trusted service providers and events coming next. One account, mobile-money payments, verified hosts across Ghana.';
 
-export const abs = (pathOrUrl: string) => (/^https?:\/\//.test(pathOrUrl) ? pathOrUrl : `${SITE_URL}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`);
+export const abs = (pathOrUrl: string) =>
+  /^https?:\/\//.test(pathOrUrl) ? pathOrUrl : `${SITE_URL}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
 
 /** Trim to a search-snippet friendly length without cutting mid-word. */
 export function clip(text: string, max: number): string {
@@ -46,17 +51,35 @@ type SeoProps = {
 
 function upsertMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
-  if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
   el.setAttribute('content', content);
 }
 
 function upsertLink(rel: string, href: string) {
   let el = document.head.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
-  if (!el) { el = document.createElement('link'); el.setAttribute('rel', rel); document.head.appendChild(el); }
+  if (!el) {
+    el = document.createElement('link');
+    el.setAttribute('rel', rel);
+    document.head.appendChild(el);
+  }
   el.setAttribute('href', href);
 }
 
-export function Seo({ title, description, path, image, imageAlt, type = 'website', noindex = false, follow = false, jsonLd }: SeoProps) {
+export function Seo({
+  title,
+  description,
+  path,
+  image,
+  imageAlt,
+  type = 'website',
+  noindex = false,
+  follow = false,
+  jsonLd,
+}: SeoProps) {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const desc = clip(description, 160);
   const canonical = abs(path ?? (typeof window !== 'undefined' ? window.location.pathname : '/'));
@@ -104,36 +127,67 @@ export function Seo({ title, description, path, image, imageAlt, type = 'website
 // ── Structured data builders ────────────────────────────────────────────────
 
 export const organizationLd = () => ({
-  '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL,
-  logo: `${SITE_URL}/favicon.svg`, email: 'support@lotnis.com',
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/favicon.svg`,
+  email: 'support@lotnis.com',
   areaServed: { '@type': 'Country', name: 'Ghana' },
   description: DEFAULT_DESCRIPTION,
 });
 
 export const websiteLd = () => ({
-  '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: SITE_URL, name: SITE_NAME, inLanguage: 'en-GH',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: SITE_NAME,
+  inLanguage: 'en-GH',
   publisher: { '@id': `${SITE_URL}/#organization` },
-  potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/explore?query={search_term_string}` }, 'query-input': 'required name=search_term_string' },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/explore?query={search_term_string}` },
+    'query-input': 'required name=search_term_string',
+  },
 });
 
 export const breadcrumbLd = (items: Array<{ name: string; path: string }>) => ({
   '@type': 'BreadcrumbList',
-  itemListElement: items.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: abs(item.path) })),
+  itemListElement: items.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: abs(item.path),
+  })),
 });
 
 export const faqLd = (faqs: Array<{ question: string; answer: string }>) => ({
   '@type': 'FAQPage',
-  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
 });
 
 export const webPageLd = (name: string, description: string, path: string, type = 'WebPage') => ({
-  '@type': type, name, description, url: abs(path), inLanguage: 'en-GH', isPartOf: { '@id': `${SITE_URL}/#website` },
+  '@type': type,
+  name,
+  description,
+  url: abs(path),
+  inLanguage: 'en-GH',
+  isPartOf: { '@id': `${SITE_URL}/#website` },
 });
 
 export const itemListLd = (name: string, properties: Property[]) => ({
-  '@type': 'ItemList', name, numberOfItems: properties.length,
+  '@type': 'ItemList',
+  name,
+  numberOfItems: properties.length,
   itemListElement: properties.map((p, i) => ({
-    '@type': 'ListItem', position: i + 1, url: abs(`/stays/${p.id}`), name: p.name,
+    '@type': 'ListItem',
+    position: i + 1,
+    url: abs(`/stays/${p.id}`),
+    name: p.name,
     image: sortedImages(p.property_images)[0]?.public_url,
   })),
 });
@@ -141,24 +195,47 @@ export const itemListLd = (name: string, properties: Property[]) => ({
 export function propertyLd(p: Property) {
   const images = sortedImages(p.property_images).map((i) => i.public_url);
   const rooms = (p.rooms ?? []).filter((r) => !r.deleted_at);
-  const prices = [p.price, ...rooms.map((r) => r.price_per_period)].filter((v): v is number => typeof v === 'number' && v > 0);
+  const prices = [p.price, ...rooms.map((r) => r.price_per_period)].filter(
+    (v): v is number => typeof v === 'number' && v > 0,
+  );
   const low = prices.length ? Math.min(...prices) : undefined;
   const high = prices.length ? Math.max(...prices) : undefined;
   const url = abs(`/stays/${p.id}`);
   return {
     '@type': 'Product',
-    '@id': `${url}#listing`, name: p.name, url, image: images.length ? images : undefined,
-    description: clip(p.description || p.tagline || `${p.name}, a ${p.sub_type ?? 'space'} for rent in ${p.city ?? 'Ghana'}.`, 500),
-    category: p.sub_type ?? p.category, sku: p.id,
+    '@id': `${url}#listing`,
+    name: p.name,
+    url,
+    image: images.length ? images : undefined,
+    description: clip(
+      p.description || p.tagline || `${p.name}, a ${p.sub_type ?? 'space'} for rent in ${p.city ?? 'Ghana'}.`,
+      500,
+    ),
+    category: p.sub_type ?? p.category,
+    sku: p.id,
     brand: { '@type': 'Brand', name: SITE_NAME },
-    ...(p.rating && p.review_count ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: p.rating, reviewCount: p.review_count } } : {}),
-    ...(low !== undefined ? {
-      offers: {
-        '@type': 'AggregateOffer', priceCurrency: p.currency || 'GHS', lowPrice: low, highPrice: high, offerCount: Math.max(1, rooms.length + (p.price != null ? 1 : 0)),
-        availability: 'https://schema.org/InStock', url,
-        priceSpecification: { '@type': 'UnitPriceSpecification', price: low, priceCurrency: p.currency || 'GHS', unitText: p.pricing_period ?? 'night' },
-      },
-    } : {}),
+    ...(p.rating && p.review_count
+      ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: p.rating, reviewCount: p.review_count } }
+      : {}),
+    ...(low !== undefined
+      ? {
+          offers: {
+            '@type': 'AggregateOffer',
+            priceCurrency: p.currency || 'GHS',
+            lowPrice: low,
+            highPrice: high,
+            offerCount: Math.max(1, rooms.length + (p.price != null ? 1 : 0)),
+            availability: 'https://schema.org/InStock',
+            url,
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: low,
+              priceCurrency: p.currency || 'GHS',
+              unitText: p.pricing_period ?? 'night',
+            },
+          },
+        }
+      : {}),
     additionalProperty: [
       p.bedrooms != null && { '@type': 'PropertyValue', name: 'Bedrooms', value: p.bedrooms },
       p.bathrooms != null && { '@type': 'PropertyValue', name: 'Bathrooms', value: p.bathrooms },
@@ -170,8 +247,21 @@ export function propertyLd(p: Property) {
 }
 
 /** Where the listing is — lets search engines show it for "near me" and place searches. */
-export const placeLd = (p: Property) => p.city ? ({
-  '@type': 'Place', name: p.name, url: abs(`/stays/${p.id}`),
-  address: { '@type': 'PostalAddress', streetAddress: p.street_address ?? undefined, addressLocality: p.city, addressRegion: p.state ?? undefined, addressCountry: 'GH' },
-  ...(p.latitude != null && p.longitude != null ? { geo: { '@type': 'GeoCoordinates', latitude: p.latitude, longitude: p.longitude } } : {}),
-}) : null;
+export const placeLd = (p: Property) =>
+  p.city
+    ? {
+        '@type': 'Place',
+        name: p.name,
+        url: abs(`/stays/${p.id}`),
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: p.street_address ?? undefined,
+          addressLocality: p.city,
+          addressRegion: p.state ?? undefined,
+          addressCountry: 'GH',
+        },
+        ...(p.latitude != null && p.longitude != null
+          ? { geo: { '@type': 'GeoCoordinates', latitude: p.latitude, longitude: p.longitude } }
+          : {}),
+      }
+    : null;

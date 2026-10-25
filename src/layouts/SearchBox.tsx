@@ -9,8 +9,15 @@ export function SearchBox() {
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const params = new URLSearchParams(searchParams);
-    if (query.trim()) params.set('query', query.trim()); else params.delete('query');
+    if (query.trim()) params.set('query', query.trim());
+    else params.delete('query');
     navigate(`/explore?${params}`);
   };
-  return <form className="search-box" onSubmit={submit}><Search size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Where do you want to stay?" /><button className="button button-primary">Search</button></form>;
+  return (
+    <form className="search-box" onSubmit={submit}>
+      <Search size={19} />
+      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Where do you want to stay?" />
+      <button className="button button-primary">Search</button>
+    </form>
+  );
 }

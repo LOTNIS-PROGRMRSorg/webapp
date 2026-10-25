@@ -1,5 +1,18 @@
 import { useEffect, useState } from 'react';
-import { BarChart3, Bell, Flag, Building2, CalendarCheck, LayoutDashboard, LogOut, Receipt, Ticket, UtensilsCrossed, Wallet, Wrench } from 'lucide-react';
+import {
+  BarChart3,
+  Bell,
+  Flag,
+  Building2,
+  CalendarCheck,
+  LayoutDashboard,
+  LogOut,
+  Receipt,
+  Ticket,
+  UtensilsCrossed,
+  Wallet,
+  Wrench,
+} from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { HostGate } from '@/features/host/HostGate';
@@ -32,11 +45,19 @@ export function HostShell() {
   const [unread, setUnread] = useState(0);
   useEffect(() => {
     let live = true;
-    const refresh = () => api.getUnreadCount().then((n) => live && setUnread(n)).catch(() => {});
+    const refresh = () =>
+      api
+        .getUnreadCount()
+        .then((n) => live && setUnread(n))
+        .catch(() => {});
     refresh();
     const timer = window.setInterval(refresh, 45_000);
     window.addEventListener('lotnis-notifications-read', refresh);
-    return () => { live = false; window.clearInterval(timer); window.removeEventListener('lotnis-notifications-read', refresh); };
+    return () => {
+      live = false;
+      window.clearInterval(timer);
+      window.removeEventListener('lotnis-notifications-read', refresh);
+    };
   }, []);
 
   return (
@@ -45,8 +66,14 @@ export function HostShell() {
         <div className="host-nav-title">Host workspace</div>
         <nav>
           {NAV.map(({ to, label, icon: Icon, end, badge }) => (
-            <NavLink key={to} to={to} end={end} className={({ isActive }) => `host-link ${isActive ? 'host-link-active' : ''}`}>
-              <Icon size={18} /><span>{label}</span>
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) => `host-link ${isActive ? 'host-link-active' : ''}`}
+            >
+              <Icon size={18} />
+              <span>{label}</span>
               {badge && unread > 0 && <em className="host-link-badge">{unread > 99 ? '99+' : unread}</em>}
             </NavLink>
           ))}
@@ -54,13 +81,20 @@ export function HostShell() {
         <div className="host-nav-title host-nav-soon">Coming soon</div>
         <nav>
           {UPCOMING.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to} className={({ isActive }) => `host-link host-link-soon ${isActive ? 'host-link-active' : ''}`}>
-              <Icon size={18} /><span>{label}</span>
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) => `host-link host-link-soon ${isActive ? 'host-link-active' : ''}`}
+            >
+              <Icon size={18} />
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
       </aside>
-      <div className="host-content"><Outlet /></div>
+      <div className="host-content">
+        <Outlet />
+      </div>
     </div>
   );
 }

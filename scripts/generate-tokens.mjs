@@ -21,6 +21,12 @@ const lines = [
 ];
 const css = lines.join('\n');
 if (process.argv.includes('--check')) {
-  if (!existsSync(out) || readFileSync(out, 'utf8') !== css) { console.error('src/theme/tokens.css is out of date — run `npm run tokens`.'); process.exit(1); }
+  if (!existsSync(out) || readFileSync(out, 'utf8') !== css) {
+    console.error('src/theme/tokens.css is out of date — run `npm run tokens`.');
+    process.exit(1);
+  }
   console.log('tokens.css is up to date');
-} else { writeFileSync(out, css); console.log(`wrote ${out}`); }
+} else {
+  writeFileSync(out, css);
+  console.log(`wrote ${out}`);
+}

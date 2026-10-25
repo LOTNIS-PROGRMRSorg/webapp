@@ -11,18 +11,19 @@ import '@/styles/components.css';
 
 async function start() {
   // Dev-only preview of signed-in screens: ?mock=<state>. Tree-shaken out of production builds.
-  if (import.meta.env.DEV && (location.search.includes('mock') || sessionStorage.getItem('lotnis_mock'))) await import('@/dev/devMock');
+  if (import.meta.env.DEV && (location.search.includes('mock') || sessionStorage.getItem('lotnis_mock')))
+    await import('@/dev/devMock');
   render();
 }
 
 function render() {
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-);
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </StrictMode>,
+  );
 }
 
 start();

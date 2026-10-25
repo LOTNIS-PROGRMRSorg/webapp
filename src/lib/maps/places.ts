@@ -8,8 +8,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import type { CatalogCity } from '@/types';
 
-export const norm = (value: string) => value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
-  .replace(/\b(metropolis|metropolitan|municipal|municipality|district|region|city)\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
+export const norm = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/\b(metropolis|metropolitan|municipal|municipality|district|region|city)\b/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 
 export function indexCities(cities: CatalogCity[]) {
   const map = new Map<string, CatalogCity>();
@@ -19,13 +25,20 @@ export function indexCities(cities: CatalogCity[]) {
 }
 
 /** First candidate (locality, neighbourhood, district…) that is a known place. */
-export function resolveCity(cities: CatalogCity[], candidates: Array<string | undefined | null>): CatalogCity | undefined {
+export function resolveCity(
+  cities: CatalogCity[],
+  candidates: Array<string | undefined | null>,
+): CatalogCity | undefined {
   const index = indexCities(cities);
-  for (const candidate of candidates) { const hit = candidate ? index.get(norm(candidate)) : undefined; if (hit) return hit; }
+  for (const candidate of candidates) {
+    const hit = candidate ? index.get(norm(candidate)) : undefined;
+    if (hit) return hit;
+  }
   return undefined;
 }
 
-export const findRegion = (regions: string[], value?: string | null) => (value ? regions.find((r) => norm(r) === norm(value)) : undefined);
+export const findRegion = (regions: string[], value?: string | null) =>
+  value ? regions.find((r) => norm(r) === norm(value)) : undefined;
 
 export const GHANA_CENTER = { lat: 7.95, lng: -1.03 };
 export const inGhana = (lat: number, lng: number) => lat >= 4.5 && lat <= 11.3 && lng >= -3.4 && lng <= 1.3;

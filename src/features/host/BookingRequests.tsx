@@ -12,8 +12,16 @@ export function BookingRequests({ bookings, onChange }: { bookings: Booking[]; o
   const [error, setError] = useState('');
   if (!pending.length) return null;
   const act = async (id: string, work: () => Promise<unknown>, failure: string) => {
-    setBusyId(id); setError('');
-    try { await work(); onChange(); } catch (err) { setError(err instanceof Error ? err.message : failure); } finally { setBusyId(''); }
+    setBusyId(id);
+    setError('');
+    try {
+      await work();
+      onChange();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : failure);
+    } finally {
+      setBusyId('');
+    }
   };
   return (
     <>
@@ -24,14 +32,32 @@ export function BookingRequests({ bookings, onChange }: { bookings: Booking[]; o
           <div className="booking-row" key={b.id}>
             <div>
               <strong>{b.property?.name || 'Reservation request'}</strong>
-              <p>{guestName(b)} · {b.start_date} → {b.end_date}</p>
-              {b.host_acceptance_deadline && <small>Respond by {new Date(b.host_acceptance_deadline).toLocaleString()}</small>}
+              <p>
+                {guestName(b)} · {b.start_date} → {b.end_date}
+              </p>
+              {b.host_acceptance_deadline && (
+                <small>Respond by {new Date(b.host_acceptance_deadline).toLocaleString()}</small>
+              )}
             </div>
             <strong>{money(b.currency_snapshot, b.landlord_payout ?? b.final_amount)}</strong>
             <div className="form-actions">
-              <button className="button button-quiet" disabled={busyId === b.id}
-                onClick={() => { const reason = window.prompt('Reason for declining this request?') || 'Not available'; act(b.id, () => api.hostRejectBooking(b.id, reason), 'Unable to decline'); }}>Decline</button>
-              <button className="button button-primary" disabled={busyId === b.id} onClick={() => act(b.id, () => api.hostAcceptBooking(b.id), 'Unable to accept')}>Accept</button>
+              <button
+                className="button button-quiet"
+                disabled={busyId === b.id}
+                onClick={() => {
+                  const reason = window.prompt('Reason for declining this request?') || 'Not available';
+                  act(b.id, () => api.hostRejectBooking(b.id, reason), 'Unable to decline');
+                }}
+              >
+                Decline
+              </button>
+              <button
+                className="button button-primary"
+                disabled={busyId === b.id}
+                onClick={() => act(b.id, () => api.hostAcceptBooking(b.id), 'Unable to accept')}
+              >
+                Accept
+              </button>
             </div>
           </div>
         ))}

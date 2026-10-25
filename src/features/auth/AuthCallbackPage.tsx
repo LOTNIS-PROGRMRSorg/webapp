@@ -19,11 +19,25 @@ export function AuthCallbackPage() {
       const payload = JSON.parse(atob(accessToken.split('.')[1]));
       setSession({ id: payload.sub, email: payload.email || '', accessToken, refreshToken });
       // Trigger the profile sync (backfills name/avatar from Google on first login).
-      api.getProfile().catch(() => {}).finally(() => navigate(next, { replace: true }));
+      api
+        .getProfile()
+        .catch(() => {})
+        .finally(() => navigate(next, { replace: true }));
     } catch {
       setError('Unable to complete sign-in. Please try again.');
     }
   }, [navigate]);
-  if (error) return <section className="section error-state"><Seo title="Sign-in problem" description="We couldn't finish signing you in." noindex />{error} <Link to="/auth">Try again</Link></section>;
-  return <section className="section empty-state"><Seo title="Signing in" description="Finishing sign-in to Lotnis." noindex />Finishing sign-in…</section>;
+  if (error)
+    return (
+      <section className="section error-state">
+        <Seo title="Sign-in problem" description="We couldn't finish signing you in." noindex />
+        {error} <Link to="/auth">Try again</Link>
+      </section>
+    );
+  return (
+    <section className="section empty-state">
+      <Seo title="Signing in" description="Finishing sign-in to Lotnis." noindex />
+      Finishing sign-in…
+    </section>
+  );
 }

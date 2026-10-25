@@ -20,17 +20,32 @@ function destination(notification: AppNotification): string {
 export function NotificationBell() {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    if (!getSession()) { setCount(0); return; }
+    if (!getSession()) {
+      setCount(0);
+      return;
+    }
     let live = true;
-    const refresh = () => api.getUnreadCount().then((n) => live && setCount(n)).catch(() => {});
+    const refresh = () =>
+      api
+        .getUnreadCount()
+        .then((n) => live && setCount(n))
+        .catch(() => {});
     refresh();
     const timer = window.setInterval(refresh, POLL_MS);
     const onRead = () => refresh();
     window.addEventListener('lotnis-notifications-read', onRead);
-    return () => { live = false; window.clearInterval(timer); window.removeEventListener('lotnis-notifications-read', onRead); };
+    return () => {
+      live = false;
+      window.clearInterval(timer);
+      window.removeEventListener('lotnis-notifications-read', onRead);
+    };
   }, []);
   return (
-    <Link className="bell-link" to="/notifications" aria-label={count ? `Notifications, ${count} unread` : 'Notifications'}>
+    <Link
+      className="bell-link"
+      to="/notifications"
+      aria-label={count ? `Notifications, ${count} unread` : 'Notifications'}
+    >
       <Bell size={18} />
       {count > 0 && <span className="bell-badge">{count > 99 ? '99+' : count}</span>}
     </Link>
@@ -39,7 +54,10 @@ export function NotificationBell() {
 
 type Tab = 'all' | 'user' | 'host';
 
-export function NotificationsPage({ embedded = false, defaultTab = 'all' }: { embedded?: boolean; defaultTab?: Tab } = {}) {
+export function NotificationsPage({
+  embedded = false,
+  defaultTab = 'all',
+}: { embedded?: boolean; defaultTab?: Tab } = {}) {
   const [items, setItems] = useState<AppNotification[]>([]);
   const [tab, setTab] = useState<Tab>(defaultTab);
   const [loading, setLoading] = useState(true);
@@ -47,14 +65,24 @@ export function NotificationsPage({ embedded = false, defaultTab = 'all' }: { em
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const load = useCallback((before?: string) => {
-    setLoading(true);
-    return api.getNotifications({ audience: tab === 'all' ? undefined : tab, before })
-      .then((rows) => { setItems((current) => (before ? [...current, ...rows] : rows)); setDone(rows.length < 30); setError(''); })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Unable to load notifications'))
-      .finally(() => setLoading(false));
-  }, [tab]);
-  useEffect(() => { load(); }, [load]);
+  const load = useCallback(
+    (before?: string) => {
+      setLoading(true);
+      return api
+        .getNotifications({ audience: tab === 'all' ? undefined : tab, before })
+        .then((rows) => {
+          setItems((current) => (before ? [...current, ...rows] : rows));
+          setDone(rows.length < 30);
+          setError('');
+        })
+        .catch((err) => setError(err instanceof Error ? err.message : 'Unable to load notifications'))
+        .finally(() => setLoading(false));
+    },
+    [tab],
+  );
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const announce = () => window.dispatchEvent(new Event('lotnis-notifications-read'));
   const open = async (n: AppNotification) => {
@@ -77,13 +105,27 @@ export function NotificationsPage({ embedded = false, defaultTab = 'all' }: { em
       <h1>Notifications</h1>
       <p className="lead">Updates on your trips, refunds and — if you host — your listings and verification.</p>
       <div className="notif-toolbar">
-        {([['all', 'All'], ['user', 'My trips'], ['host', 'Hosting']] as const).map(([key, label]) => (
-          <button key={key} className={`chip ${tab === key ? 'chip-active' : ''}`} onClick={() => setTab(key)}>{label}</button>
+        {(
+          [
+            ['all', 'All'],
+            ['user', 'My trips'],
+            ['host', 'Hosting'],
+          ] as const
+        ).map(([key, label]) => (
+          <button key={key} className={`chip ${tab === key ? 'chip-active' : ''}`} onClick={() => setTab(key)}>
+            {label}
+          </button>
         ))}
         <span className="grow" />
-        <button className="chip" onClick={readAll}>Mark all read</button>
+        <button className="chip" onClick={readAll}>
+          Mark all read
+        </button>
       </div>
-      {error ? <div className="error-state">{error}</div> : loading && !items.length ? <div className="empty-state">Loading…</div> : items.length ? (
+      {error ? (
+        <div className="error-state">{error}</div>
+      ) : loading && !items.length ? (
+        <div className="empty-state">Loading…</div>
+      ) : items.length ? (
         <div className="notif-list">
           {items.map((n) => (
             <button key={n.id} className={`notif-item ${n.read_at ? '' : 'notif-unread'}`} onClick={() => open(n)}>
@@ -91,13 +133,22 @@ export function NotificationsPage({ embedded = false, defaultTab = 'all' }: { em
               <span className="notif-body">
                 <strong>{n.title}</strong>
                 {n.body && <span>{n.body}</span>}
-                <small>{timeAgo(n.created_at)}{n.audience === 'host' ? ' · Hosting' : ''}</small>
+                <small>
+                  {timeAgo(n.created_at)}
+                  {n.audience === 'host' ? ' · Hosting' : ''}
+                </small>
               </span>
             </button>
           ))}
-          {!done && <button className="chip" disabled={loading} onClick={() => load(items[items.length - 1].created_at)}>{loading ? 'Loading…' : 'Load older'}</button>}
+          {!done && (
+            <button className="chip" disabled={loading} onClick={() => load(items[items.length - 1].created_at)}>
+              {loading ? 'Loading…' : 'Load older'}
+            </button>
+          )}
         </div>
-      ) : <div className="empty-state">Nothing yet. Updates about your bookings will show up here.</div>}
+      ) : (
+        <div className="empty-state">Nothing yet. Updates about your bookings will show up here.</div>
+      )}
     </section>
   );
 }

@@ -3,7 +3,15 @@ import type { Tone } from '@/theme';
 import { statusMeta } from '@/lib/status';
 
 /** A small coloured label. `tone` picks the colour from the theme. */
-export function Pill({ tone = 'neutral', children, className = '' }: { tone?: Tone; children: ReactNode; className?: string }) {
+export function Pill({
+  tone = 'neutral',
+  children,
+  className = '',
+}: {
+  tone?: Tone;
+  children: ReactNode;
+  className?: string;
+}) {
   return <span className={`pill pill-${tone} ${className}`}>{children}</span>;
 }
 

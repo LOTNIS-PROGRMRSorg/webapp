@@ -16,8 +16,12 @@ export function HomePage() {
   useReveal(loading || eventsLoading);
   return (
     <div className="lp">
-      <Seo title="Rent spaces and buy event tickets in Ghana" description={DEFAULT_DESCRIPTION} path="/"
-        jsonLd={[organizationLd(), websiteLd()]} />
+      <Seo
+        title="Rent spaces and buy event tickets in Ghana"
+        description={DEFAULT_DESCRIPTION}
+        path="/"
+        jsonLd={[organizationLd(), websiteLd()]}
+      />
       <Hero heroStay={heroStay} />
       <HeroSearch />
       <LinesGrid />

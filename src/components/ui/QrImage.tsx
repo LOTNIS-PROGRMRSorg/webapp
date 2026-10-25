@@ -5,8 +5,17 @@ export function QrImage({ value, size = 220, label }: { value: string; size?: nu
   const [src, setSrc] = useState('');
   useEffect(() => {
     let live = true;
-    import('qrcode').then((m) => m.toDataURL(value, { width: size * 2, margin: 1, errorCorrectionLevel: 'M' })).then((url) => live && setSrc(url)).catch(() => {});
-    return () => { live = false; };
+    import('qrcode')
+      .then((m) => m.toDataURL(value, { width: size * 2, margin: 1, errorCorrectionLevel: 'M' }))
+      .then((url) => live && setSrc(url))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
   }, [value, size]);
-  return src ? <img className="qr" src={src} width={size} height={size} alt={label || 'QR code'} /> : <div className="qr qr-empty" style={{ width: size, height: size }} />;
+  return src ? (
+    <img className="qr" src={src} width={size} height={size} alt={label || 'QR code'} />
+  ) : (
+    <div className="qr qr-empty" style={{ width: size, height: size }} />
+  );
 }

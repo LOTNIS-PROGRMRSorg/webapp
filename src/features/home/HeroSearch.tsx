@@ -6,7 +6,9 @@ import { LINE_ICON, PERIODS, Period, SPACE_TYPES } from './homeShared';
 
 // ── One search box, four lines ──────────────────────────────────────────────
 export const PLACEHOLDER: Record<Exclude<LineKey, 'spaces'>, string> = {
-  food: 'Waakye, cake, catering…', services: 'Plumber, photographer, tour guide…', events: 'Wedding, concert, workshop…',
+  food: 'Waakye, cake, catering…',
+  services: 'Plumber, photographer, tour guide…',
+  events: 'Wedding, concert, workshop…',
 };
 
 export function HeroSearch() {
@@ -43,32 +45,117 @@ export function HeroSearch() {
   return (
     <div className="lp-container lp-search-wrap">
       <div className="lp-tabs" role="tablist" aria-label="What are you looking for?">
-        {LINES.map((l) => { const Icon = LINE_ICON[l.key]; return (
-          <button key={l.key} type="button" role="tab" aria-selected={tab === l.key} className={tab === l.key ? 'on' : ''} onClick={() => setTab(l.key)}>
-            <Icon size={17} /> {l.label}{l.status === 'soon' && <em>Soon</em>}
-          </button>); })}
+        {LINES.map((l) => {
+          const Icon = LINE_ICON[l.key];
+          return (
+            <button
+              key={l.key}
+              type="button"
+              role="tab"
+              aria-selected={tab === l.key}
+              className={tab === l.key ? 'on' : ''}
+              onClick={() => setTab(l.key)}
+            >
+              <Icon size={17} /> {l.label}
+              {l.status === 'soon' && <em>Soon</em>}
+            </button>
+          );
+        })}
       </div>
       <form className="lp-search" role="search" onSubmit={submit}>
-        {tab === 'spaces' ? (<>
-          <label className="lp-field lp-field-where"><MapPin size={20} /><span className="lp-field-text"><span className="lp-field-label">Where</span>
-            <input value={where} onChange={(e) => setWhere(e.target.value)} placeholder="Search Osu, Kumasi, Cape Coast…" /></span></label>
-          <label className="lp-field"><Building2 size={20} /><span className="lp-field-text"><span className="lp-field-label">Space</span>
-            <select value={space} onChange={(e) => setSpace(e.target.value)}><option value="">Any kind of space</option>{SPACE_TYPES.map(({ slug, label }) => <option key={slug} value={slug}>{label}</option>)}</select></span></label>
-          <label className="lp-field"><CalendarDays size={20} /><span className="lp-field-text"><span className="lp-field-label">Rent by</span>
-            <select value={period} onChange={(e) => setPeriod(e.target.value as Period | '')}><option value="">Any length</option>{PERIODS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}</select></span></label>
-        </>) : (<>
-          <label className="lp-field lp-field-where"><Search size={20} /><span className="lp-field-text"><span className="lp-field-label">{tab === 'food' ? 'What are you hungry for?' : tab === 'services' ? 'What do you need done?' : 'What are you planning?'}</span>
-            <input value={what} onChange={(e) => setWhat(e.target.value)} placeholder={PLACEHOLDER[tab as Exclude<LineKey, 'spaces'>]} /></span></label>
-          <label className="lp-field"><MapPin size={20} /><span className="lp-field-text"><span className="lp-field-label">Where</span>
-            <input value={where} onChange={(e) => setWhere(e.target.value)} placeholder="Your area or city" /></span></label>
-          {line.status === 'soon' && <div className="lp-field lp-soon-note"><Clock size={20} /><span className="lp-field-text"><span className="lp-field-label">Launching soon</span><span>See what's planned</span></span></div>}
-        </>)}
-        <button className="lp-search-btn" type="submit"><Search size={20} /> {line.status === 'live' ? 'Search' : 'Learn more'}</button>
+        {tab === 'spaces' ? (
+          <>
+            <label className="lp-field lp-field-where">
+              <MapPin size={20} />
+              <span className="lp-field-text">
+                <span className="lp-field-label">Where</span>
+                <input
+                  value={where}
+                  onChange={(e) => setWhere(e.target.value)}
+                  placeholder="Search Osu, Kumasi, Cape Coast…"
+                />
+              </span>
+            </label>
+            <label className="lp-field">
+              <Building2 size={20} />
+              <span className="lp-field-text">
+                <span className="lp-field-label">Space</span>
+                <select value={space} onChange={(e) => setSpace(e.target.value)}>
+                  <option value="">Any kind of space</option>
+                  {SPACE_TYPES.map(({ slug, label }) => (
+                    <option key={slug} value={slug}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+            <label className="lp-field">
+              <CalendarDays size={20} />
+              <span className="lp-field-text">
+                <span className="lp-field-label">Rent by</span>
+                <select value={period} onChange={(e) => setPeriod(e.target.value as Period | '')}>
+                  <option value="">Any length</option>
+                  {PERIODS.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+          </>
+        ) : (
+          <>
+            <label className="lp-field lp-field-where">
+              <Search size={20} />
+              <span className="lp-field-text">
+                <span className="lp-field-label">
+                  {tab === 'food'
+                    ? 'What are you hungry for?'
+                    : tab === 'services'
+                      ? 'What do you need done?'
+                      : 'What are you planning?'}
+                </span>
+                <input
+                  value={what}
+                  onChange={(e) => setWhat(e.target.value)}
+                  placeholder={PLACEHOLDER[tab as Exclude<LineKey, 'spaces'>]}
+                />
+              </span>
+            </label>
+            <label className="lp-field">
+              <MapPin size={20} />
+              <span className="lp-field-text">
+                <span className="lp-field-label">Where</span>
+                <input value={where} onChange={(e) => setWhere(e.target.value)} placeholder="Your area or city" />
+              </span>
+            </label>
+            {line.status === 'soon' && (
+              <div className="lp-field lp-soon-note">
+                <Clock size={20} />
+                <span className="lp-field-text">
+                  <span className="lp-field-label">Launching soon</span>
+                  <span>See what's planned</span>
+                </span>
+              </div>
+            )}
+          </>
+        )}
+        <button className="lp-search-btn" type="submit">
+          <Search size={20} /> {line.status === 'live' ? 'Search' : 'Learn more'}
+        </button>
       </form>
       <ul className="lp-assurances">
-        <li><ShieldCheck size={16} /> Verified hosts and providers</li>
-        <li><Smartphone size={16} /> Pay with mobile money or card</li>
-        <li><Undo2 size={16} /> Clear prices and fair refund rules</li>
+        <li>
+          <ShieldCheck size={16} /> Verified hosts and providers
+        </li>
+        <li>
+          <Smartphone size={16} /> Pay with mobile money or card
+        </li>
+        <li>
+          <Undo2 size={16} /> Clear prices and fair refund rules
+        </li>
       </ul>
     </div>
   );

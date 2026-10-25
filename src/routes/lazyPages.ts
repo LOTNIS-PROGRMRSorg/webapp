@@ -1,7 +1,10 @@
 import { lazyNamed } from '@/lib/lazy';
 
 export const HowItWorksPage = lazyNamed(() => import('@/features/info/HowItWorksPage'), 'HowItWorksPage');
-export const HostApplicationPage = lazyNamed(() => import('@/features/host/application/HostApplicationPage'), 'HostApplicationPage');
+export const HostApplicationPage = lazyNamed(
+  () => import('@/features/host/application/HostApplicationPage'),
+  'HostApplicationPage',
+);
 export const HostWorkspace = lazyNamed(() => import('@/features/host'), 'HostWorkspace');
 export const HostOverview = lazyNamed(() => import('@/features/host'), 'HostOverview');
 export const HostAccommodation = lazyNamed(() => import('@/features/host'), 'HostAccommodation');

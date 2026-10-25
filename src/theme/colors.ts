@@ -11,7 +11,8 @@ export type ColorName = keyof typeof colors;
 export const cssVar = (name: ColorName) => `var(--c-${name})`;
 
 /** A translucent version of a palette colour: `alpha('ink', 12)` → 12% ink. Same thing the stylesheets do with color-mix. */
-export const alpha = (name: ColorName, percent: number) => `color-mix(in srgb, var(--c-${name}) ${percent}%, transparent)`;
+export const alpha = (name: ColorName, percent: number) =>
+  `color-mix(in srgb, var(--c-${name}) ${percent}%, transparent)`;
 
 /** Medal colours for ranks 1–3, shared by the leaderboard and podium. */
 export const medalColors = {

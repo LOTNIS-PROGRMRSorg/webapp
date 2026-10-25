@@ -10,9 +10,20 @@
 const API = (process.env.API_URL || process.env.VITE_API_URL || '').replace(/\/$/, '');
 const SITE = (process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
 
-const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const money = (currency, n) => `${currency === 'GHS' || !currency ? 'GH₵' : `${currency} `}${Number(n).toLocaleString('en-GH', { maximumFractionDigits: 2, minimumFractionDigits: Number(n) % 1 ? 2 : 0 })}`;
-const clip = (s, n) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length <= n ? t : `${t.slice(0, n - 1).trimEnd()}…`; };
+const esc = (s) =>
+  String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+const money = (currency, n) =>
+  `${currency === 'GHS' || !currency ? 'GH₵' : `${currency} `}${Number(n).toLocaleString('en-GH', { maximumFractionDigits: 2, minimumFractionDigits: Number(n) % 1 ? 2 : 0 })}`;
+const clip = (s, n) => {
+  const t = String(s ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return t.length <= n ? t : `${t.slice(0, n - 1).trimEnd()}…`;
+};
 
 /** Replace (or add) <meta {attr}="{key}" content="…">. */
 function setMeta(html, attr, key, value) {
@@ -20,7 +31,8 @@ function setMeta(html, attr, key, value) {
   const re = new RegExp(`<meta\\s+${attr}="${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`, 'i');
   return re.test(html) ? html.replace(re, tag) : html.replace('</head>', `    ${tag}\n  </head>`);
 }
-const dropMeta = (html, attr, key) => html.replace(new RegExp(`\\s*<meta\\s+${attr}="${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`, 'i'), '');
+const dropMeta = (html, attr, key) =>
+  html.replace(new RegExp(`\\s*<meta\\s+${attr}="${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`, 'i'), '');
 
 export function applyPreview(html, p) {
   let out = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(p.title)}</title>`);
@@ -34,7 +46,8 @@ export function applyPreview(html, p) {
     out = setMeta(out, 'property', 'og:image', p.image);
     out = setMeta(out, 'property', 'og:image:alt', p.imageAlt || p.title);
     // The default image's size no longer applies to this picture.
-    out = dropMeta(out, 'property', 'og:image:width'); out = dropMeta(out, 'property', 'og:image:height');
+    out = dropMeta(out, 'property', 'og:image:width');
+    out = dropMeta(out, 'property', 'og:image:height');
     out = setMeta(out, 'name', 'twitter:image', p.image);
   }
   out = setMeta(out, 'name', 'twitter:card', 'summary_large_image');
@@ -44,7 +57,10 @@ export function applyPreview(html, p) {
 }
 
 async function get(path) {
-  const res = await fetch(`${API}${path}`, { signal: AbortSignal.timeout(6000), headers: { accept: 'application/json' } });
+  const res = await fetch(`${API}${path}`, {
+    signal: AbortSignal.timeout(6000),
+    headers: { accept: 'application/json' },
+  });
   if (!res.ok) return null;
   const body = await res.json();
   return body?.success ? body.data : null;
@@ -55,7 +71,9 @@ export async function previewFor({ slug, cat, nominee }, origin, fetchData = get
   const site = SITE || origin;
   if (!slug) return null;
   if (cat) {
-    const page = await fetchData(`/events/${encodeURIComponent(slug)}/vote/${encodeURIComponent(cat)}${nominee ? `/${encodeURIComponent(nominee)}` : ''}`);
+    const page = await fetchData(
+      `/events/${encodeURIComponent(slug)}/vote/${encodeURIComponent(cat)}${nominee ? `/${encodeURIComponent(nominee)}` : ''}`,
+    );
     if (!page) return null;
     const { event, category } = page;
     const price = money(event.currency, category.price_per_vote);
@@ -64,13 +82,17 @@ export async function previewFor({ slug, cat, nominee }, origin, fetchData = get
       return {
         title: `Vote for ${n.name} as ${category.name} — ${event.title}`,
         description: `Vote for ${n.name} as ${category.name} at ${event.title}. A vote costs ${price}.`,
-        image: n.photo_url || event.cover_image_url, imageAlt: `${n.name} — ${category.name}`, url: `${site}/events/${slug}/vote/${cat}/${nominee}`,
+        image: n.photo_url || event.cover_image_url,
+        imageAlt: `${n.name} — ${category.name}`,
+        url: `${site}/events/${slug}/vote/${cat}/${nominee}`,
       };
     }
     return {
       title: `Vote for ${category.name} — ${event.title}`,
       description: `Vote for your favourite in ${category.name} at ${event.title}. A vote costs ${price}. ${category.nominee_count} contestant${category.nominee_count === 1 ? '' : 's'}.`,
-      image: event.cover_image_url, imageAlt: event.title, url: `${site}/events/${slug}/vote/${cat}`,
+      image: event.cover_image_url,
+      imageAlt: event.title,
+      url: `${site}/events/${slug}/vote/${cat}`,
     };
   }
   const ev = await fetchData(`/events/${encodeURIComponent(slug)}`);
@@ -78,7 +100,9 @@ export async function previewFor({ slug, cat, nominee }, origin, fetchData = get
   return {
     title: `${ev.title} — tickets${ev.city ? `, ${ev.city}` : ''}`,
     description: clip(ev.summary || ev.description, 160),
-    image: ev.cover_image_url, imageAlt: ev.title, url: `${site}/events/${slug}`,
+    image: ev.cover_image_url,
+    imageAlt: ev.title,
+    url: `${site}/events/${slug}`,
   };
 }
 
@@ -99,7 +123,9 @@ export default async function handler(req, res) {
   try {
     const preview = API ? await previewFor({ slug: q.slug, cat: q.cat, nominee: q.nominee }, origin) : null;
     if (preview) html = applyPreview(shell, preview);
-  } catch { /* keep the plain shell */ }
+  } catch {
+    /* keep the plain shell */
+  }
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=900');
   res.status(200).send(html);

@@ -1,6 +1,12 @@
 import type { Property } from '@/types';
 
-const PERIOD_LABELS: Record<string, string> = { hour: 'hour', day: 'night', week: 'week', month: 'month', year: 'year' };
+const PERIOD_LABELS: Record<string, string> = {
+  hour: 'hour',
+  day: 'night',
+  week: 'week',
+  month: 'month',
+  year: 'year',
+};
 
 /** The backend prices stays per hour/day/week/month/year; guests read a daily price as "per night". */
 export function periodLabel(period?: string | null) {
@@ -29,9 +35,13 @@ export const timeAgo = (iso: string) => {
   return days < 7 ? `${days}d ago` : new Date(iso).toLocaleDateString();
 };
 
-export const policyLine = (tier: { days_before_start: number; refund_percentage: number }, previous?: { days_before_start: number }) => {
+export const policyLine = (
+  tier: { days_before_start: number; refund_percentage: number },
+  previous?: { days_before_start: number },
+) => {
   const pct = Number(tier.refund_percentage);
-  const refund = pct >= 100 ? 'full refund of the stay' : pct <= 0 ? 'no refund of the stay' : `${pct}% of the stay refunded`;
+  const refund =
+    pct >= 100 ? 'full refund of the stay' : pct <= 0 ? 'no refund of the stay' : `${pct}% of the stay refunded`;
   return tier.days_before_start <= 0
     ? `Less than ${previous?.days_before_start ?? 1} day(s) before check-in: ${refund}`
     : `${tier.days_before_start}+ days before check-in: ${refund}`;
@@ -52,16 +62,24 @@ function addMonths(date: Date, months: number) {
 /** Exclusive end date for `quantity` units from `start` (YYYY-MM-DD). */
 export function endDateFor(start: string, unit: RentalUnitCode, quantity: number): string {
   const from = new Date(`${start}T00:00:00Z`);
-  const end = unit === 'week' ? new Date(from.getTime() + quantity * 7 * DAY_MS)
-    : unit === 'month' ? addMonths(from, quantity)
-    : unit === 'year' ? addMonths(from, quantity * 12)
-    : new Date(from.getTime() + quantity * DAY_MS);
+  const end =
+    unit === 'week'
+      ? new Date(from.getTime() + quantity * 7 * DAY_MS)
+      : unit === 'month'
+        ? addMonths(from, quantity)
+        : unit === 'year'
+          ? addMonths(from, quantity * 12)
+          : new Date(from.getTime() + quantity * DAY_MS);
   return end.toISOString().slice(0, 10);
 }
 
 export const unitNoun = (unit: RentalUnitCode, quantity: number) => {
   const nouns: Record<RentalUnitCode, [string, string]> = {
-    hour: ['hour', 'hours'], day: ['night', 'nights'], week: ['week', 'weeks'], month: ['month', 'months'], year: ['year', 'years'],
+    hour: ['hour', 'hours'],
+    day: ['night', 'nights'],
+    week: ['week', 'weeks'],
+    month: ['month', 'months'],
+    year: ['year', 'years'],
   };
   return nouns[unit][quantity === 1 ? 0 : 1];
 };
