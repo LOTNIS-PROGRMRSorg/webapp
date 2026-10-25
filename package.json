@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-sitemap.mjs && tsc -b && vite build",
+    "build": "node scripts/generate-tokens.mjs --check && node scripts/generate-sitemap.mjs && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "sitemap": "node scripts/generate-sitemap.mjs"
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "tokens": "node scripts/generate-tokens.mjs",
+    "tokens:check": "node scripts/generate-tokens.mjs --check"
   },
   "dependencies": {
     "jsqr": "^1.4.0",
