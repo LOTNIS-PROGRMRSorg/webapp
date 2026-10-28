@@ -13,10 +13,7 @@ export function Hero({ heroStay }: { heroStay?: Property }) {
       </picture>
       <div className="lp-container lp-hero-content">
         <h1>Everything you need, from people you can trust.</h1>
-        <p>
-          Rent a space, buy tickets to an event, and soon order food or book a plumber, a photographer or a tour guide —
-          one account, one way to pay, verified providers across Ghana.
-        </p>
+        <p>Rent a space, find an event, and discover trusted people across Ghana.</p>
       </div>
       {heroStay && (
         <Link className="lp-hero-stay" to={`/stays/${heroStay.id}`}>
