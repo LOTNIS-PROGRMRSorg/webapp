@@ -912,7 +912,7 @@
   font-size: 0.93rem;
   font-variant-numeric: tabular-nums;
 }
-.lp-lines div {
+.lp-booking .lp-lines > div {
   display: flex;
   justify-content: space-between;
   gap: 16px;
