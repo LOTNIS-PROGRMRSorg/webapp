@@ -55,7 +55,7 @@ export function LinesGrid() {
 export function Providers() {
   const signedIn = Boolean(getSession());
   return (
-    <section className="lp-section lp-container" aria-labelledby="lp-providers-title">
+    <section className="lp-section lp-container reveal" aria-labelledby="lp-providers-title">
       <div className="lp-section-head reveal">
         <div>
           <span className="lp-eyebrow">Earn on Lotnis</span>

@@ -32,7 +32,7 @@ export function StayRail({ stays, source, loading }: { stays: Property[]; source
   };
 
   return (
-    <section className="lp-section lp-container" aria-labelledby="lp-stays-title">
+    <section className="lp-section lp-container reveal" aria-labelledby="lp-stays-title">
       <div className="lp-section-head">
         <div>
           <span className="lp-eyebrow">{source === 'featured' ? 'Featured spaces' : 'New spaces'}</span>

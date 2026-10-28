@@ -1,5 +1,16 @@
 import { FormEvent, useState } from 'react';
-import { Building2, CalendarDays, Clock, MapPin, Search, ShieldCheck, Smartphone, Undo2 } from 'lucide-react';
+import {
+  BadgeCheck,
+  Building2,
+  CalendarDays,
+  Clock,
+  LockKeyhole,
+  MapPin,
+  Search,
+  ShieldCheck,
+  Smartphone,
+  Undo2,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { LINES, lineByKey, type LineKey } from '@/lib/lines';
 import { LINE_ICON, PERIODS, Period, SPACE_TYPES } from './homeShared';
@@ -10,6 +21,14 @@ export const PLACEHOLDER: Record<Exclude<LineKey, 'spaces'>, string> = {
   services: 'Plumber, photographer, tour guide…',
   events: 'Wedding, concert, workshop…',
 };
+
+const ASSURANCES = [
+  { icon: ShieldCheck, text: 'Verified hosts and providers' },
+  { icon: Smartphone, text: 'Pay with mobile money or card' },
+  { icon: Undo2, text: 'Clear prices and fair refund rules' },
+  { icon: LockKeyhole, text: 'Secure account and payments' },
+  { icon: BadgeCheck, text: 'Support when you need it' },
+];
 
 export function HeroSearch() {
   const navigate = useNavigate();
@@ -43,7 +62,7 @@ export function HeroSearch() {
   };
 
   return (
-    <div className="lp-container lp-search-wrap">
+    <div className="lp-container lp-search-wrap reveal">
       <div className="lp-tabs" role="tablist" aria-label="What are you looking for?">
         {LINES.map((l) => {
           const Icon = LINE_ICON[l.key];
@@ -143,20 +162,18 @@ export function HeroSearch() {
           </>
         )}
         <button className="lp-search-btn" type="submit">
-          <Search size={20} /> {line.status === 'live' ? 'Search' : 'Learn more'}
+          <Search size={20} /> {tab === 'spaces' ? 'Find a space' : line.status === 'live' ? 'Search' : 'Learn more'}
         </button>
       </form>
-      <ul className="lp-assurances">
-        <li>
-          <ShieldCheck size={16} /> Verified hosts and providers
-        </li>
-        <li>
-          <Smartphone size={16} /> Pay with mobile money or card
-        </li>
-        <li>
-          <Undo2 size={16} /> Clear prices and fair refund rules
-        </li>
-      </ul>
+      <div className="lp-assurances" aria-label="Why use Lotnis">
+        <div className="lp-assurances-track">
+          {[...ASSURANCES, ...ASSURANCES].map(({ icon: Icon, text }, index) => (
+            <span className="lp-assurance" key={`${text}-${index}`} aria-hidden={index >= ASSURANCES.length}>
+              <Icon size={16} /> {text}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
