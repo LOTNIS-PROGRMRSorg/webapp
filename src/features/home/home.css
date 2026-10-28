@@ -1636,6 +1636,45 @@ a.lp-line:hover,
 .lp-line-events {
   background: linear-gradient(150deg, var(--c-accent-bg), var(--c-danger-line));
 }
+.lp-lines-sec .lp-line {
+  color: var(--c-white);
+  background-position: center;
+  background-size: cover;
+  isolation: isolate;
+}
+.lp-lines-sec .lp-line::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-ink-night) 18%, transparent) 0%,
+    color-mix(in srgb, var(--c-ink-night) 78%, transparent) 100%
+  );
+}
+.lp-lines-sec .lp-line-spaces {
+  background-image: url('/images/landing/categories/spaces.webp');
+}
+.lp-lines-sec .lp-line-events {
+  background-image: url('/images/landing/categories/events.webp');
+}
+.lp-lines-sec .lp-line-food {
+  background-image: url('/images/landing/categories/food.webp');
+}
+.lp-lines-sec .lp-line-services {
+  background-image: url('/images/landing/categories/services.webp');
+}
+.lp-lines-sec .lp-line > p,
+.lp-lines-sec .lp-line ul {
+  color: color-mix(in srgb, var(--c-white) 88%, transparent);
+}
+.lp-lines-sec .lp-line ul li::before {
+  color: var(--c-white);
+}
+.lp-lines-sec .lp-line-go {
+  color: var(--c-white);
+}
 .lp-line-top {
   display: flex;
   justify-content: space-between;
