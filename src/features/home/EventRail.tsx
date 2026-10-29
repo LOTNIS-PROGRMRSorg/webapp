@@ -24,7 +24,7 @@ export function EventRail({ events, loading }: { events: EventCard[]; loading: b
     rail?.scrollBy({ left: direction * rail.clientWidth * 0.8, behavior: 'smooth' });
   };
   return (
-    <section className="lp-section lp-container" aria-labelledby="lp-events-title">
+    <section className="lp-section lp-container reveal" aria-labelledby="lp-events-title">
       <div className="lp-section-head">
         <div>
           <span className="lp-eyebrow">Upcoming events</span>
