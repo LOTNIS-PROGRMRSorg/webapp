@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import type { EventCard as EventCardData } from '@/lib/api/events';
 import { cedisShort, fmtDate, fmtTime } from '@/lib/dates';
 
-/** An event in a grid: cover, date badge, title, place, "from GH₵…". */
+/** A complete, image-led event card linking to the public event page. */
 export function EventCard({ ev }: { ev: EventCardData }) {
   const price = ev.sold_out
     ? 'Sold out'
@@ -25,32 +25,36 @@ export function EventCard({ ev }: { ev: EventCardData }) {
             decoding="async"
           />
         ) : (
-          <div className="ev-card-ph">
+          <div className="ev-card-ph" aria-hidden="true">
             <Ticket size={34} />
           </div>
         )}
         <span className="ev-date-badge">
           <b>{fmtDate(ev.starts_at, { day: 'numeric' })}</b>
-          {fmtDate(ev.starts_at, { month: 'short' })}
+          <span>{fmtDate(ev.starts_at, { month: 'short' })}</span>
         </span>
-        {ev.postponed && <span className="ev-flag ev-flag-warn">Postponed</span>}
-        {ev.status === 'cancelled' && <span className="ev-flag ev-flag-bad">Cancelled</span>}
-        {ev.voting_enabled && ev.status === 'published' && (
-          <span className="ev-flag">
-            <Trophy size={12} /> Voting
-          </span>
-        )}
+        <div className="ev-flags">
+          {ev.postponed && <span className="ev-flag ev-flag-warn">Postponed</span>}
+          {ev.status === 'cancelled' && <span className="ev-flag ev-flag-bad">Cancelled</span>}
+          {ev.voting_enabled && ev.status === 'published' && (
+            <span className="ev-flag">
+              <Trophy size={12} aria-hidden="true" /> Voting
+            </span>
+          )}
+        </div>
       </div>
       <div className="ev-card-body">
-        <small>{ev.category}</small>
+        <small className="ev-category">{ev.category}</small>
         <h3>{ev.title}</h3>
-        <p>
-          <CalendarDays size={14} /> {fmtDate(ev.starts_at)} · {fmtTime(ev.starts_at)}
+        <p className="ev-card-meta">
+          <CalendarDays size={15} aria-hidden="true" /> <span>{fmtDate(ev.starts_at)} · {fmtTime(ev.starts_at)}</span>
         </p>
-        <p>
-          <MapPin size={14} /> {ev.venue_name}, {ev.city}
+        <p className="ev-card-meta">
+          <MapPin size={15} aria-hidden="true" /> <span>{ev.venue_name}, {ev.city}</span>
         </p>
-        <strong className={ev.sold_out || ev.sales_paused ? 'ev-soldout' : ''}>{price}</strong>
+        <div className="ev-card-footer">
+          <strong className={ev.sold_out || ev.sales_paused ? 'ev-soldout' : ''}>{price}</strong>
+        </div>
       </div>
     </Link>
   );
