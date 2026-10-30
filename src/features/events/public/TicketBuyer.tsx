@@ -161,16 +161,18 @@ export function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boole
   return (
     <div className="ev-buy">
       <div className="evd-tickets">
-        {ev.ticket_types.map((t) => (
-          <TicketCard
-            key={t.id}
-            ticket={t}
-            ev={ev}
-            qty={qty[t.id] ?? 0}
-            live={t.status === 'on_sale' && !disabled}
-            onChange={(delta, max) => change(t.id, delta, max)}
-          />
-        ))}
+        {[...ev.ticket_types]
+          .sort((a, b) => b.price - a.price)
+          .map((t) => (
+            <TicketCard
+              key={t.id}
+              ticket={t}
+              ev={ev}
+              qty={qty[t.id] ?? 0}
+              live={t.status === 'on_sale' && !disabled}
+              onChange={(delta, max) => change(t.id, delta, max)}
+            />
+          ))}
       </div>
 
       {count > 0 && quote && (
@@ -191,8 +193,8 @@ export function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boole
                 <div className="notice">
                   <Mail size={16} />
                   <span>
-                    No account needed — just an email. <AuthLink to="/my-tickets">Sign in</AuthLink> to keep all your tickets in one
-                    place.
+                    No account needed — just an email. <AuthLink to="/my-tickets">Sign in</AuthLink> to keep all your
+                    tickets in one place.
                   </span>
                 </div>
               )}
@@ -283,7 +285,9 @@ export function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boole
                       : `Pay ${cedis(quote.total, quote.currency)}`}{' '}
                 <ArrowRight size={18} />
               </button>
-              <p className="muted-inline"><ShieldCheck size={16} /> Secured by Paystack. Lotnis never sees your card or PIN.</p>
+              <p className="muted-inline">
+                <ShieldCheck size={16} /> Secured by Paystack. Lotnis never sees your card or PIN.
+              </p>
             </div>
           )}
         </div>
