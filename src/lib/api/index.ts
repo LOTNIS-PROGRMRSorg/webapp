@@ -17,7 +17,7 @@ import type {
   Transaction,
 } from '@/types';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api').replace(/\/$/, '');
+const API_URL = (import.meta.env.VITE_API_URL).replace(/\/$/, '');
 const SESSION_KEY = 'lotnis_web_session';
 
 export function getSession(): AuthUser | null {
