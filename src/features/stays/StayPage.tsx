@@ -13,6 +13,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { useAuthModal } from '@/features/auth/AuthModal';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api, getSession } from '@/lib/api';
 import { bookingMode, liveRooms, Photo, sortedImages, useReveal } from '@/features/stays/bookingUi';
@@ -187,6 +188,7 @@ function StayMap({ lat, lng, label }: { lat: number; lng: number; label: string 
 export function StayPage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
+  const { openSignIn } = useAuthModal();
   const { property, error } = useProperty(id);
   const [catalog, setCatalog] = useState<CatalogOptions | null>(null);
   useEffect(() => {
@@ -221,7 +223,8 @@ export function StayPage() {
   const reserve = (roomId?: string) => {
     track('property', property.id, 'click_book');
     const target = `/reserve/${property.id}${roomId ? `?room=${roomId}` : ''}`;
-    navigate(getSession() ? target : `/auth?next=${encodeURIComponent(target)}`);
+    if (getSession()) navigate(target);
+    else openSignIn(target);
   };
   const per = periodLabel(property.pricing_period);
   const canBookWhole = mode !== 'rooms';

@@ -71,7 +71,7 @@ function endSession() {
   setSession(null);
   const here = `${window.location.pathname}${window.location.search}`;
   if (!window.location.pathname.startsWith('/auth'))
-    window.location.assign(`/auth?expired=1&next=${encodeURIComponent(here)}`);
+    window.location.assign(`/?signin=1&expired=1&next=${encodeURIComponent(here)}`);
 }
 
 export async function request<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {

@@ -48,7 +48,9 @@ import {
   ServiceStatsPage,
 } from '@/routes/lazyPages';
 import { AppShell } from '@/layouts/AppShell';
-import { AuthPage } from '@/features/auth/AuthPage';
+import { HostEntry } from '@/features/host/HostEntry';
+import { AuthRedirect } from '@/features/auth/AuthRedirect';
+import { AuthModalProvider } from '@/features/auth/AuthModal';
 import { AuthCallbackPage } from '@/features/auth/AuthCallbackPage';
 import { TripsPage } from '@/features/account/TripsPage';
 import { TransactionsPage } from '@/features/account/TransactionsPage';
@@ -59,6 +61,7 @@ import { forwardAuthHash } from '@/lib/authHash';
 export default function App() {
   if (forwardAuthHash()) return null;
   return (
+    <AuthModalProvider>
     <AppShell>
       <ErrorBoundary>
         <Suspense
@@ -89,7 +92,7 @@ export default function App() {
               }
             />
             <Route path="/scan/:token" element={<ScanPage />} />
-            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth" element={<AuthRedirect />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route
               path="/trips"
@@ -157,6 +160,14 @@ export default function App() {
             />
             {/* The application flow is open to anyone signed in; everything else under /host is verified-hosts-only. */}
             <Route
+              path="/host/start"
+              element={
+                <Protected title="Become a host">
+                  <HostEntry />
+                </Protected>
+              }
+            />
+            <Route
               path="/host/apply"
               element={
                 <Protected title="Host application">
@@ -216,5 +227,6 @@ export default function App() {
         </Suspense>
       </ErrorBoundary>
     </AppShell>
+    </AuthModalProvider>
   );
 }

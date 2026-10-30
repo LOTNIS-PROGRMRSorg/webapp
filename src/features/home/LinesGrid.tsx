@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getSession } from '@/lib/api';
+import { AuthLink } from '@/features/auth/AuthModal';
 import { LINES, partnerMailto } from '@/lib/lines';
 import { LINE_ICON } from './homeShared';
 
@@ -53,7 +53,6 @@ export function LinesGrid() {
 }
 
 export function Providers() {
-  const signedIn = Boolean(getSession());
   return (
     <section className="lp-section lp-container reveal" aria-labelledby="lp-providers-title">
       <div className="lp-section-head reveal">
@@ -83,9 +82,9 @@ export function Providers() {
               <h3>{l.providerTitle}</h3>
               <p>{l.providerText}</p>
               {l.status === 'live' ? (
-                <Link className="lp-line-go" to={signedIn ? '/host' : '/auth?next=/host'}>
+                <AuthLink className="lp-line-go" to="/host/start">
                   {l.providerCta} <ArrowRight size={15} />
-                </Link>
+                </AuthLink>
               ) : (
                 <a className="lp-line-go" href={partnerMailto(l.providerMail ?? l.providerTitle)}>
                   {l.providerCta} <ArrowRight size={15} />
