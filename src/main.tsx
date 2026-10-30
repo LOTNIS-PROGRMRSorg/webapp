@@ -7,7 +7,9 @@ import '@/styles/styles.css';
 import '@/styles/features.css';
 import '@/styles/design.css';
 import '@/styles/events.css';
+import '@/styles/event-detail.css';
 import '@/styles/components.css';
+import '@/styles/headers.css';
 
 async function start() {
   // Dev-only preview of signed-in screens: ?mock=<state>. Tree-shaken out of production builds.

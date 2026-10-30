@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, Minus, Plus } from 'lucide-react';
+import { AuthLink } from '@/features/auth/AuthModal';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSession } from '@/lib/api';
 import { cedis, forgetPayment, payWithPaystack, rememberPayment } from '@/features/events/eventUi';
@@ -142,7 +143,7 @@ export function VoteCheckout({
       {!session && (
         <div className="notice">
           <span>
-            No account needed. <Link to="/auth">Sign in</Link> to keep your receipts together.
+            No account needed. <AuthLink to="/">Sign in</AuthLink> to keep your receipts together.
           </span>
         </div>
       )}

@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Mail, Minus, Plus, Ticket } from 'lucide-react';
+import { ArrowRight, Mail, ShieldCheck } from 'lucide-react';
+import { AuthLink } from '@/features/auth/AuthModal';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSession } from '@/lib/api';
-import { cedis, fmtDateTime, forgetPayment, payWithPaystack, rememberPayment } from '@/features/events/eventUi';
+import { cedis, forgetPayment, payWithPaystack, rememberPayment } from '@/features/events/eventUi';
 import { eventApi, EventDetail, Quote } from '@/lib/api/events';
 import { errText } from './eventShared';
-import { POLICY_ICON } from './EventPage';
+import { QuoteSummary, TicketCard } from './detail';
 
 // ── Ticket picker + checkout ──────────────────────────────────────────────────
 
@@ -159,85 +160,22 @@ export function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boole
 
   return (
     <div className="ev-buy">
-      <div className="ev-types">
-        {ev.ticket_types.map((t) => {
-          const q = qty[t.id] ?? 0;
-          const max = Math.min(t.max_per_order, ev.max_tickets_per_order, t.remaining ?? 50);
-          const live = t.status === 'on_sale' && !disabled;
-          return (
-            <div className={`ev-type ${q > 0 ? 'ev-type-on' : ''}`} key={t.id}>
-              <div className="ev-type-info">
-                <b>{t.name}</b>
-                {t.description && <p>{t.description}</p>}
-                <small>
-                  {t.status === 'sold_out'
-                    ? 'Sold out'
-                    : t.status === 'not_started'
-                      ? `Sales open ${t.sales_start ? fmtDateTime(t.sales_start) : 'soon'}`
-                      : t.status === 'ended'
-                        ? 'Sales closed'
-                        : t.remaining != null
-                          ? `Only ${t.remaining} left`
-                          : t.max_per_order < ev.max_tickets_per_order
-                            ? `Up to ${t.max_per_order} per order`
-                            : ''}
-                </small>
-              </div>
-              <strong className="ev-type-price">{t.is_free ? 'Free' : cedis(t.price, ev.currency)}</strong>
-              <div className="ev-stepper" aria-label={`${t.name} quantity`}>
-                <button
-                  type="button"
-                  onClick={() => change(t.id, -1, max)}
-                  disabled={!live || q === 0}
-                  aria-label="Fewer"
-                >
-                  <Minus size={16} />
-                </button>
-                <output>{q}</output>
-                <button
-                  type="button"
-                  onClick={() => change(t.id, 1, max)}
-                  disabled={!live || q >= max}
-                  aria-label="More"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-            </div>
-          );
-        })}
+      <div className="evd-tickets">
+        {ev.ticket_types.map((t) => (
+          <TicketCard
+            key={t.id}
+            ticket={t}
+            ev={ev}
+            qty={qty[t.id] ?? 0}
+            live={t.status === 'on_sale' && !disabled}
+            onChange={(delta, max) => change(t.id, delta, max)}
+          />
+        ))}
       </div>
 
       {count > 0 && quote && (
-        <div className="ev-checkout">
-          <div className="ev-lines">
-            {quote.lines.map((l) => (
-              <div key={l.ticket_type_id}>
-                <span>
-                  {l.quantity} × {l.name}
-                </span>
-                <b>
-                  {(l.unit_price ?? 0) === 0 ? 'Free' : cedis((l.quantity ?? 0) * (l.unit_price ?? 0), quote.currency)}
-                </b>
-              </div>
-            ))}
-            {quote.service_fee > 0 && (
-              <div>
-                <span>Lotnis service fee</span>
-                <b>{cedis(quote.service_fee, quote.currency)}</b>
-              </div>
-            )}
-            {quote.processing_fee > 0 && (
-              <div>
-                <span>Payment processing</span>
-                <b>{cedis(quote.processing_fee, quote.currency)}</b>
-              </div>
-            )}
-            <div className="ev-total">
-              <span>Total</span>
-              <b>{quote.total === 0 ? 'Free' : cedis(quote.total, quote.currency)}</b>
-            </div>
-          </div>
+        <div className="evd-checkout">
+          <QuoteSummary quote={quote} />
           {step === 'pick' ? (
             <button
               className="button button-primary button-lg button-wide"
@@ -253,7 +191,7 @@ export function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boole
                 <div className="notice">
                   <Mail size={16} />
                   <span>
-                    No account needed — just an email. <Link to="/auth">Sign in</Link> to keep all your tickets in one
+                    No account needed — just an email. <AuthLink to="/my-tickets">Sign in</AuthLink> to keep all your tickets in one
                     place.
                   </span>
                 </div>
@@ -345,7 +283,7 @@ export function TicketBuyer({ ev, disabled }: { ev: EventDetail; disabled: boole
                       : `Pay ${cedis(quote.total, quote.currency)}`}{' '}
                 <ArrowRight size={18} />
               </button>
-              <p className="muted-inline">{POLICY_ICON} Secured by Paystack. Lotnis never sees your card or PIN.</p>
+              <p className="muted-inline"><ShieldCheck size={16} /> Secured by Paystack. Lotnis never sees your card or PIN.</p>
             </div>
           )}
         </div>

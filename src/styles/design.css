@@ -66,10 +66,8 @@ html {
 .dashboard-page {
   max-width: none;
 }
-.site-header-inner,
 .site-footer-inner,
-.lp-container,
-.mobile-panel {
+.lp-container {
   width: min(var(--wrap), 100% - var(--gutter) * 2);
 }
 .lp-hero-content {

@@ -891,30 +891,6 @@
 }
 
 /* ── Host header (replaces the guest header inside the host workspace) ─────── */
-.app-shell-host {
-  background: var(--cream);
-}
-.host-header {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  background: color-mix(in srgb, var(--c-white) 92%, transparent);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line);
-}
-.host-header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px var(--gutter);
-  width: 100%;
-}
-.host-header .brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
 .host-chip {
   font-style: normal;
   font-size: 0.68rem;
@@ -926,18 +902,6 @@
   padding: 4px 9px;
   border-radius: 99px;
 }
-.host-header-actions {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.host-header-actions .header-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
 /* ── Upload previews + lightbox ───────────────────────────────────────────── */
 .app-file-thumb {
   flex: none;

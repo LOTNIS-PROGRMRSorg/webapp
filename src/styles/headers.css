@@ -1,0 +1,409 @@
+/* ── Headers (guest + host) ────────────────────────────────────────────────── */
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--c-white) 94%, transparent);
+  backdrop-filter: saturate(1.6) blur(14px);
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  box-shadow: 0 1px 0 var(--line);
+  transition:
+    background 0.25s,
+    box-shadow 0.25s;
+}
+.hdr-home {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+.hdr-inner {
+  width: min(var(--wrap, 1760px), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+  height: 84px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+.hdr-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+.hdr-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px;
+  height: 100%;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--c-ink-muted);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.hdr-tab-icon {
+  flex: none;
+  transition:
+    transform 0.35s var(--ease, ease),
+    filter 0.2s;
+  filter: saturate(0.8) opacity(0.85);
+  user-select: none;
+}
+.hdr-tab:hover {
+  color: var(--ink);
+}
+.hdr-tab:hover .hdr-tab-icon {
+  transform: scale(1.1) rotate(-4deg);
+  filter: none;
+}
+.hdr-tab.active {
+  color: var(--ink);
+  font-weight: 600;
+}
+.hdr-tab.active .hdr-tab-icon {
+  transform: scale(1.12);
+  filter: none;
+}
+/* Per-icon motion: plays when a tab becomes active and on hover, like Airbnb's animated tabs. */
+.hdr-tab-icon {
+  transform-origin: 50% 85%;
+}
+.hdr-tab:hover .hdr-tab-icon,
+.hdr-tab.active .hdr-tab-icon {
+  animation-duration: 0.9s;
+  animation-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+  animation-fill-mode: both;
+}
+.hdr-tab-spaces:hover .hdr-tab-icon,
+.hdr-tab-spaces.active .hdr-tab-icon {
+  animation-name: hdr-hop;
+}
+.hdr-tab-events:hover .hdr-tab-icon,
+.hdr-tab-events.active .hdr-tab-icon {
+  animation-name: hdr-wobble;
+}
+.hdr-tab-food:hover .hdr-tab-icon,
+.hdr-tab-food.active .hdr-tab-icon {
+  animation-name: hdr-sizzle;
+}
+.hdr-tab-services:hover .hdr-tab-icon,
+.hdr-tab-services.active .hdr-tab-icon {
+  animation-name: hdr-ding;
+  transform-origin: 50% 100%;
+}
+@keyframes hdr-hop {
+  0% { transform: translateY(0) scale(1, 1); }
+  18% { transform: translateY(2px) scale(1.12, 0.88); }
+  45% { transform: translateY(-12px) scale(0.94, 1.1) rotate(-4deg); }
+  70% { transform: translateY(0) scale(1.1, 0.92) rotate(2deg); }
+  100% { transform: translateY(0) scale(1.12) rotate(0); }
+}
+@keyframes hdr-wobble {
+  0% { transform: scale(1) rotate(0); }
+  20% { transform: scale(1.18) rotate(-14deg); }
+  40% { transform: scale(1.14) rotate(10deg); }
+  60% { transform: scale(1.14) rotate(-6deg); }
+  80% { transform: scale(1.12) rotate(3deg); }
+  100% { transform: scale(1.12) rotate(0); }
+}
+@keyframes hdr-sizzle {
+  0% { transform: scale(1) rotate(0); }
+  15% { transform: scale(1.14) translate(-2px, -3px) rotate(-5deg); }
+  30% { transform: scale(1.14) translate(2px, -1px) rotate(5deg); }
+  45% { transform: scale(1.14) translate(-2px, -3px) rotate(-4deg); }
+  60% { transform: scale(1.14) translate(2px, -1px) rotate(4deg); }
+  80% { transform: scale(1.12) translate(0, -2px) rotate(-1deg); }
+  100% { transform: scale(1.12) translate(0, 0) rotate(0); }
+}
+@keyframes hdr-ding {
+  0% { transform: scale(1) rotate(0); }
+  15% { transform: translateY(-8px) scale(1.14) rotate(-18deg); }
+  35% { transform: translateY(0) scale(1.14) rotate(14deg); }
+  55% { transform: translateY(-3px) scale(1.12) rotate(-8deg); }
+  75% { transform: scale(1.12) rotate(4deg); }
+  100% { transform: scale(1.12) rotate(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdr-tab-icon {
+    animation: none !important;
+  }
+  .hdr-underline {
+    transition: none;
+  }
+}
+
+.hdr-tab-media {
+  position: relative;
+  display: block;
+  width: 52px;
+  height: 52px;
+  flex: none;
+}
+.hdr-tab-media img,
+.hdr-tab-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.hdr-tab-media video {
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.35s var(--ease, ease),
+    opacity 0.15s;
+}
+.hdr-tab-icon-hidden + video {
+  opacity: 1;
+}
+.hdr-tab-icon-hidden {
+  opacity: 0;
+}
+.hdr-tab:hover .hdr-tab-video,
+.hdr-tab.active .hdr-tab-video {
+  transform: scale(1.12);
+}
+.hdr-soon {
+  margin-left: 4px;
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: var(--c-surface-2);
+  color: var(--c-muted);
+}
+.hdr-underline {
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--ink);
+  transition:
+    transform 0.4s var(--ease, ease),
+    width 0.4s var(--ease, ease),
+    opacity 0.2s;
+}
+.hdr-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.hdr-host {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 16px;
+  border-radius: 99px;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.hdr-host:hover {
+  background: var(--c-surface-2);
+}
+.hdr-circle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--c-surface-2);
+  color: var(--ink);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.hdr-circle:hover {
+  background: var(--c-surface-3, var(--c-surface-2));
+  transform: scale(1.06);
+}
+.hdr-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 99px;
+  background: var(--ink);
+  color: var(--c-white);
+  font-weight: 600;
+}
+.hdr-menu {
+  position: absolute;
+  right: 0;
+  top: 64px;
+  display: grid;
+  min-width: 230px;
+  padding: 8px;
+  background: var(--c-white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--c-ink-deep) 14%, transparent);
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: hdr-pop 0.18s var(--ease, ease);
+}
+@keyframes hdr-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+.hdr-menu a,
+.hdr-menu button {
+  display: flex;
+  align-items: center;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+.hdr-menu a:hover,
+.hdr-menu button:hover {
+  background: var(--c-surface-2);
+}
+.hdr-menu hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 6px 4px;
+}
+.hdr-menu .hdr-menu-primary {
+  justify-content: center;
+  background: var(--ink);
+  color: var(--c-white);
+  font-weight: 600;
+}
+.hdr-menu .hdr-menu-primary:hover {
+  background: var(--ink);
+  opacity: 0.88;
+}
+.hdr-menu-tabs {
+  display: none;
+}
+.hdr-menu-tabs .hdr-tab {
+  height: auto;
+  padding: 4px 8px;
+}
+.hdr-menu-tabs .hdr-tab-icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* Transparent header over the homepage hero */
+.hdr-overlay {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-ink-night) 42%, transparent) 0%,
+    color-mix(in srgb, var(--c-ink-night) 12%, transparent) 78%,
+    transparent 100%
+  );
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.hdr-overlay .brand,
+.hdr-overlay .hdr-host,
+.hdr-overlay .hdr-tab.active {
+  color: var(--c-white);
+}
+.hdr-overlay .brand-mark {
+  background: var(--c-white);
+  color: var(--ink);
+}
+.hdr-overlay .hdr-tab {
+  color: color-mix(in srgb, var(--c-white) 82%, transparent);
+  text-shadow: 0 1px 8px color-mix(in srgb, var(--c-ink-night) 45%, transparent);
+}
+.hdr-overlay .hdr-tab:hover {
+  color: var(--c-white);
+}
+.hdr-overlay .hdr-underline {
+  background: var(--c-white);
+}
+.hdr-overlay .hdr-soon {
+  background: color-mix(in srgb, var(--c-white) 18%, transparent);
+  color: var(--c-white);
+}
+.hdr-overlay .hdr-host:hover {
+  background: color-mix(in srgb, var(--c-white) 14%, transparent);
+}
+.hdr-overlay .hdr-circle {
+  background: color-mix(in srgb, var(--c-white) 20%, transparent);
+  color: var(--c-white);
+  backdrop-filter: blur(8px);
+}
+.hdr :focus-visible,
+.host-header :focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+/* Host header */
+.app-shell-host {
+  background: var(--cream);
+}
+.host-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--c-white) 92%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.host-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px var(--gutter);
+  width: 100%;
+}
+.host-header-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.host-header .hdr-menu {
+  top: 48px;
+}
+
+@media (max-width: 1180px) {
+  .hdr-inner {
+    grid-template-columns: auto 1fr;
+    height: 72px;
+  }
+  .hdr-nav,
+  .hdr-host {
+    display: none;
+  }
+  .hdr-menu-tabs {
+    display: grid;
+  }
+  .hdr-menu {
+    top: 56px;
+  }
+}
+@media (max-width: 520px) {
+  .hdr-circle:not(:last-of-type) {
+    display: none;
+  }
+  .hdr-menu {
+    position: fixed;
+    left: var(--gutter);
+    right: var(--gutter);
+    top: 76px;
+  }
+}
