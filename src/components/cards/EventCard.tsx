@@ -2,7 +2,9 @@ import { Ticket, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { EventCard as EventCardData } from '@/lib/api/events';
 import { cedisShort, fmtDate, fmtTime } from '@/lib/dates';
-import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { FavoriteButton } from '@/features/favorites/Favorites';
+import { track } from '@/lib/track';
+import { ShareMenu } from '@/components/share/ShareMenu';
 import { SITE_URL } from '@/lib/seo/seo';
 import { eventShare } from '@/lib/shareCopy';
 
@@ -21,6 +23,17 @@ export function EventCard({ ev }: { ev: EventCardData }) {
   const share = eventShare(ev, url);
   return (
     <Link className="ev-card" to={`/events/${ev.slug}`}>
+      <div className="fav-actions">
+        <ShareMenu
+          url={url}
+          title={share.title}
+          text={share.description}
+          heading="Share this event"
+          className="fav-share"
+          onShare={() => track('event', ev.id, 'click_share')}
+        />
+        <FavoriteButton type="event" id={ev.id} label={ev.title} />
+      </div>
       <div className="ev-card-img">
         {ev.cover_image_url ? (
           <img
@@ -35,10 +48,6 @@ export function EventCard({ ev }: { ev: EventCardData }) {
           </div>
         )}
         <span className="ev-category">{ev.category}</span>
-        <div className="fav-actions">
-          <ShareIconButton url={url} title={share.title} text={share.text} />
-          <FavoriteButton type="event" id={ev.id} label={ev.title} />
-        </div>
         <div className="ev-flags">
           {ev.postponed && <span className="ev-flag ev-flag-warn">Postponed</span>}
           {ev.status === 'cancelled' && <span className="ev-flag ev-flag-bad">Cancelled</span>}

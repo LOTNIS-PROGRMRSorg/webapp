@@ -97,7 +97,7 @@ export function PublicHostPage() {
       )}
       <SectionHeading title="Upcoming events" />
       {host.events.length ? (
-        <div className="card-grid">
+        <div className="card-grid ev-grid">
           {host.events.map((e) => (
             <EventCard key={e.id} ev={e} />
           ))}

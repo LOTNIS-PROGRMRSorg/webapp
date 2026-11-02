@@ -3,7 +3,9 @@ import { cedis, fmtDate, fmtTime } from '@/features/events/eventUi';
 import type { EventDetail } from '@/lib/api/events';
 import { mapsUrl } from '../eventShared';
 import { Countdown } from './Countdown';
-import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { FavoriteButton } from '@/features/favorites/Favorites';
+import { track } from '@/lib/track';
+import { ShareMenu } from '@/components/share/ShareMenu';
 import { SITE_URL } from '@/lib/seo/seo';
 import { eventShare } from '@/lib/shareCopy';
 
@@ -15,6 +17,17 @@ export function EventHero({ ev, canBuy }: { ev: EventDetail; canBuy: boolean }) 
   return (
     <header className="evd-hero">
       <div className="evd-poster-wrap">
+        <div className="fav-actions">
+          <ShareMenu
+            url={url}
+            title={share.title}
+            text={share.description}
+            heading="Share this event"
+            className="fav-share"
+            onShare={() => track('event', ev.id, 'click_share')}
+          />
+          <FavoriteButton type="event" id={ev.id} label={ev.title} />
+        </div>
         <div className="evd-poster">
           {ev.cover_image_url ? (
             <img src={ev.cover_image_url} alt={ev.title} />
@@ -24,10 +37,6 @@ export function EventHero({ ev, canBuy }: { ev: EventDetail; canBuy: boolean }) 
             </div>
           )}
           <span className="evd-poster-chip">{ev.category}</span>
-          <div className="fav-actions">
-            <ShareIconButton url={url} title={share.title} text={share.text} />
-            <FavoriteButton type="event" id={ev.id} label={ev.title} />
-          </div>
         </div>
         <div className="evd-sticker" aria-hidden="true">
           <span>{fmtDate(ev.starts_at, { month: 'short' })}</span>
@@ -88,7 +97,13 @@ export function EventHero({ ev, canBuy }: { ev: EventDetail; canBuy: boolean }) 
             </a>
             {ev.from_price != null && (
               <span className="evd-from">
-                {ev.has_free && ev.from_price === 0 ? 'Free entry available' : <>From <b>{cedis(ev.from_price, ev.currency)}</b></>}
+                {ev.has_free && ev.from_price === 0 ? (
+                  'Free entry available'
+                ) : (
+                  <>
+                    From <b>{cedis(ev.from_price, ev.currency)}</b>
+                  </>
+                )}
               </span>
             )}
           </div>

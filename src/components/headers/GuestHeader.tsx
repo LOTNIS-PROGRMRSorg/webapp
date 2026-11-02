@@ -179,6 +179,7 @@ export function GuestHeader({ session, onSignOut }: { session: AuthUser | null; 
               <AuthLink to={isHost ? '/host' : '/host/start'}>{isHost ? 'Host dashboard' : 'Become a host'}</AuthLink>
               {session ? (
                 <>
+                  <Link to="/favorites">Favourites</Link>
                   <Link to="/trips">My trips</Link>
                   <Link to="/my-tickets">My tickets</Link>
                   <Link to="/notifications">Notifications</Link>

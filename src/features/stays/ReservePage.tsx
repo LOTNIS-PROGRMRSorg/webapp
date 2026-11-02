@@ -23,9 +23,10 @@ export function ReservePage() {
   const navigate = useNavigate();
   const [property, setProperty] = useState<Property | null>(null);
   const [roomId, setRoomId] = useState(params.get('room') ?? '');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  // Dates chosen on the listing page arrive in the link (?start=…&end=… or &qty=…).
+  const [startDate, setStartDate] = useState(params.get('start') ?? '');
+  const [endDate, setEndDate] = useState(params.get('end') ?? '');
+  const [quantity, setQuantity] = useState(Math.max(1, Number(params.get('qty')) || 1));
   const [quote, setQuote] = useState<StayQuote | null>(null);
   const [quoteError, setQuoteError] = useState('');
   const [error, setError] = useState('');

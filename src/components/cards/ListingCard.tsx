@@ -2,7 +2,9 @@ import { MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPrice, money, periodLabel, primaryImage } from '@/lib/format';
 import type { Property, Transaction } from '@/types';
-import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { FavoriteButton } from '@/features/favorites/Favorites';
+import { track } from '@/lib/track';
+import { ShareMenu } from '@/components/share/ShareMenu';
 import { SITE_URL } from '@/lib/seo/seo';
 import { propertyShare } from '@/lib/shareCopy';
 
@@ -47,6 +49,17 @@ export function PropertyCard({ property }: { property: Property }) {
   const share = propertyShare(property, startingPrice(property), url);
   return (
     <Link className="property-card" to={`/stays/${property.id}`}>
+      <div className="fav-actions">
+        <ShareMenu
+          url={url}
+          title={share.title}
+          text={share.description}
+          heading="Share this space"
+          className="fav-share"
+          onShare={() => track('property', property.id, 'click_share')}
+        />
+        <FavoriteButton type="property" id={property.id} label={property.name} />
+      </div>
       <div className="property-image">
         {image && (
           <img
@@ -57,10 +70,6 @@ export function PropertyCard({ property }: { property: Property }) {
           />
         )}
         <span className="image-label">{property.verified ? 'Verified' : kind}</span>
-        <div className="fav-actions">
-          <ShareIconButton url={url} title={share.title} text={share.text} />
-          <FavoriteButton type="property" id={property.id} label={property.name} />
-        </div>
       </div>
       <div className="property-card-body">
         <div className="property-title-row">
