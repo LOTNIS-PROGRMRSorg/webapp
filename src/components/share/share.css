@@ -1,0 +1,113 @@
+/* Share button + menu (ShareMenu). */
+.share-menu {
+  position: relative;
+}
+.share-menu-btn {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+.share-menu-pill {
+  width: auto;
+  height: 40px;
+  gap: 8px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  background: var(--c-surface);
+  color: var(--c-ink);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  filter: none;
+}
+.share-menu-pill:hover {
+  border-color: var(--c-ink-muted);
+}
+.share-menu-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  width: 210px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--c-line);
+  background: var(--c-surface);
+  box-shadow:
+    0 2px 6px rgba(16, 48, 44, 0.06),
+    0 20px 40px -14px rgba(16, 48, 44, 0.32);
+  animation: share-drop 0.14s ease-out;
+}
+@keyframes share-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.share-menu-pop > p {
+  margin: 4px 8px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.share-menu-pop a,
+.share-menu-pop button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--c-ink);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.share-menu-pop a:hover,
+.share-menu-pop button:hover,
+.share-menu-pop a:focus-visible,
+.share-menu-pop button:focus-visible {
+  background: var(--c-surface-2);
+}
+.share-ic {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--c-surface-3);
+  color: var(--c-ink-soft);
+}
+.share-whatsapp {
+  background: #e7f8ee;
+  color: #1a8a4b;
+}
+.share-facebook {
+  background: #e8effc;
+  color: #1b59c4;
+}
+.share-x {
+  background: #ececec;
+  color: #111;
+}
+.share-telegram {
+  background: #e6f3fb;
+  color: #1d84c1;
+}

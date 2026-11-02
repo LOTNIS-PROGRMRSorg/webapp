@@ -90,6 +90,13 @@ export type Property = {
   latitude?: number | null;
   longitude?: number | null;
   distance_km?: number;
+  /** Amenity keys chosen by the host in the app, e.g. `backup_generator`, `borehole_water`. */
+  selected_amenities?: string[] | null;
+  discount_type?: 'percentage' | 'fixed' | null;
+  discount_value?: number | null;
+  discount_label?: string | null;
+  available_units?: number | null;
+  total_units?: number | null;
 };
 
 export type Booking = {

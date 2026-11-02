@@ -14,7 +14,7 @@ export function ResultsPagination({
 }) {
   return (
     <>
-      {pages > 1 && filters.view !== 'map' && (
+      {pages > 1 && (
         <nav className="ex-pages" aria-label="Pagination">
           <button
             disabled={filters.page <= 1}
