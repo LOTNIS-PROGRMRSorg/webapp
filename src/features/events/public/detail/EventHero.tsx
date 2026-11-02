@@ -3,10 +3,15 @@ import { cedis, fmtDate, fmtTime } from '@/features/events/eventUi';
 import type { EventDetail } from '@/lib/api/events';
 import { mapsUrl } from '../eventShared';
 import { Countdown } from './Countdown';
+import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { SITE_URL } from '@/lib/seo/seo';
+import { eventShare } from '@/lib/shareCopy';
 
 /** Poster on the left, everything a buyer needs to decide on the right. */
 export function EventHero({ ev, canBuy }: { ev: EventDetail; canBuy: boolean }) {
   const gateAt = ev.doors_open_at || ev.starts_at;
+  const url = `${SITE_URL}/events/${ev.slug}`;
+  const share = eventShare(ev, url);
   return (
     <header className="evd-hero">
       <div className="evd-poster-wrap">
@@ -19,6 +24,10 @@ export function EventHero({ ev, canBuy }: { ev: EventDetail; canBuy: boolean }) 
             </div>
           )}
           <span className="evd-poster-chip">{ev.category}</span>
+          <div className="fav-actions">
+            <ShareIconButton url={url} title={share.title} text={share.text} />
+            <FavoriteButton type="event" id={ev.id} label={ev.title} />
+          </div>
         </div>
         <div className="evd-sticker" aria-hidden="true">
           <span>{fmtDate(ev.starts_at, { month: 'short' })}</span>

@@ -2,6 +2,9 @@ import { MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPrice, money, periodLabel, primaryImage } from '@/lib/format';
 import type { Property, Transaction } from '@/types';
+import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { SITE_URL } from '@/lib/seo/seo';
+import { propertyShare } from '@/lib/shareCopy';
 
 /** "GHS 500 / month", or "From GHS 300 / month" for room-only listings. */
 export function startingPrice(property: Property): string {
@@ -40,6 +43,8 @@ export function SpaceFacts({ property }: { property: Property }) {
 export function PropertyCard({ property }: { property: Property }) {
   const image = primaryImage(property);
   const kind = property.sub_type ? property.sub_type.charAt(0).toUpperCase() + property.sub_type.slice(1) : 'Space';
+  const url = `${SITE_URL}/stays/${property.id}`;
+  const share = propertyShare(property, startingPrice(property), url);
   return (
     <Link className="property-card" to={`/stays/${property.id}`}>
       <div className="property-image">
@@ -52,6 +57,10 @@ export function PropertyCard({ property }: { property: Property }) {
           />
         )}
         <span className="image-label">{property.verified ? 'Verified' : kind}</span>
+        <div className="fav-actions">
+          <ShareIconButton url={url} title={share.title} text={share.text} />
+          <FavoriteButton type="property" id={property.id} label={property.name} />
+        </div>
       </div>
       <div className="property-card-body">
         <div className="property-title-row">

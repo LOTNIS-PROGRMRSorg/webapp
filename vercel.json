@@ -9,6 +9,10 @@
       "destination": "/api/share?slug=:slug&cat=:cat"
     },
     {
+      "source": "/stays/:id",
+      "destination": "/api/share?stay=:id"
+    },
+    {
       "source": "/events/:slug",
       "destination": "/api/share?slug=:slug"
     },

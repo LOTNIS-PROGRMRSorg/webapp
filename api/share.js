@@ -1,11 +1,13 @@
-// Link previews for shareable event pages.
+// Link previews for shareable event and space (stay) pages.
 //
 // WhatsApp, Facebook, X, Telegram and Google read a page's Open Graph tags from the raw HTML —
 // they don't run JavaScript — so the single-page app's own tags never reach them. vercel.json routes
-// /events/:slug, /events/:slug/vote/:category and /events/:slug/vote/:category/:contestant here. This
+// /events/:slug, /events/:slug/vote/:category and /events/:slug/vote/:category/:contestant and /stays/:id here. This
 // function loads the normal app shell (index.html), swaps in tags for that exact page (the contestant's
 // picture, "Vote for {name} as {category}", the price of a vote…) and returns it. Browsers then boot the
 // app as usual. If the API is slow or down the untouched shell is returned, so pages never break.
+
+import { eventShare, propertyShare } from '../src/lib/shareCopy.js';
 
 const API = (process.env.API_URL || process.env.VITE_API_URL || '').replace(/\/$/, '');
 const SITE = (process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
@@ -63,12 +65,37 @@ async function get(path) {
   });
   if (!res.ok) return null;
   const body = await res.json();
-  return body?.success ? body.data : null;
+  if (body?.success) return body.data;
+  return body?.id ? body : null; // /property/:id answers with the bare listing
+}
+
+/** "GH₵500 / month", or "From GH₵300 / month" when only rooms are priced. */
+function stayPrice(p) {
+  const per = (v) => ({ hour: 'hour', day: 'night', week: 'week', month: 'month', year: 'year' })[v || 'day'] || v;
+  if (p.price != null) return `${money(p.currency, p.price)} / ${per(p.pricing_period)}`;
+  const rooms = (p.rooms || []).filter((r) => !r.deleted_at);
+  if (!rooms.length) return '';
+  const r = rooms.reduce((a, b) => (b.price_per_period < a.price_per_period ? b : a));
+  return `From ${money(r.currency || p.currency, r.price_per_period)} / ${per(r.pricing_period || p.pricing_period)}`;
 }
 
 /** Build the preview for a request, or null to serve the app shell unchanged. */
-export async function previewFor({ slug, cat, nominee }, origin, fetchData = get) {
+export async function previewFor({ slug, cat, nominee, stay }, origin, fetchData = get) {
   const site = SITE || origin;
+  if (stay) {
+    const p = await fetchData(`/property/${encodeURIComponent(stay)}`);
+    if (!p) return null;
+    const url = `${site}/stays/${stay}`;
+    const copy = propertyShare(p, stayPrice(p), url);
+    const images = [...(p.property_images || [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    return {
+      title: copy.title,
+      description: clip(copy.description, 200),
+      image: images[0]?.public_url,
+      imageAlt: `${p.name} in ${p.city || 'Ghana'}`,
+      url,
+    };
+  }
   if (!slug) return null;
   if (cat) {
     const page = await fetchData(
@@ -97,9 +124,10 @@ export async function previewFor({ slug, cat, nominee }, origin, fetchData = get
   }
   const ev = await fetchData(`/events/${encodeURIComponent(slug)}`);
   if (!ev) return null;
+  const copy = eventShare(ev);
   return {
     title: `${ev.title} — tickets${ev.city ? `, ${ev.city}` : ''}`,
-    description: clip(ev.summary || ev.description, 160),
+    description: clip(copy.description, 200),
     image: ev.cover_image_url,
     imageAlt: ev.title,
     url: `${site}/events/${slug}`,
@@ -121,7 +149,9 @@ export default async function handler(req, res) {
   }
   let html = shell;
   try {
-    const preview = API ? await previewFor({ slug: q.slug, cat: q.cat, nominee: q.nominee }, origin) : null;
+    const preview = API
+      ? await previewFor({ slug: q.slug, cat: q.cat, nominee: q.nominee, stay: q.stay }, origin)
+      : null;
     if (preview) html = applyPreview(shell, preview);
   } catch {
     /* keep the plain shell */

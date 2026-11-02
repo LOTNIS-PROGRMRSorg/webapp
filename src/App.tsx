@@ -51,6 +51,7 @@ import { AppShell } from '@/layouts/AppShell';
 import { HostEntry } from '@/features/host/HostEntry';
 import { AuthRedirect } from '@/features/auth/AuthRedirect';
 import { AuthModalProvider } from '@/features/auth/AuthModal';
+import { FavoritesProvider } from '@/features/favorites/Favorites';
 import { AuthCallbackPage } from '@/features/auth/AuthCallbackPage';
 import { TripsPage } from '@/features/account/TripsPage';
 import { TransactionsPage } from '@/features/account/TransactionsPage';
@@ -62,6 +63,7 @@ export default function App() {
   if (forwardAuthHash()) return null;
   return (
     <AuthModalProvider>
+    <FavoritesProvider>
     <AppShell>
       <ErrorBoundary>
         <Suspense
@@ -227,6 +229,7 @@ export default function App() {
         </Suspense>
       </ErrorBoundary>
     </AppShell>
+    </FavoritesProvider>
     </AuthModalProvider>
   );
 }

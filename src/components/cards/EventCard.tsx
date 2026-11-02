@@ -1,7 +1,10 @@
-import { CalendarDays, MapPin, Ticket, Trophy } from 'lucide-react';
+import { Ticket, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { EventCard as EventCardData } from '@/lib/api/events';
 import { cedisShort, fmtDate, fmtTime } from '@/lib/dates';
+import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { SITE_URL } from '@/lib/seo/seo';
+import { eventShare } from '@/lib/shareCopy';
 
 /** A complete, image-led event card linking to the public event page. */
 export function EventCard({ ev }: { ev: EventCardData }) {
@@ -14,6 +17,8 @@ export function EventCard({ ev }: { ev: EventCardData }) {
         : ev.from_price === 0
           ? 'Free'
           : `From ${cedisShort(ev.from_price, ev.currency)}`;
+  const url = `${SITE_URL}/events/${ev.slug}`;
+  const share = eventShare(ev, url);
   return (
     <Link className="ev-card" to={`/events/${ev.slug}`}>
       <div className="ev-card-img">
@@ -29,10 +34,11 @@ export function EventCard({ ev }: { ev: EventCardData }) {
             <Ticket size={34} />
           </div>
         )}
-        <span className="ev-date-badge">
-          <b>{fmtDate(ev.starts_at, { day: 'numeric' })}</b>
-          <span>{fmtDate(ev.starts_at, { month: 'short' })}</span>
-        </span>
+        <span className="ev-category">{ev.category}</span>
+        <div className="fav-actions">
+          <ShareIconButton url={url} title={share.title} text={share.text} />
+          <FavoriteButton type="event" id={ev.id} label={ev.title} />
+        </div>
         <div className="ev-flags">
           {ev.postponed && <span className="ev-flag ev-flag-warn">Postponed</span>}
           {ev.status === 'cancelled' && <span className="ev-flag ev-flag-bad">Cancelled</span>}
@@ -44,17 +50,14 @@ export function EventCard({ ev }: { ev: EventCardData }) {
         </div>
       </div>
       <div className="ev-card-body">
-        <small className="ev-category">{ev.category}</small>
         <h3>{ev.title}</h3>
         <p className="ev-card-meta">
-          <CalendarDays size={15} aria-hidden="true" /> <span>{fmtDate(ev.starts_at)} · {fmtTime(ev.starts_at)}</span>
+          {fmtDate(ev.starts_at, { weekday: 'short', day: 'numeric', month: 'short' })} · {fmtTime(ev.starts_at)}
         </p>
         <p className="ev-card-meta">
-          <MapPin size={15} aria-hidden="true" /> <span>{ev.venue_name}, {ev.city}</span>
+          {ev.venue_name}, {ev.city}
         </p>
-        <div className="ev-card-footer">
-          <strong className={ev.sold_out || ev.sales_paused ? 'ev-soldout' : ''}>{price}</strong>
-        </div>
+        <p className={`ev-card-price${ev.sold_out || ev.sales_paused ? ' ev-soldout' : ''}`}>{price}</p>
       </div>
     </Link>
   );

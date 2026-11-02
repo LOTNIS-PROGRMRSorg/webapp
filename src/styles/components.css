@@ -560,3 +560,36 @@ a.host-card-mini:hover {
 .signin-card small a {
   text-decoration: underline;
 }
+
+/* ── Save & share icons on event and space cards ── */
+.fav-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+.fav-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c-white) 92%, transparent);
+  color: var(--c-ink);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--c-ink) 18%, transparent);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease), color 0.15s var(--ease);
+}
+.fav-btn:hover { transform: scale(1.08); }
+.fav-btn:focus-visible { outline: 3px solid var(--c-good); outline-offset: 2px; }
+.fav-btn.is-on { color: var(--c-danger); }
+.fav-btn.is-on svg { fill: currentColor; }
+@media (prefers-reduced-motion: reduce) {
+  .fav-btn { transition: none; }
+}
+.stay-head-actions { display: flex; flex: none; gap: 8px; }
+.stay-head-actions .fav-btn { border: 1px solid var(--c-line); box-shadow: none; background: var(--c-white); }

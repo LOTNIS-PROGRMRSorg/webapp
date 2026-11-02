@@ -18,10 +18,12 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { api, getSession } from '@/lib/api';
 import { bookingMode, liveRooms, Photo, sortedImages, useReveal } from '@/features/stays/bookingUi';
 import { money, periodLabel, policyLine } from '@/lib/format';
-import { breadcrumbLd, clip, placeLd, propertyLd, Seo } from '@/lib/seo/seo';
+import { breadcrumbLd, clip, placeLd, propertyLd, Seo, SITE_URL } from '@/lib/seo/seo';
 import { loadMaps, mapsEnabled } from '@/lib/maps/maps';
 import { mapsLink } from '@/lib/maps/places';
 import { SpaceFacts, startingPrice } from '@/components/cards/ListingCard';
+import { FavoriteButton, ShareIconButton } from '@/features/favorites/Favorites';
+import { propertyShare } from '@/lib/shareCopy';
 import { HostCard } from '@/components/cards';
 import { ReportSection } from '@/features/reports/ReportSection';
 import { track, useTrackView } from '@/lib/track';
@@ -235,6 +237,8 @@ export function StayPage() {
   const noun = property.sub_type ?? 'space';
   const article = /^[aeiou]/i.test(noun) ? 'an' : 'a';
   const blurb = property.description ? clip(property.description, 75).replace(/[.…]*$/, '') + '. ' : '';
+  const shareUrl = `${SITE_URL}/stays/${property.id}`;
+  const share = propertyShare(property, startingPrice(property), shareUrl);
   const seoDesc = `Rent ${property.name}, ${article} ${noun} in ${where || 'Ghana'}, ${priceText}. ${blurb}Verified host, clear refunds, pay by mobile money.`;
   return (
     <div className="page stay">
@@ -276,6 +280,10 @@ export function StayPage() {
               </span>
             ) : null}
           </p>
+        </div>
+        <div className="stay-head-actions">
+          <ShareIconButton url={shareUrl} title={share.title} text={share.text} />
+          <FavoriteButton type="property" id={property.id} label={property.name} />
         </div>
       </div>
 
