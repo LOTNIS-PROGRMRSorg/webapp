@@ -1,0 +1,22 @@
+/* "What this place offers" on the listing page. */
+.amenities ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 4px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.amenities li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--c-line-soft);
+  font-size: 0.95rem;
+  color: var(--c-ink);
+}
+.amenities li svg {
+  flex: none;
+  color: var(--c-ink-muted);
+}

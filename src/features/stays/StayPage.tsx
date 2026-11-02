@@ -7,8 +7,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Grid3x3,
+  Heart,
   MapPin,
-  ShieldCheck,
   Star,
   Users,
   X,
@@ -19,23 +19,32 @@ import { api, getSession } from '@/lib/api';
 import { bookingMode, liveRooms, Photo, sortedImages, useReveal } from '@/features/stays/bookingUi';
 import { money, periodLabel, policyLine } from '@/lib/format';
 import { breadcrumbLd, clip, placeLd, propertyLd, Seo } from '@/lib/seo/seo';
-import { loadMaps, mapsEnabled } from '@/lib/maps/maps';
+import { loadMaps, mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
 import { mapsLink } from '@/lib/maps/places';
-import { SpaceFacts, startingPrice } from '@/components/cards/ListingCard';
+import { startingPrice } from '@/components/cards/ListingCard';
 import { HostCard } from '@/components/cards';
+import { ShareMenu } from '@/components/share/ShareMenu';
 import { ReportSection } from '@/features/reports/ReportSection';
+import { Amenities } from '@/features/stays/Amenities';
+import { areaOf } from '@/features/stays/explore/SpaceCard';
+import { rememberViewed, useSavedSpaces } from '@/features/stays/explore/spaceMemory';
+import { BookingCard, QuoteSummary, ReserveChoice } from '@/features/stays/stay/BookingCard';
+import { Highlights } from '@/features/stays/stay/Highlights';
+import { NearbySpaces } from '@/features/stays/stay/NearbySpaces';
+import '@/features/stays/stay/stay.css';
 import { track, useTrackView } from '@/lib/track';
 import type { CatalogOptions, Property, PropertyImage, Room } from '@/types';
 
-function useProperty(id: string) {
+function useProperty(id: string, attempt = 0) {
   const [property, setProperty] = useState<Property | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
+    setError('');
     api
       .getProperty(id)
       .then(setProperty)
       .catch((e) => setError(e.message));
-  }, [id]);
+  }, [id, attempt]);
   return { property, error };
 }
 
@@ -65,7 +74,7 @@ function Mosaic({ images, propertyId, name }: { images: PropertyImage[]; propert
 }
 
 // ── A bookable space (room or whole property) as a card with pictures ───────
-function SpaceCard({
+function RoomCard({
   title,
   subtitle,
   images,
@@ -139,12 +148,18 @@ function SpaceCard({
   );
 }
 
-/** Area map with a soft circle (about 300 m) so the page shows where, without a pin on the doorstep. */
-function StayMap({ lat, lng, label }: { lat: number; lng: number; label: string }) {
+/** Area map with a soft circle (about 300 m) so the page shows where, without a pin on the doorstep.
+ *  If Google Maps can't load (no key, rejected key), it falls back to a plain area card. */
+function StayMap({ lat, lng, label, area }: { lat: number; lng: number; label: string; area: string }) {
   const el = useRef<HTMLDivElement>(null);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState(!mapsEnabled || mapsAuthFailed());
   useEffect(() => {
-    if (!mapsEnabled || !el.current) return;
+    const fail = () => setFailed(true);
+    window.addEventListener('lotnis-maps-auth-failed', fail);
+    return () => window.removeEventListener('lotnis-maps-auth-failed', fail);
+  }, []);
+  useEffect(() => {
+    if (failed || !el.current) return;
     let live = true;
     loadMaps()
       .then(async (google) => {
@@ -172,15 +187,42 @@ function StayMap({ lat, lng, label }: { lat: number; lng: number; label: string 
     return () => {
       live = false;
     };
-  }, [lat, lng]);
+  }, [lat, lng, failed]);
   return (
     <div className="stay-map">
-      {mapsEnabled && !failed ? (
-        <div ref={el} className="stay-map-canvas" role="img" aria-label={`Map of the area around ${label}`} />
-      ) : null}
+      {/* Keys make React swap the element, dropping whatever Google drew into the map div. */}
+      {failed ? (
+        <div className="st-area-card" key="area">
+          <span>
+            <MapPin size={22} />
+          </span>
+          <div>
+            <b>{area}</b>
+            <small>The exact spot is shown in Google Maps.</small>
+          </div>
+        </div>
+      ) : (
+        <div ref={el} key="map" className="stay-map-canvas" role="img" aria-label={`Map of the area around ${label}`} />
+      )}
       <a className="button button-secondary" href={mapsLink(lat, lng)} target="_blank" rel="noreferrer">
         Open in Google Maps ↗
       </a>
+    </div>
+  );
+}
+
+/** Long descriptions open in place rather than pushing everything else down. */
+function Description({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  const long = text.length > 420;
+  return (
+    <div className="st-desc">
+      <p className={long && !open ? 'st-desc-clamp' : undefined}>{text}</p>
+      {long && (
+        <button type="button" className="st-link" onClick={() => setOpen((o) => !o)}>
+          {open ? 'Show less' : 'Read more'}
+        </button>
+      )}
     </div>
   );
 }
@@ -189,25 +231,71 @@ export function StayPage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const { openSignIn } = useAuthModal();
-  const { property, error } = useProperty(id);
+  const [attempt, setAttempt] = useState(0);
+  const { property, error } = useProperty(id, attempt);
   const [catalog, setCatalog] = useState<CatalogOptions | null>(null);
+  const [roomChoice, setRoomChoice] = useState<string | undefined>();
+  const [sheet, setSheet] = useState(false);
+  const [summary, setSummary] = useState<QuoteSummary>({ quote: null, ready: false });
+  const { isSaved, toggle } = useSavedSpaces();
   useEffect(() => {
     api
       .getCatalog()
       .then(setCatalog)
       .catch(() => {});
   }, []);
-  useReveal(property?.id);
+  // The cancellation section waits on the catalog, so look for new sections again once it arrives.
+  useReveal(`${property?.id}:${catalog ? 1 : 0}`);
   useTrackView('property', property?.id);
+  // Opening a listing directly (a shared link) also counts as "recently viewed".
+  useEffect(() => {
+    if (property) rememberViewed(property);
+  }, [property]);
+  // The phone booking sheet: stop the page scrolling behind it, and let Escape close it.
+  useEffect(() => {
+    if (!sheet) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setSheet(false);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [sheet]);
 
   const rooms = useMemo(() => (property ? liveRooms(property) : []), [property]);
-  if (error)
+  if (error) {
+    const gone = /not found|404/i.test(error);
     return (
       <div className="page">
-        <Seo title="Listing not found" description="This listing is no longer available." noindex follow />
-        <div className="error-state">{error}</div>
+        <Seo
+          title={gone ? 'Listing not found' : 'Couldn’t load this space'}
+          description="This listing is no longer available."
+          noindex
+          follow
+        />
+        <div className="st-problem">
+          <h1>{gone ? 'This space is no longer listed' : 'We couldn’t load this space'}</h1>
+          <p>
+            {gone
+              ? 'The host may have removed it, or the link is out of date.'
+              : 'This is usually a brief connection problem. Please try again.'}
+          </p>
+          <div>
+            {!gone && (
+              <button type="button" className="button button-primary" onClick={() => setAttempt((n) => n + 1)}>
+                Try again
+              </button>
+            )}
+            <Link className="button button-secondary" to="/explore">
+              Browse other spaces
+            </Link>
+          </div>
+        </div>
       </div>
     );
+  }
   if (!property)
     return (
       <div className="page">
@@ -220,30 +308,53 @@ export function StayPage() {
   const policy =
     catalog?.cancellation_policies.find((p) => p.id === property.cancellation_policy_id) ??
     catalog?.cancellation_policies.find((p) => p.code === property.cancellation_policy);
-  const reserve = (roomId?: string) => {
+  const reserve = ({ roomId, start, end, qty }: ReserveChoice = {}) => {
     track('property', property.id, 'click_book');
-    const target = `/reserve/${property.id}${roomId ? `?room=${roomId}` : ''}`;
+    const q = new URLSearchParams();
+    if (roomId) q.set('room', roomId);
+    if (start) q.set('start', start);
+    if (end) q.set('end', end);
+    if (qty) q.set('qty', String(qty));
+    const target = `/reserve/${property.id}${q.size ? `?${q}` : ''}`;
     if (getSession()) navigate(target);
     else openSignIn(target);
+  };
+  // Choosing from the room list fills in the booking card (on phones it opens it).
+  const pickRoom = (roomId: string) => {
+    setRoomChoice(roomId);
+    if (window.matchMedia('(max-width: 1000px)').matches) setSheet(true);
+    else document.getElementById('book')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   const per = periodLabel(property.pricing_period);
   const canBookWhole = mode !== 'rooms';
 
-  const kind = property.sub_type ? property.sub_type.charAt(0).toUpperCase() + property.sub_type.slice(1) : 'Space';
+  const name = property.name.trim();
+  const kind = property.sub_type
+    ? (property.sub_type.charAt(0).toUpperCase() + property.sub_type.slice(1)).replace(/-/g, ' ')
+    : 'Space';
   const where = [property.city, property.country].filter(Boolean).join(', ');
+  const area = areaOf(property, catalog?.locations.cities ?? []);
+  const place = [area, property.city].filter(Boolean).join(', ');
+  const region = property.state?.replace(/ Region$/, '');
   const priceText = startingPrice(property).replace(/^From /, 'from ');
   const noun = property.sub_type ?? 'space';
   const article = /^[aeiou]/i.test(noun) ? 'an' : 'a';
   const blurb = property.description ? clip(property.description, 75).replace(/[.…]*$/, '') + '. ' : '';
-  const seoDesc = `Rent ${property.name}, ${article} ${noun} in ${where || 'Ghana'}, ${priceText}. ${blurb}Verified host, clear refunds, pay by mobile money.`;
+  const seoDesc = `Rent ${name}, ${article} ${noun} in ${where || 'Ghana'}, ${priceText}. ${blurb}Verified host, clear refunds, pay by mobile money.`;
+  const citySlug = (property.city ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const saved = isSaved(property.id);
+  const barPrice = summary.quote
+    ? { main: money(summary.quote.currency, summary.quote.final_amount), sub: `Total · ${summary.quote.stay_label}` }
+    : { main: startingPrice(property).replace(/\.00(?= )/, ''), sub: 'Add dates for the total' };
+
   return (
-    <div className="page stay">
+    <div className="page stay st-page">
       <Seo
-        title={`${property.name} — ${kind} for rent in ${property.city ?? 'Ghana'}`}
+        title={`${name} — ${kind} for rent in ${property.city ?? 'Ghana'}`}
         description={seoDesc}
         path={`/stays/${property.id}`}
         image={images[0]?.public_url}
-        imageAlt={`${property.name} in ${where}`}
+        imageAlt={`${name} in ${where}`}
         type="product"
         jsonLd={[
           propertyLd(property),
@@ -254,30 +365,65 @@ export function StayPage() {
             ...(property.sub_type
               ? [{ name: `${kind}s for rent`, path: `/rent/${property.sub_type.toLowerCase()}` }]
               : []),
-            { name: property.name, path: `/stays/${property.id}` },
+            { name, path: `/stays/${property.id}` },
           ]),
         ]}
       />
-      <Link className="back-link" to="/explore">
-        ← All stays
-      </Link>
-      <div className="stay-head">
-        <div>
-          <span className="eyebrow">
-            {property.sub_type || 'Space'} · {property.city}
+
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <span>
+          <Link to="/explore">Spaces</Link>
+        </span>
+        {property.city && (
+          <span>
+            <ChevronRight size={14} />
+            <Link to={`/in/${citySlug}`}>{property.city}</Link>
           </span>
-          <h1>{property.name}</h1>
-          <p className="stay-loc">
-            <MapPin size={15} /> {property.formatted_address || `${property.city}, ${property.country}`}
-            {property.rating ? (
-              <span className="stay-rate">
-                <Star size={14} fill="currentColor" /> {property.rating.toFixed(1)}
-                {property.review_count ? ` · ${property.review_count} reviews` : ''}
+        )}
+        <span>
+          <ChevronRight size={14} />
+          <b aria-current="page">{name}</b>
+        </span>
+      </nav>
+
+      <header className="st-head">
+        <div>
+          <h1>{name}</h1>
+          <p className="st-sub">
+            <span>{kind}</span>
+            {place && (
+              <span>
+                <MapPin size={14} /> {place}
               </span>
-            ) : null}
+            )}
+            {property.rating ? (
+              <span className="st-rate">
+                <Star size={14} fill="currentColor" /> {property.rating.toFixed(1)}
+                {property.review_count ? <small>({property.review_count} reviews)</small> : null}
+              </span>
+            ) : (
+              <span className="st-new">New listing</span>
+            )}
           </p>
         </div>
-      </div>
+        <div className="st-actions">
+          <ShareMenu
+            url={`${window.location.origin}/stays/${property.id}`}
+            title={name}
+            text={`${name}${place ? ` in ${place}` : ''} — ${startingPrice(property)} on Lotnis`}
+            label="Share"
+            onShare={() => track('property', property.id, 'click_share')}
+          />
+          <button
+            type="button"
+            className={`st-save${saved ? ' on' : ''}`}
+            aria-pressed={saved}
+            onClick={() => toggle(property)}
+          >
+            <Heart size={17} /> {saved ? 'Saved' : 'Save'}
+          </button>
+        </div>
+      </header>
 
       {property.is_paused && (
         <div className="callout callout-warn">
@@ -287,37 +433,28 @@ export function StayPage() {
           </div>
         </div>
       )}
-      <Mosaic images={images} propertyId={property.id} name={property.name} />
+      <Mosaic images={images} propertyId={property.id} name={name} />
 
       <div className="stay-grid">
         <div className="stay-main">
           <section className="reveal">
-            <SpaceFacts property={property} />
-            <p className="stay-desc">
-              {property.description || property.tagline || 'A welcoming place to stay, listed on Lotnis.'}
-            </p>
-            <ul className="trust-list">
-              <li>
-                <ShieldCheck size={16} /> Verified host and approved listing
-              </li>
-              <li>
-                <ShieldCheck size={16} /> See the full price before you pay
-              </li>
-              {property.requires_host_acceptance && (
-                <li>
-                  <ShieldCheck size={16} /> The host confirms each request within 48 hours
-                </li>
-              )}
-            </ul>
+            <Highlights property={property} />
           </section>
+
+          <section className="stay-section reveal" aria-labelledby="st-about">
+            <h2 id="st-about">About this space</h2>
+            <Description text={property.description || property.tagline || 'A welcoming place, listed on Lotnis.'} />
+          </section>
+
+          <Amenities property={property} />
 
           {rooms.length > 0 && (
             <section id="spaces" className="stay-section">
               <h2 className="reveal">Choose your space</h2>
               <div className="space-list-cards">
                 {canBookWhole && (
-                  <SpaceCard
-                    title={rooms.length ? 'The whole property' : property.name}
+                  <RoomCard
+                    title={rooms.length ? 'The whole property' : name}
                     subtitle={rooms.length ? 'Exclusive use — every room is yours for the dates.' : undefined}
                     images={images}
                     price={property.price != null ? money(property.currency, property.price) : 'Price on request'}
@@ -336,12 +473,12 @@ export function StayPage() {
                           ]
                         : []),
                     ]}
-                    onSelect={() => reserve()}
-                    cta="Select whole property"
+                    onSelect={() => pickRoom('')}
+                    cta="Choose whole property"
                   />
                 )}
                 {rooms.map((room: Room) => (
-                  <SpaceCard
+                  <RoomCard
                     key={room.id}
                     title={room.room_label || 'Room'}
                     subtitle={room.description || undefined}
@@ -365,8 +502,8 @@ export function StayPage() {
                         : []),
                       ...(room.size_sqm ? [[null, `${room.size_sqm} m²`] as [React.ReactNode, string]] : []),
                     ]}
-                    onSelect={() => reserve(room.id)}
-                    cta="Select this room"
+                    onSelect={() => pickRoom(room.id)}
+                    cta="Choose this room"
                   />
                 ))}
               </div>
@@ -382,23 +519,25 @@ export function StayPage() {
           {(property.city || property.formatted_address) && (
             <section className="stay-section reveal" aria-labelledby="stay-where">
               <h2 id="stay-where">Where you'll be</h2>
-              <p className="stay-desc" style={{ marginBottom: 12 }}>
-                <MapPin size={16} style={{ verticalAlign: '-2px' }} />{' '}
-                {property.formatted_address ||
-                  [property.street_address, property.city, property.state, property.country].filter(Boolean).join(', ')}
+              <p className="st-where">
+                <b>{[place || property.city, region].filter(Boolean).join(' · ')}</b>
+                <span>
+                  {property.formatted_address ||
+                    [property.street_address, property.city, property.state, property.country]
+                      .filter(Boolean)
+                      .join(', ')}
+                </span>
               </p>
               {property.latitude != null && property.longitude != null ? (
-                <StayMap lat={Number(property.latitude)} lng={Number(property.longitude)} label={property.name} />
+                <StayMap
+                  lat={Number(property.latitude)}
+                  lng={Number(property.longitude)}
+                  label={name}
+                  area={place || property.city || 'This area'}
+                />
               ) : (
                 <p className="muted-inline">The host hasn't pinned this space on the map yet.</p>
               )}
-              <p className="muted-inline">
-                Browse more in{' '}
-                <Link to={`/in/${(property.city ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                  {property.city}
-                </Link>
-                .
-              </p>
             </section>
           )}
 
@@ -408,8 +547,8 @@ export function StayPage() {
           </section>
 
           {policy && (
-            <section className="stay-section reveal">
-              <h2>Refund policy · {policy.name}</h2>
+            <section className="stay-section reveal" id="refunds">
+              <h2>Cancellation · {policy.name}</h2>
               <ul className="policy-ticks">
                 {policy.tiers.map((t, i) => (
                   <li key={t.days_before_start}>{policyLine(t, policy.tiers[i - 1])}</li>
@@ -425,40 +564,48 @@ export function StayPage() {
         </div>
 
         <aside className="stay-aside">
-          <div className="buy-card">
-            <small>{rooms.length && !canBookWhole ? 'Rooms from' : 'From'}</small>
-            <div className="buy-price">{startingPrice(property).replace(/^From /, '')}</div>
-            {property.security_deposit ? (
-              <p className="muted-inline">Refundable deposit {money(property.currency, property.security_deposit)}</p>
-            ) : null}
-            {rooms.length > 0 && !canBookWhole ? (
-              <a className="button button-primary button-wide" href="#spaces">
-                Choose a room <ArrowRight size={16} />
-              </a>
-            ) : (
-              <button
-                className="button button-primary button-wide"
-                disabled={property.is_paused}
-                onClick={() => reserve()}
-              >
-                {property.is_paused ? (
-                  'Not available right now'
-                ) : (
-                  <>
-                    Reserve dates <ArrowRight size={16} />
-                  </>
-                )}
+          {sheet && <div className="st-scrim" onClick={() => setSheet(false)} role="presentation" />}
+          <div
+            id="book"
+            className={`st-book${sheet ? ' open' : ''}`}
+            role={sheet ? 'dialog' : undefined}
+            aria-modal={sheet || undefined}
+            aria-label="Book this space"
+          >
+            <div className="st-book-head">
+              <b>Book {name}</b>
+              <button type="button" onClick={() => setSheet(false)} aria-label="Close">
+                <X size={20} />
               </button>
-            )}
-            <ul className="buy-points">
-              <li>No charge until you confirm</li>
-              <li>Pay by mobile money or card</li>
-              <li>Free, clear refund rules</li>
-            </ul>
+            </div>
+            <BookingCard
+              property={property}
+              rooms={rooms}
+              mode={mode}
+              policy={policy}
+              initialRoomId={roomChoice}
+              onReserve={reserve}
+              onQuote={setSummary}
+              onPolicy={() => setSheet(false)}
+            />
           </div>
         </aside>
       </div>
-      <ReportSection kind="property" target={{ property_id: property.id }} subject={property.name} />
+
+      <NearbySpaces property={property} cities={catalog?.locations.cities ?? []} />
+
+      <ReportSection kind="property" target={{ property_id: property.id }} subject={name} />
+
+      {/* Phones: price and the next step are always one tap away. */}
+      <div className="st-bar">
+        <div>
+          <b>{barPrice.main}</b>
+          <small>{barPrice.sub}</small>
+        </div>
+        <button type="button" disabled={property.is_paused} onClick={() => setSheet(true)}>
+          {property.is_paused ? 'Unavailable' : summary.quote ? 'Review & book' : 'Check dates'}
+        </button>
+      </div>
     </div>
   );
 }

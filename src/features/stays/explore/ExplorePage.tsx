@@ -1,41 +1,52 @@
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  BadgeCheck,
   ChevronRight,
-  Home,
-  MapPin,
-  LayoutGrid,
-  LocateFixed,
+  Heart,
+  List,
   Map as MapIcon,
+  ReceiptText,
   Search,
   SlidersHorizontal,
-  Star,
+  Smartphone,
   X,
 } from 'lucide-react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api } from '@/lib/api';
-import { mapsEnabled, mountPlaceSearch } from '@/lib/maps/maps';
+import { mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
 import { ResultsMap } from '@/components/maps/ResultsMap';
 import { useReveal } from '@/features/stays/bookingUi';
 import { resolveCity } from '@/lib/maps/places';
 import { breadcrumbLd, faqLd, itemListLd, Seo, webPageLd } from '@/lib/seo/seo';
-import { CITY_COPY, SPACE_COPY, spaceBySlug } from '@/lib/seo/content';
-import { PropertyCard } from '@/components/cards/ListingCard';
+import { CITY_COPY, spaceBySlug } from '@/lib/seo/content';
 import type { CatalogOptions, Property } from '@/types';
 import {
+  apiQuery,
+  essentialByKey,
+  EXTRAS,
   Filters,
+  INTENTS,
+  intentOf,
+  intentPatch,
   PAGE_SIZE,
-  PRESETS,
-  RADII,
   SORTS,
-  TYPE_ICONS,
-  UNITS,
   readFilters,
   toQuery,
   unitWord,
 } from './exploreFilters';
 import { AboutSection } from './AboutSection';
 import { BrowseLinks } from './BrowseLinks';
+import { FilterSheet } from './FilterSheet';
 import { ResultsPagination } from './ResultsPagination';
+import { SearchBar } from './SearchBar';
+import { areaOf, priceOf, SpaceCard } from './SpaceCard';
+import { rememberViewed, useRecentSpaces, useSavedSpaces } from './spaceMemory';
+import { MustHaves } from './MustHaves';
+import { HostPrompt, WidenSearch } from './WidenSearch';
+import './explore.css';
+
+const MAP_PREF = 'lotnis_explore_map';
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function ExplorePage() {
   const { type: typeSlug, city: citySlug } = useParams();
@@ -48,27 +59,27 @@ export function ExplorePage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [attempt, setAttempt] = useState(0);
+  const [notice, setNotice] = useState('');
   const [panelOpen, setPanelOpen] = useState(false);
-  // On phones and tablets the filters are a drawer: stop the page scrolling behind it and let Escape close it.
-  useEffect(() => {
-    if (!panelOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPanelOpen(false);
-    };
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [panelOpen]);
-  const [text, setText] = useState(filters.query);
-  const [min, setMin] = useState(filters.minPrice);
-  const [max, setMax] = useState(filters.maxPrice);
+  const [showSaved, setShowSaved] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  // Desktop: the map sits beside the list unless the person hid it. Phones: a full-screen map on demand.
+  const [mapOn, setMapOn] = useState(() => {
+    try {
+      return localStorage.getItem(MAP_PREF) !== 'off';
+    } catch {
+      return true;
+    }
+  });
+  const [mobileMap, setMobileMap] = useState(params.get('view') === 'map');
+  // A rejected or missing Google key: show the list on its own rather than an error box.
+  const [mapBroken, setMapBroken] = useState(() => !mapsEnabled || mapsAuthFailed());
   const [locations, setLocations] = useState<CatalogOptions['locations'] | null>(null);
-  const placeHost = useRef<HTMLDivElement>(null);
-  const reqId = useRef(0);
+  const cities = locations?.cities ?? [];
+  const { saved, isSaved, toggle } = useSavedSpaces();
+  const recent = useRecentSpaces();
+
   useEffect(() => {
     api
       .getCatalog()
@@ -85,61 +96,34 @@ export function ExplorePage() {
       const q = toQuery(next);
       const leavesRoute = (typeSlug && next.subType !== typeSlug) || (citySlug && next.city !== filters.city);
       if ((typeSlug || citySlug) && leavesRoute) navigate(`/explore${q.size ? `?${q}` : ''}`);
-      else if (typeSlug || citySlug) {
-        const rest = toQuery({ ...next, subType: '', city: '' });
-        setParams(rest, { replace: true });
-      } else setParams(q, { replace: true });
+      else if (typeSlug || citySlug) setParams(toQuery({ ...next, subType: '', city: '' }), { replace: true });
+      else setParams(q, { replace: true });
+      setShowSaved(false);
     },
     [filters, typeSlug, citySlug, navigate, setParams],
   );
 
-  // Keep typed inputs in step with the URL, and debounce them into it.
   useEffect(() => {
-    setText(filters.query);
-    setMin(filters.minPrice);
-    setMax(filters.maxPrice);
-  }, [filters.query, filters.minPrice, filters.maxPrice]);
-  useEffect(() => {
-    if (text === filters.query && min === filters.minPrice && max === filters.maxPrice) return;
-    const t = window.setTimeout(() => commit({ query: text, minPrice: min, maxPrice: max }), 450);
-    return () => window.clearTimeout(t);
-  }, [text, min, max]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    const id = ++reqId.current;
+    let live = true;
     setLoading(true);
     setError('');
-    const q = toQuery(filters, false);
-    q.delete('sort');
-    q.set('page', String(filters.page));
-    q.set('limit', String(PAGE_SIZE));
-    const s = SORTS[filters.sort];
-    q.set('sortBy', s.sortBy);
-    q.set('sortOrder', s.sortOrder);
-    q.delete('view');
-    q.delete('near');
-    if (filters.view === 'map') {
-      q.set('limit', '60');
-      q.set('page', '1');
-    }
     api
-      .searchProperties(q)
+      .searchProperties(apiQuery(filters))
       .then((r) => {
-        if (id === reqId.current) {
-          setResults(r.data || []);
-          setTotal(r.total ?? 0);
-        }
+        if (!live) return;
+        setResults(r.data || []);
+        setTotal(r.total ?? 0);
       })
-      .catch((e) => {
-        if (id === reqId.current) setError(e.message);
-      })
-      .finally(() => {
-        if (id === reqId.current) setLoading(false);
-      });
-  }, [filters]);
+      .catch((e) => live && setError(e.message))
+      .finally(() => live && setLoading(false));
+    return () => {
+      live = false;
+    };
+  }, [filters, attempt]);
 
   // ── Copy & SEO ────────────────────────────────────────────────────────────
   const space = spaceBySlug(filters.subType);
+  const intent = intentOf(filters);
   // Curated copy exists for the main cities; every other known place gets a sensible generic page.
   const city = filters.city
     ? (CITY_COPY.find((c) => c.name === filters.city) ?? {
@@ -150,17 +134,36 @@ export function ExplorePage() {
         areas: [] as string[],
       })
     : undefined;
+  // A search for a neighbourhood inside a city reads "in Santasi, Kumasi".
+  const place = city ? (filters.query ? `${filters.query}, ${city.name}` : city.name) : '';
+  const where = place ? ` in ${place}` : '';
   const h1 =
     space && city
-      ? `${space.label} for rent in ${city.name}`
+      ? `${cap(space.plural)} for rent in ${city.name}`
       : space
         ? space.h1
-        : city
-          ? city.h1
-          : filters.query
-            ? `Places matching “${filters.query}”`
-            : 'Find your next space in Ghana';
-  const noun = space ? (total === 1 ? space.slug : space.plural) : total === 1 ? 'space' : 'spaces';
+        : intent === 'homes'
+          ? `Homes to rent${where || ' in Ghana'}`
+          : intent === 'stays'
+            ? `Short stays${where || ' in Ghana'}`
+            : city && filters.query
+              ? `Places to rent in ${place}`
+              : city
+                ? city.h1
+                : filters.query
+                  ? `Places matching “${filters.query}”`
+                  : 'Find your next space in Ghana';
+  const noun = space
+    ? total === 1
+      ? space.label.toLowerCase()
+      : space.plural
+    : intent === 'homes'
+      ? total === 1
+        ? 'home'
+        : 'homes'
+      : total === 1
+        ? 'space'
+        : 'spaces';
   const lead =
     space && !city
       ? space.intro
@@ -168,7 +171,7 @@ export function ExplorePage() {
         ? city.intro
         : space && city
           ? `Browse ${space.plural} for rent in ${city.name}. Verified hosts, the full price up front and fair, clear refund rules.`
-          : 'Rooms, homes, villas, offices, shops, garages and warehouses across Ghana. Rent by the night, week, month or year — verified hosts, clear prices, pay with mobile money.';
+          : 'Homes, rooms, offices, shops, warehouses and venues from verified hosts. Rent by the night, week, month or year.';
   // A neighbourhood alias (Santasi, Osu…) shows its parent city's listings, so it points search engines at that page.
   const parentCity = city && locations ? resolveCity(locations.cities, [city.name]) : undefined;
   const baseCanonical = typeSlug
@@ -183,8 +186,9 @@ export function ExplorePage() {
   const thin = Boolean(
     (!loading && total === 0) ||
     hasPoint ||
-    filters.view === 'map' ||
     filters.query ||
+    filters.category ||
+    filters.amenities.length ||
     filters.minPrice ||
     filters.maxPrice ||
     filters.minRating ||
@@ -200,29 +204,42 @@ export function ExplorePage() {
     !thin && filters.pricingPeriod && !space && !city
       ? `/explore?pricingPeriod=${filters.pricingPeriod}`
       : baseCanonical;
-  const title = `${h1}${filters.pricingPeriod && !filters.query ? ` — ${unitWord[filters.pricingPeriod]}` : ''}`;
+  const title = `${h1}${filters.pricingPeriod && !filters.query && intent !== 'stays' ? ` — ${unitWord[filters.pricingPeriod]}` : ''}`;
   const description = `${total ? `${total} ${noun} to rent${city ? ` in ${city.name}` : ' in Ghana'}. ` : ''}${lead}`;
   const crumbs = [
     { name: 'Home', path: '/' },
-    { name: 'Explore', path: '/explore' },
-    ...(space
-      ? [{ name: space.plural.charAt(0).toUpperCase() + space.plural.slice(1), path: `/rent/${space.slug}` }]
-      : []),
+    { name: 'Spaces', path: '/explore' },
+    ...(space ? [{ name: cap(space.plural), path: `/rent/${space.slug}` }] : []),
     ...(city ? [{ name: city.name, path: `/in/${city.slug}` }] : []),
   ];
 
+  // ── Active filters as removable chips ────────────────────────────────────
   const chips: Array<{ label: string; clear: () => void }> = [];
+  if (space) chips.push({ label: space.label, clear: () => commit({ subType: '' }) });
+  if (filters.category === 'residential') chips.push({ label: 'Homes', clear: () => commit({ category: '' }) });
   if (filters.query) chips.push({ label: `“${filters.query}”`, clear: () => commit({ query: '' }) });
   if (city) chips.push({ label: city.name, clear: () => commit({ city: '' }) });
   if (filters.pricingPeriod)
     chips.push({
-      label: unitWord[filters.pricingPeriod],
+      label: cap(unitWord[filters.pricingPeriod] ?? filters.pricingPeriod),
       clear: () => commit({ pricingPeriod: '', minPrice: '', maxPrice: '' }),
     });
+  const ghs = (v: string) => `GHS ${Number(v).toLocaleString()}`;
+  const budgetText =
+    filters.minPrice && filters.maxPrice
+      ? `${ghs(filters.minPrice)} – ${Number(filters.maxPrice).toLocaleString()}`
+      : filters.maxPrice
+        ? `Under ${ghs(filters.maxPrice)}`
+        : `${ghs(filters.minPrice || '0')}+`;
   if (filters.minPrice || filters.maxPrice)
     chips.push({
-      label: `GHS ${filters.minPrice || '0'} – ${filters.maxPrice || 'any'}`,
+      label: budgetText,
       clear: () => commit({ minPrice: '', maxPrice: '' }),
+    });
+  for (const key of filters.amenities)
+    chips.push({
+      label: essentialByKey(key)?.label ?? key.replace(/_/g, ' '),
+      clear: () => commit({ amenities: filters.amenities.filter((a) => a !== key) }),
     });
   if (filters.minRating) chips.push({ label: `${filters.minRating}+ stars`, clear: () => commit({ minRating: '' }) });
   if (hasPoint)
@@ -231,23 +248,29 @@ export function ExplorePage() {
       clear: () =>
         commit({ lat: '', lng: '', near: '', radiusKm: '', sort: filters.sort === 'nearest' ? 'new' : filters.sort }),
     });
-  if (filters.rooms) chips.push({ label: 'Rooms available', clear: () => commit({ rooms: false }) });
-  if (filters.pets) chips.push({ label: 'Pet friendly', clear: () => commit({ pets: false }) });
-  if (filters.parking) chips.push({ label: 'Parking', clear: () => commit({ parking: false }) });
-  if (space) chips.unshift({ label: space.label, clear: () => commit({ subType: '' }) });
+  for (const extra of EXTRAS)
+    if (filters[extra.key])
+      chips.push({ label: extra.label, clear: () => commit({ [extra.key]: false } as Partial<Filters>) });
+  // Type/intent show in the tabs and must-haves on their own button, so neither counts towards Filters.
+  const filterCount = chips.length - (space ? 1 : 0) - (filters.category ? 1 : 0) - filters.amenities.length;
+
+  const summary = [
+    filters.pricingPeriod && cap(unitWord[filters.pricingPeriod] ?? ''),
+    (filters.minPrice || filters.maxPrice) &&
+      (filters.maxPrice && !filters.minPrice
+        ? `under GHS ${Number(filters.maxPrice).toLocaleString()}`
+        : `GHS ${filters.minPrice || '0'} – ${filters.maxPrice || 'any'}`),
+    filters.amenities.length > 0 &&
+      `with ${filters.amenities.map((a) => essentialByKey(a)?.label.toLowerCase() ?? a).join(', ')}`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const presets = filters.pricingPeriod ? (PRESETS[filters.pricingPeriod] ?? []) : [];
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    commit({ query: text, minPrice: min, maxPrice: max });
-  };
-  const reset = () => {
-    setText('');
-    setMin('');
-    setMax('');
-    navigate('/explore');
-  };
+  const pageNumbers = Array.from({ length: pages }, (_, i) => i + 1).filter(
+    (n) => n === 1 || n === pages || Math.abs(n - filters.page) <= 1,
+  );
+  const reset = () => navigate('/explore');
   const nearPoint = (lat: number, lng: number, label: string) =>
     commit({
       lat: String(lat),
@@ -256,223 +279,63 @@ export function ExplorePage() {
       radiusKm: filters.radiusKm || '10',
       sort: 'nearest',
       city: '',
+      query: '',
     });
   const nearMe = () => {
-    if (!navigator.geolocation) return;
+    setNotice('');
+    if (!navigator.geolocation) return setNotice('Your browser can’t share its location. Pick a city or area instead.');
     navigator.geolocation.getCurrentPosition(
       (pos) => nearPoint(Number(pos.coords.latitude.toFixed(5)), Number(pos.coords.longitude.toFixed(5)), 'Near me'),
-      () => window.alert('Allow location access to search near you, or pick a city instead.'),
+      () => setNotice('Allow location access to search near you, or pick a city or area instead.'),
       { timeout: 10_000 },
     );
   };
-  // Google place search (when configured): choosing an area/address searches around it.
-  useEffect(() => {
-    if (!mapsEnabled || !locations || !placeHost.current) return;
-    let stop: (() => void) | undefined;
-    let live = true;
-    mountPlaceSearch(
-      placeHost.current,
-      locations.cities,
-      (p) =>
-        nearPoint(
-          Number(p.latitude.toFixed(5)),
-          Number(p.longitude.toFixed(5)),
-          p.area || p.cityRaw || p.formatted.split(',')[0] || 'Selected place',
-        ),
-      'Near an address or area',
-    )
-      .then((cleanup) => {
-        if (live) stop = cleanup;
-        else cleanup();
-      })
-      .catch(() => {});
-    return () => {
-      live = false;
-      stop?.();
-    };
-  }, [locations, panelOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-  const cityGroups = useMemo(() => {
-    const groups = new Map<string, string[]>();
-    for (const c of locations?.cities ?? []) groups.set(c.region, [...(groups.get(c.region) ?? []), c.name]);
-    return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
-  }, [locations]);
-  const pageNumbers = Array.from({ length: pages }, (_, i) => i + 1).filter(
-    (n) => n === 1 || n === pages || Math.abs(n - filters.page) <= 1,
-  );
+  const toggleMap = () => {
+    setMapOn((on) => {
+      try {
+        localStorage.setItem(MAP_PREF, on ? 'off' : 'on');
+      } catch {
+        /* preference only */
+      }
+      return !on;
+    });
+  };
+  const toggleAmenity = (key: string) =>
+    commit({
+      amenities: filters.amenities.includes(key)
+        ? filters.amenities.filter((a) => a !== key)
+        : [...filters.amenities, key],
+    });
+  const closePanel = useCallback(() => setPanelOpen(false), []);
+  // After a search: flash the result count, and bring the results into view if they're below.
+  const resultsTop = useRef<HTMLElement>(null);
+  const [flash, setFlash] = useState(0);
+  const showResults = () => {
+    setFlash((n) => n + 1);
+    const top = resultsTop.current?.getBoundingClientRect().top ?? 0;
+    if (top > window.innerHeight * 0.6) resultsTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
-  const filterPanel = (
-    <div className="ex-panel">
-      <div className="ex-panel-head">
-        <h2>
-          <SlidersHorizontal size={16} /> Filters
-        </h2>
-        <button className="ex-close" onClick={() => setPanelOpen(false)} aria-label="Close filters">
-          <X size={18} />
-        </button>
-      </div>
-      <fieldset>
-        <legend>Location</legend>
-        <select
-          className="ex-select"
-          aria-label="City or town"
-          value={filters.city}
-          onChange={(e) => commit({ city: e.target.value, lat: '', lng: '', near: '', radiusKm: '' })}
-        >
-          <option value="">Anywhere in Ghana</option>
-          {cityGroups.map(([region, names]) => (
-            <optgroup key={region} label={region}>
-              {names.map((n) => (
-                <option key={n}>{n}</option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-        {mapsEnabled && (
-          <div className="ex-place">
-            <MapPin size={16} />
-            <div ref={placeHost} />
-          </div>
-        )}
-        <button type="button" className="ex-near" onClick={nearMe}>
-          <LocateFixed size={15} /> Near me
-        </button>
-        {hasPoint && (
-          <label className="ex-radius">
-            Within{' '}
-            <select value={filters.radiusKm || '10'} onChange={(e) => commit({ radiusKm: e.target.value })}>
-              {RADII.map((r) => (
-                <option key={r} value={r}>
-                  {r} km
-                </option>
-              ))}
-            </select>{' '}
-            of {filters.near || 'this point'}
-          </label>
-        )}
-      </fieldset>
-      <fieldset>
-        <legend>Rent by</legend>
-        <div className="ex-seg" role="radiogroup" aria-label="Rental length">
-          {UNITS.map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              role="radio"
-              aria-checked={filters.pricingPeriod === value}
-              className={filters.pricingPeriod === value ? 'on' : ''}
-              onClick={() => commit({ pricingPeriod: value, minPrice: '', maxPrice: '' })}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>
-          Price (GHS
-          {filters.pricingPeriod ? ` per ${filters.pricingPeriod === 'day' ? 'night' : filters.pricingPeriod}` : ''})
-        </legend>
-        <div className="ex-price">
-          <input
-            inputMode="numeric"
-            placeholder="Min"
-            aria-label="Minimum price"
-            value={min}
-            onChange={(e) => setMin(e.target.value.replace(/\D/g, ''))}
-          />
-          <span>–</span>
-          <input
-            inputMode="numeric"
-            placeholder="Max"
-            aria-label="Maximum price"
-            value={max}
-            onChange={(e) => setMax(e.target.value.replace(/\D/g, ''))}
-          />
-        </div>
-        {presets.length > 0 && (
-          <div className="ex-presets">
-            {presets.map(([label, lo, hi]) => (
-              <button
-                key={label}
-                type="button"
-                onClick={() => commit({ minPrice: lo ? String(lo) : '', maxPrice: hi ? String(hi) : '' })}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        )}
-      </fieldset>
-      <fieldset>
-        <legend>Space type</legend>
-        <div className="ex-list">
-          <label>
-            <input type="radio" name="space" checked={!filters.subType} onChange={() => commit({ subType: '' })} /> Any
-            space
-          </label>
-          {SPACE_COPY.map((s) => (
-            <label key={s.slug}>
-              <input
-                type="radio"
-                name="space"
-                checked={filters.subType === s.slug}
-                onChange={() => commit({ subType: s.slug })}
-              />{' '}
-              {s.label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Guest rating</legend>
-        <div className="ex-seg">
-          {[
-            ['', 'Any'],
-            ['3', '3+'],
-            ['4', '4+'],
-            ['4.5', '4.5+'],
-          ].map(([v, l]) => (
-            <button
-              key={l}
-              type="button"
-              className={filters.minRating === v ? 'on' : ''}
-              onClick={() => commit({ minRating: v })}
-            >
-              {v && <Star size={12} fill="currentColor" />} {l}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Good to have</legend>
-        <div className="ex-list">
-          <label>
-            <input type="checkbox" checked={filters.rooms} onChange={(e) => commit({ rooms: e.target.checked })} />{' '}
-            Rooms you can book separately
-          </label>
-          <label>
-            <input type="checkbox" checked={filters.parking} onChange={(e) => commit({ parking: e.target.checked })} />{' '}
-            Parking
-          </label>
-          <label>
-            <input type="checkbox" checked={filters.pets} onChange={(e) => commit({ pets: e.target.checked })} /> Pet
-            friendly
-          </label>
-        </div>
-      </fieldset>
-      <div className="ex-panel-foot">
-        <button className="button button-quiet" onClick={reset}>
-          Clear all
-        </button>
-        <button className="button button-primary" onClick={() => setPanelOpen(false)}>
-          Show {total || ''} results
-        </button>
-      </div>
-    </div>
+  const canMap = !mapBroken && !showSaved;
+  const showMap = canMap && mapOn;
+  const few = !loading && !error && total > 0 && total < 4;
+  const none = !loading && !error && total === 0;
+  const areas =
+    city && !filters.query ? (city.areas.length ? city.areas : (parentCity?.aliases ?? []).slice(0, 6)) : [];
+  const cardFor = (p: Property) => (
+    <SpaceCard
+      key={p.id}
+      property={p}
+      area={areaOf(p, cities)}
+      saved={isSaved(p.id)}
+      highlighted={hovered === p.id}
+      onToggleSave={() => toggle(p)}
+      onHover={setHovered}
+      onOpen={() => rememberViewed(p)}
+    />
   );
-
   return (
-    <div className="page explore">
+    <div className={`page explore sp-page${showMap ? ' sp-has-map' : ''}`}>
       <Seo
         title={title}
         description={description}
@@ -496,146 +359,272 @@ export function ExplorePage() {
         ))}
       </nav>
 
-      <header className="ex-head">
-        <div>
-          <h1>{h1}</h1>
-          <p className="lead">{lead}</p>
-        </div>
-        <form className="ex-search" role="search" onSubmit={submit}>
-          <MapPin size={18} />
-          <input
-            aria-label="Search by place or name"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Search by area, name or type — Osu, office, villa…"
-          />
-          <button className="button button-primary">
-            <Search size={16} /> Search
-          </button>
-        </form>
+      <header className="sp-headline">
+        {/* The longer intro for this page is in the About section below and the meta description. */}
+        <h1>{h1}</h1>
+        <ul className="sp-proof" aria-label="Why rent on Lotnis">
+          <li>
+            <BadgeCheck size={16} /> Verified hosts
+          </li>
+          <li>
+            <ReceiptText size={16} /> Full price upfront
+          </li>
+          <li>
+            <Smartphone size={16} /> MoMo or card
+          </li>
+        </ul>
       </header>
 
-      <nav className="ex-types" aria-label="Space types">
-        <Link to="/explore" className={!filters.subType ? 'on' : ''}>
-          <Search size={18} />
-          All spaces
-        </Link>
-        {SPACE_COPY.map((s) => {
-          const Icon = TYPE_ICONS[s.slug] ?? Home;
-          return (
-            <Link key={s.slug} to={`/rent/${s.slug}`} className={filters.subType === s.slug ? 'on' : ''}>
-              <Icon size={18} />
-              {s.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="sp-search">
+        <SearchBar filters={filters} cities={cities} commit={commit} onNearMe={nearMe} onSearched={showResults} />
+      </div>
 
-      <div className="ex-layout">
-        <aside
-          className={`ex-filters ${panelOpen ? 'ex-filters-open' : ''}`}
-          aria-label="Filters"
-          role={panelOpen ? 'dialog' : undefined}
-          aria-modal={panelOpen || undefined}
-        >
-          {filterPanel}
-        </aside>
-        {panelOpen && <div className="ex-scrim" onClick={() => setPanelOpen(false)} role="presentation" />}
+      <div className="sp-intents">
+        <nav className="sp-tabs" aria-label="What is the space for?">
+          {INTENTS.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={intent === key}
+              onClick={() => commit(intentPatch(key, filters))}
+            >
+              <Icon size={17} strokeWidth={1.9} />
+              {label}
+            </button>
+          ))}
+        </nav>
+        <div className="sp-tools">
+          {saved.length > 0 && (
+            <button
+              type="button"
+              className={`sp-tool${showSaved ? ' on' : ''}`}
+              onClick={() => setShowSaved((s) => !s)}
+            >
+              <Heart size={16} /> <span>Saved</span> <b>{saved.length}</b>
+            </button>
+          )}
+          <MustHaves selected={filters.amenities} onToggle={toggleAmenity} onClear={() => commit({ amenities: [] })} />
+          <button type="button" className="sp-tool" onClick={() => setPanelOpen(true)}>
+            <SlidersHorizontal size={16} /> <span>Filters</span>
+            {filterCount > 0 && <b>{filterCount}</b>}
+          </button>
+          {!mapBroken && (
+            <button type="button" className="sp-tool sp-maptoggle" onClick={toggleMap} aria-pressed={mapOn}>
+              <MapIcon size={16} /> <span>{mapOn ? 'Hide map' : 'Show map'}</span>
+            </button>
+          )}
+        </div>
+      </div>
 
-        <section className="ex-results" aria-live="polite" aria-busy={loading}>
-          <div className="ex-bar">
-            <strong>
-              {loading
-                ? 'Searching…'
-                : `${total.toLocaleString()} ${total === 1 ? 'space' : 'spaces'}${city ? ` in ${city.name}` : ''}`}
-            </strong>
-            <div className="ex-bar-tools">
-              <button className="ex-filter-btn" onClick={() => setPanelOpen(true)}>
-                <SlidersHorizontal size={16} /> Filters{chips.length ? ` (${chips.length})` : ''}
-              </button>
-              {mapsEnabled && (
-                <div className="ex-view" role="group" aria-label="View">
-                  <button className={filters.view === 'grid' ? 'on' : ''} onClick={() => commit({ view: 'grid' })}>
-                    <LayoutGrid size={15} /> List
-                  </button>
-                  <button className={filters.view === 'map' ? 'on' : ''} onClick={() => commit({ view: 'map' })}>
-                    <MapIcon size={15} /> Map
+      <div className="sp-split">
+        <section className="sp-results" aria-live="polite" aria-busy={loading} ref={resultsTop}>
+          {showSaved ? (
+            <>
+              <div className="sp-bar">
+                <div>
+                  <strong>Saved spaces</strong>
+                  <small>Kept on this device</small>
+                </div>
+                <button type="button" className="sp-link-btn" onClick={() => setShowSaved(false)}>
+                  Back to results
+                </button>
+              </div>
+              <div className="sp-grid">{saved.map(cardFor)}</div>
+            </>
+          ) : (
+            <>
+              <div className="sp-bar" key={flash} data-flash={flash > 0 || undefined}>
+                <div>
+                  <strong>
+                    {loading
+                      ? 'Searching…'
+                      : error
+                        ? 'Couldn’t load spaces'
+                        : `${total.toLocaleString()} ${noun}${where}`}
+                  </strong>
+                  {summary && <small>{summary}</small>}
+                </div>
+                <label className="sp-sort">
+                  Sort
+                  <select value={filters.sort} onChange={(e) => commit({ sort: e.target.value })}>
+                    {Object.entries(SORTS)
+                      .filter(([k]) => k !== 'nearest' || hasPoint)
+                      .map(([k, v]) => (
+                        <option key={k} value={k}>
+                          {v.label}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+              </div>
+              {notice && (
+                <p className="sp-notice" role="status">
+                  {notice}
+                </p>
+              )}
+              {chips.length > 0 && (
+                <div className="sp-active">
+                  {chips.map((c) => (
+                    <button
+                      key={c.label}
+                      type="button"
+                      className="sp-achip"
+                      onClick={c.clear}
+                      aria-label={`Remove ${c.label}`}
+                    >
+                      {c.label} <X size={13} />
+                    </button>
+                  ))}
+                  <button type="button" className="sp-link-btn" onClick={reset}>
+                    Clear all
                   </button>
                 </div>
               )}
-              <label className="ex-sort">
-                Sort{' '}
-                <select value={filters.sort} onChange={(e) => commit({ sort: e.target.value })}>
-                  {Object.entries(SORTS)
-                    .filter(([k]) => k !== 'nearest' || hasPoint)
-                    .map(([k, v]) => (
-                      <option key={k} value={k}>
-                        {v.label}
-                      </option>
-                    ))}
-                </select>
-              </label>
-            </div>
-          </div>
-          {chips.length > 0 && (
-            <div className="ex-active">
-              {chips.map((c) => (
-                <button key={c.label} className="ex-chip" onClick={c.clear}>
-                  {c.label} <X size={13} />
-                </button>
-              ))}
-              <button className="ex-clear" onClick={reset}>
-                Clear all
-              </button>
-            </div>
-          )}
 
-          {error ? (
-            <div className="error-state">{error}</div>
-          ) : loading && !results.length ? (
-            <div className="property-grid">
-              {Array.from({ length: 6 }, (_, i) => (
-                <div className="ex-skel" key={i}>
-                  <i />
-                  <b />
-                  <b />
+              {error ? (
+                <div className="error-state">
+                  We couldn’t load spaces just now. This is usually a brief connection problem.
+                  <p>
+                    <button type="button" className="button button-primary" onClick={() => setAttempt((n) => n + 1)}>
+                      Try again
+                    </button>
+                  </p>
                 </div>
-              ))}
-            </div>
-          ) : results.length ? (
-            <>
-              {filters.view === 'map' && mapsEnabled && <ResultsMap properties={results} centre={centre} />}
-              <div className="property-grid ex-grid">
-                {results.map((p) => (
-                  <PropertyCard key={p.id} property={p} />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="empty-state ex-empty">
-              <Search size={30} />
-              <h2>Nothing matches yet</h2>
-              <p>Try fewer filters, a wider price range, or a different space type.</p>
-              <div className="ex-empty-links">
-                {SPACE_COPY.slice(0, 5).map((s) => (
-                  <Link key={s.slug} to={`/rent/${s.slug}`}>
-                    {s.plural}
-                  </Link>
-                ))}
-              </div>
-              <button className="button button-secondary" onClick={reset}>
-                Clear all filters
-              </button>
-            </div>
-          )}
+              ) : loading && !results.length ? (
+                <div className="sp-grid">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <div className="sp-skel" key={i} aria-hidden="true">
+                      <i />
+                      <b />
+                      <b />
+                    </div>
+                  ))}
+                </div>
+              ) : results.length ? (
+                <div className={`sp-grid${loading ? ' sp-grid-busy' : ''}`}>
+                  {results.map((p, i) => (
+                    <Fragment key={p.id}>
+                      {cardFor(p)}
+                      {i === 3 && results.length >= 6 && areas.length > 0 && (
+                        <section className="sp-areas sp-wide" aria-label={`Popular areas in ${city!.name}`}>
+                          <div>
+                            <h2>Popular areas in {city!.name}</h2>
+                            <p>Jump straight to a neighbourhood.</p>
+                          </div>
+                          <div className="sp-areas-list">
+                            {areas.map((a) => (
+                              <button key={a} type="button" onClick={() => commit({ query: a })}>
+                                {a}
+                              </button>
+                            ))}
+                          </div>
+                        </section>
+                      )}
+                    </Fragment>
+                  ))}
+                  {!few && filters.page === 1 && (
+                    <div className="sp-wide">
+                      <HostPrompt city={city?.name} space={space} />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="sp-empty">
+                  <span>
+                    <Search size={26} />
+                  </span>
+                  <h2>
+                    {space || city ? `No ${space ? space.plural : noun}${where} match yet` : 'Nothing matches yet'}
+                  </h2>
+                  <p>New spaces are listed every week. Try one of the suggestions below.</p>
+                </div>
+              )}
 
-          <ResultsPagination filters={filters} pages={pages} pageNumbers={pageNumbers} commit={commit} />
+              {(few || none) && (
+                <>
+                  <WidenSearch filters={filters} total={total} space={space} cities={cities} commit={commit} />
+                  <HostPrompt city={city?.name} space={space} empty={none} />
+                </>
+              )}
+
+              <ResultsPagination filters={filters} pages={pages} pageNumbers={pageNumbers} commit={commit} />
+            </>
+          )}
         </section>
+
+        {canMap && (
+          <aside className={`sp-mapcol${mobileMap ? ' open' : ''}`} aria-label="Map of results">
+            {(showMap || mobileMap) && (
+              <ResultsMap
+                properties={results}
+                centre={centre}
+                highlightId={hovered}
+                onHover={setHovered}
+                onSearchArea={({ lat, lng, radiusKm }) =>
+                  commit({
+                    lat: String(lat),
+                    lng: String(lng),
+                    radiusKm: String(radiusKm),
+                    near: 'Map area',
+                    city: '',
+                    query: '',
+                  })
+                }
+                onUnavailable={() => {
+                  setMapBroken(true);
+                  setMobileMap(false);
+                }}
+              />
+            )}
+          </aside>
+        )}
       </div>
+
+      {canMap && (
+        <button type="button" className="sp-mapfab" onClick={() => setMobileMap((m) => !m)}>
+          {mobileMap ? <List size={17} /> : <MapIcon size={17} />} {mobileMap ? 'List' : 'Map'}
+        </button>
+      )}
+
+      {recent.length > 0 && (
+        <section className="sp-recent reveal" aria-labelledby="sp-recent-title">
+          <div className="sp-recent-head">
+            <h2 id="sp-recent-title">Recently viewed</h2>
+            <small>Kept on this device</small>
+          </div>
+          <div className="sp-recent-list">
+            {recent.slice(0, 4).map((p) => {
+              const price = priceOf(p);
+              const img = [...(p.property_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]
+                ?.public_url;
+              return (
+                <Link key={p.id} to={`/stays/${p.id}`} className="sp-recent-item">
+                  {img ? <img src={img} alt="" loading="lazy" /> : <span className="sp-recent-noimg" />}
+                  <span>
+                    <b>{p.name}</b>
+                    <small>{price ? `${price.from ? 'From ' : ''}${price.amount} / ${price.per}` : p.city}</small>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <AboutSection space={space} city={city} />
 
       <BrowseLinks />
+
+      {panelOpen && (
+        <FilterSheet
+          filters={filters}
+          total={total}
+          loading={loading}
+          commit={commit}
+          reset={reset}
+          onClose={closePanel}
+        />
+      )}
     </div>
   );
 }
