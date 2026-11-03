@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { loadMaps, mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
 import { GHANA_CENTER } from '@/lib/maps/places';
 import { primaryImage } from '@/lib/format';
+import { resizedPhoto } from '@/lib/images';
 import type { Property } from '@/types';
 
 type G = any; // Google Maps types are loaded at runtime, not bundled
@@ -65,7 +66,11 @@ function infoCard(p: Property) {
   const img = primaryImage(p);
   if (img) {
     const i = document.createElement('img');
-    i.src = img;
+    i.src = resizedPhoto(img, 640);
+    i.onerror = () => {
+      i.onerror = null;
+      i.src = img;
+    };
     i.alt = '';
     card.appendChild(i);
   }

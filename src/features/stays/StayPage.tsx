@@ -18,6 +18,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { api, getSession } from '@/lib/api';
 import { bookingMode, liveRooms, Photo, sortedImages, useReveal } from '@/features/stays/bookingUi';
 import { money, periodLabel, policyLine } from '@/lib/format';
+import { photoProps } from '@/lib/images';
 import { breadcrumbLd, clip, placeLd, propertyLd, Seo } from '@/lib/seo/seo';
 import { loadMaps, mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
 import { mapsLink } from '@/lib/maps/places';
@@ -61,7 +62,12 @@ function Mosaic({ images, propertyId, name }: { images: PropertyImage[]; propert
           className={`mosaic-cell ${i === 0 ? 'mosaic-main' : ''}`}
           aria-label={`Open photo ${i + 1} of ${images.length}`}
         >
-          <Photo src={img.public_url} alt={`${name} — photo ${i + 1}`} />
+          <Photo
+            src={img.public_url}
+            alt={`${name} — photo ${i + 1}`}
+            sizes={i === 0 ? '(max-width: 760px) 100vw, 60vw' : '(max-width: 760px) 100vw, 30vw'}
+            priority={i === 0}
+          />
         </Link>
       ))}
       {images.length > 1 && (
@@ -98,7 +104,7 @@ function RoomCard({
   return (
     <article className="space-card reveal">
       <div className="space-photo">
-        <Photo src={img?.public_url} alt={title} />
+        <Photo src={img?.public_url} alt={title} sizes="(max-width: 760px) 100vw, 40vw" />
         {images.length > 1 && (
           <>
             <button
@@ -316,6 +322,8 @@ export function StayPage() {
     if (end) q.set('end', end);
     if (qty) q.set('qty', String(qty));
     const target = `/reserve/${property.id}${q.size ? `?${q}` : ''}`;
+    // The phone sheet sits above dialogs, so it has to close or it would cover the sign-in dialog.
+    setSheet(false);
     if (getSession()) navigate(target);
     else openSignIn(target);
   };
@@ -695,7 +703,7 @@ export function PhotosPage() {
                   onClick={() => setOpen(idx)}
                   aria-label={`Open photo ${idx + 1}`}
                 >
-                  <Photo src={img.public_url} alt={`${group.title} photo`} />
+                  <Photo src={img.public_url} alt={`${group.title} photo`} sizes="(max-width: 760px) 50vw, 33vw" />
                 </button>
               );
             })}
@@ -717,7 +725,7 @@ export function PhotosPage() {
           >
             <ChevronLeft size={26} />
           </button>
-          <img src={flat[open].public_url} alt="" onClick={(e) => e.stopPropagation()} />
+          <img {...photoProps(flat[open].public_url, '100vw')} alt="" onClick={(e) => e.stopPropagation()} />
           <button
             className="lb-nav lb-next"
             aria-label="Next"

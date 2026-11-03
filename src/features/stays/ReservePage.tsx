@@ -127,7 +127,7 @@ export function ReservePage() {
           className={`choice-tile ${!roomId ? 'on' : ''}`}
           onClick={() => setRoomId('')}
         >
-          <Photo src={sortedImages(property.property_images)[0]?.public_url} alt="" />
+          <Photo src={sortedImages(property.property_images)[0]?.public_url} alt="" sizes="96px" />
           <span>
             <b>Whole property</b>
             <small>
@@ -149,6 +149,7 @@ export function ReservePage() {
           <Photo
             src={sortedImages(r.room_images)[0]?.public_url ?? sortedImages(property.property_images)[0]?.public_url}
             alt=""
+            sizes="96px"
           />
           <span>
             <b>{r.room_label || 'Room'}</b>
@@ -259,7 +260,7 @@ export function ReservePage() {
         <aside className="bk-summary">
           <div className="sum-card">
             <div className="sum-photo">
-              <Photo src={cover?.public_url} alt="" />
+              <Photo src={cover?.public_url} alt="" sizes="420px" />
             </div>
             <div className="sum-body">
               <small className="eyebrow">{room ? room.room_label : property.sub_type || 'Space'}</small>

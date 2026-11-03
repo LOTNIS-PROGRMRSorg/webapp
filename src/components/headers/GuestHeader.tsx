@@ -7,10 +7,18 @@ import { AuthLink, useAuthModal } from '@/features/auth/AuthModal';
 import { NotificationBell } from '@/features/account/notifications';
 
 const tabs = [
-  { key: 'spaces', to: '/explore', label: 'Spaces', image: '/images/nav/spaces.png', soon: false },
-  { key: 'events', to: '/events', label: 'Events', image: '/images/nav/events.png', soon: false },
-  { key: 'food', to: '/food', label: 'Food', image: '/images/nav/food.png', soon: true },
-  { key: 'services', to: '/services', label: 'Services', image: '/images/nav/services.png', soon: true },
+  // City and type pages, a listing and its booking steps are all still "Spaces", so the tab stays lit through them.
+  {
+    key: 'spaces',
+    to: '/explore',
+    also: ['/rent', '/in', '/stays', '/reserve', '/pay', '/booked'],
+    label: 'Spaces',
+    image: '/images/nav/spaces.png',
+    soon: false,
+  },
+  { key: 'events', to: '/events', also: [], label: 'Events', image: '/images/nav/events.png', soon: false },
+  { key: 'food', to: '/food', also: [], label: 'Food', image: '/images/nav/food.png', soon: true },
+  { key: 'services', to: '/services', also: [], label: 'Services', image: '/images/nav/services.png', soon: true },
 ];
 
 /** 3D still that swaps to a short video clip (when one exists in /videos/nav) and plays it on hover / when the tab becomes active. */
@@ -47,22 +55,18 @@ function TabMedia({ name, image, active, hovered }: { name: string; image: strin
   );
 }
 
-function HeaderTab({ tab }: { tab: (typeof tabs)[number] }) {
+function HeaderTab({ tab, active }: { tab: (typeof tabs)[number]; active: boolean }) {
   const [hovered, setHovered] = useState(false);
   return (
     <NavLink
       to={tab.to}
-      className={`hdr-tab hdr-tab-${tab.key}`}
+      className={() => `hdr-tab hdr-tab-${tab.key}${active ? ' active' : ''}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {({ isActive }) => (
-        <>
-          <TabMedia name={tab.key} image={tab.image} active={isActive} hovered={hovered} />
-          <span>{tab.label}</span>
-          {tab.soon && <em className="hdr-soon">Soon</em>}
-        </>
-      )}
+      <TabMedia name={tab.key} image={tab.image} active={active} hovered={hovered} />
+      <span>{tab.label}</span>
+      {tab.soon && <em className="hdr-soon">Soon</em>}
     </NavLink>
   );
 }
@@ -77,7 +81,9 @@ export function GuestHeader({ session, onSignOut }: { session: AuthUser | null; 
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const isHome = pathname === '/';
-  const activeIndex = tabs.findIndex((t) => pathname === t.to || pathname.startsWith(`${t.to}/`));
+  const activeIndex = tabs.findIndex((t) =>
+    [t.to, ...t.also].some((path) => pathname === path || pathname.startsWith(`${path}/`)),
+  );
   const overlay = isHome && !scrolled && !menuOpen;
 
   useEffect(() => {
@@ -129,7 +135,7 @@ export function GuestHeader({ session, onSignOut }: { session: AuthUser | null; 
     return () => window.removeEventListener('resize', measure);
   }, [activeIndex]);
 
-  const tabLinks = tabs.map((tab) => <HeaderTab key={tab.to} tab={tab} />);
+  const tabLinks = tabs.map((tab, i) => <HeaderTab key={tab.to} tab={tab} active={i === activeIndex} />);
 
   return (
     <header className={['hdr', isHome && 'hdr-home', overlay && 'hdr-overlay'].filter(Boolean).join(' ')}>

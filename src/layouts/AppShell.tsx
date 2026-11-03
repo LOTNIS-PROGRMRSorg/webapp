@@ -71,13 +71,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link to="/how-it-works">How it works</Link>
                 </li>
                 <li>
-                  <Link to="/explore?query=Accra">Accra</Link>
+                  <Link to="/in/accra">Accra</Link>
                 </li>
                 <li>
-                  <Link to="/explore?query=Kumasi">Kumasi</Link>
+                  <Link to="/in/kumasi">Kumasi</Link>
                 </li>
                 <li>
-                  <Link to="/explore?query=Cape%20Coast">Cape Coast</Link>
+                  <Link to="/in/cape-coast">Cape Coast</Link>
                 </li>
               </ul>
             </div>

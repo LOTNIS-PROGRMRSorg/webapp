@@ -13,6 +13,19 @@
       "destination": "/api/share?slug=:slug"
     },
     {
+      "source": "/stays/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": {
+            "re": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|LinkedInBot|Slackbot|Discordbot|SkypeUriPreview|Pinterest).*"
+          }
+        }
+      ],
+      "destination": "/api/share?stay=:id"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -29,7 +29,7 @@ function Summary({ booking }: { booking: Booking }) {
   return (
     <div className="sum-card">
       <div className="sum-photo">
-        <Photo src={cover?.public_url} alt="" />
+        <Photo src={cover?.public_url} alt="" sizes="420px" />
       </div>
       <div className="sum-body">
         <small className="eyebrow">Your reservation</small>

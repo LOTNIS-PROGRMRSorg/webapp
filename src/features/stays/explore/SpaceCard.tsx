@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { BadgeCheck, Building2, ChevronLeft, ChevronRight, Heart, Star, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { periodLabel } from '@/lib/format';
+import { photoProps } from '@/lib/images';
 import { norm } from '@/lib/maps/places';
 import { track } from '@/lib/track';
 import type { CatalogCity, Property } from '@/types';
@@ -127,7 +128,13 @@ export function SpaceCard({
               }
             >
               {images.map((src, i) => (
-                <img key={src} src={src} alt="" loading={i ? 'lazy' : undefined} decoding="async" />
+                <img
+                  key={src}
+                  {...photoProps(src, '(max-width: 640px) 100vw, 420px')}
+                  alt=""
+                  loading={i ? 'lazy' : undefined}
+                  decoding="async"
+                />
               ))}
             </div>
           ) : (

@@ -51,9 +51,15 @@ export function TripsPage() {
       ) : bookings.length ? (
         <div className="booking-list">
           {bookings.map((booking) => {
+            // Instant bookings are unpaid until the guest pays, so "Pay later" has to be able to come back here.
+            // Once the deadline passes the dates are released, so the button goes rather than risk a late charge.
+            const stage = booking.reservation_stage;
+            const deadline = booking.payment_deadline_at ?? booking.payment_deadline;
             const needsPayment =
-              booking.reservation_stage === 'awaiting_payment' ||
-              (!booking.reservation_stage && booking.status === 'pending' && !booking.payment_reference);
+              booking.status === 'pending' &&
+              !booking.payment_reference &&
+              (!stage || stage === 'instant' || stage === 'awaiting_payment') &&
+              !(deadline && Date.parse(deadline) <= Date.now());
             const started = booking.start_date <= todayAccra;
             const exit = exits[booking.id];
             const canCancel = booking.status === 'pending' || (booking.status === 'confirmed' && !started);

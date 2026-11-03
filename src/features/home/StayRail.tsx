@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { BadgeCheck, Building2, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPrice, periodLabel, primaryImage } from '@/lib/format';
+import { photoProps } from '@/lib/images';
 import type { Property } from '@/types';
 import { PERIODS, Period, StaySource } from './homeShared';
 
@@ -99,7 +100,11 @@ export function StayCard({ stay }: { stay: Property }) {
     <Link className="lp-stay" to={`/stays/${stay.id}`}>
       <div className="lp-stay-media">
         {image ? (
-          <img src={image} alt={`${stay.name} — ${kind.toLowerCase()} in ${stay.city ?? 'Ghana'}`} loading="lazy" />
+          <img
+            {...photoProps(image, '(max-width: 760px) 80vw, 25vw')}
+            alt={`${stay.name} — ${kind.toLowerCase()} in ${stay.city ?? 'Ghana'}`}
+            loading="lazy"
+          />
         ) : (
           <div className="lp-stay-noimage">
             <Building2 size={26} />

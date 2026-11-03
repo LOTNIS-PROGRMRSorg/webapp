@@ -2,7 +2,7 @@
    Compact headline → search bar → purpose tabs → must-have chips → list beside a sticky map. */
 .sp-page {
   --sp-map-w: clamp(380px, 36vw, 640px);
-  --sp-header: 72px;
+  --sp-header: 84px; /* the site header's height (headers.css) */
   padding-top: 22px;
 }
 .sp-page h2 {
@@ -1425,6 +1425,9 @@
 
 /* Tablet: map becomes a full-screen view behind a floating button. */
 @media (max-width: 1180px) {
+  .sp-page {
+    --sp-header: 72px;
+  }
   .sp-has-map .sp-split {
     grid-template-columns: minmax(0, 1fr);
   }

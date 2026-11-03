@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { AuthLink } from '@/features/auth/AuthModal';
 import { api } from '@/lib/api';
 import type { SpaceCopy } from '@/lib/seo/content';
 import type { CatalogCity } from '@/types';
@@ -169,9 +169,9 @@ export function HostPrompt({ city, space, empty }: { city?: string; space?: Spac
             : 'List it on Lotnis for free. You set the price and the house rules, and get paid by mobile money or bank.'}
         </p>
       </div>
-      <Link to="/host">
+      <AuthLink to="/host/start">
         List your space <ArrowRight size={16} />
-      </Link>
+      </AuthLink>
     </aside>
   );
 }

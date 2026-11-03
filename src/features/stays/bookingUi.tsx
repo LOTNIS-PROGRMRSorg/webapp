@@ -57,10 +57,4 @@ export function BookingProgress({ step }: { step: 1 | 2 | 3 }) {
   );
 }
 
-export function Photo({ src, alt = '', className = '' }: { src?: string | null; alt?: string; className?: string }) {
-  return src ? (
-    <img className={`ph ${className}`} src={src} alt={alt} loading="lazy" />
-  ) : (
-    <div className={`ph ph-empty ${className}`} role="img" aria-label={alt || 'No photo yet'} />
-  );
-}
+export { Photo } from '@/components/ui/Photo';

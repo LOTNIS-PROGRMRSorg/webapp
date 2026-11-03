@@ -2,6 +2,7 @@ import { FormEvent, Fragment, useEffect, useId, useMemo, useRef, useState } from
 import { LayoutGrid, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
+import { photoProps } from '@/lib/images';
 import { norm } from '@/lib/maps/places';
 import { CITY_COPY, SPACE_COPY } from '@/lib/seo/content';
 import type { CatalogCity, Property } from '@/types';
@@ -91,7 +92,7 @@ function SpaceThumb({ property }: { property: Property }) {
   const img = [...(property.property_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]
     ?.public_url;
   return img ? (
-    <img className="sp-opt-thumb" src={img} alt="" />
+    <img className="sp-opt-thumb" {...photoProps(img, '64px')} alt="" />
   ) : (
     <span className="sp-opt-icon">
       <LayoutGrid size={16} />

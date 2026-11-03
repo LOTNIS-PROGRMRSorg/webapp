@@ -196,7 +196,7 @@
 /* Booking card */
 .st-book {
   position: sticky;
-  top: 92px;
+  top: 100px;
 }
 .st-book-head {
   display: none;

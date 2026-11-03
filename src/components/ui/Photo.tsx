@@ -1,7 +1,30 @@
-/** An image with a calm placeholder when there isn't one yet. */
-export function Photo({ src, alt = '', className = '' }: { src?: string | null; alt?: string; className?: string }) {
+import { photoProps } from '@/lib/images';
+
+/**
+ * An image with a calm placeholder when there isn't one yet. Pass `sizes` (how wide it shows on the page) to load a
+ * resized copy instead of the full upload, and `priority` for the page's main image so it isn't loaded lazily.
+ */
+export function Photo({
+  src,
+  alt = '',
+  className = '',
+  sizes,
+  priority,
+}: {
+  src?: string | null;
+  alt?: string;
+  className?: string;
+  sizes?: string;
+  priority?: boolean;
+}) {
   return src ? (
-    <img className={`ph ${className}`} src={src} alt={alt} loading="lazy" />
+    <img
+      className={`ph ${className}`}
+      {...(sizes ? photoProps(src, sizes) : { src })}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : undefined}
+    />
   ) : (
     <div className={`ph ph-empty ${className}`} role="img" aria-label={alt || 'No photo yet'} />
   );

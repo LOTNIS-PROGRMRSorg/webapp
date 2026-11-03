@@ -1,4 +1,4 @@
-// Link previews for shareable event pages.
+// Link previews for shareable event and space pages.
 //
 // WhatsApp, Facebook, X, Telegram and Google read a page's Open Graph tags from the raw HTML —
 // they don't run JavaScript — so the single-page app's own tags never reach them. vercel.json routes
@@ -6,6 +6,9 @@
 // function loads the normal app shell (index.html), swaps in tags for that exact page (the contestant's
 // picture, "Vote for {name} as {category}", the price of a vote…) and returns it. Browsers then boot the
 // app as usual. If the API is slow or down the untouched shell is returned, so pages never break.
+//
+// /stays/:id comes here too, but only for link-preview bots (see `has` in vercel.json): the backend can take
+// a while to wake, and renters opening a listing shouldn't wait on it for tags they never see.
 
 const API = (process.env.API_URL || process.env.VITE_API_URL || '').replace(/\/$/, '');
 const SITE = (process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
@@ -63,12 +66,50 @@ async function get(path) {
   });
   if (!res.ok) return null;
   const body = await res.json();
-  return body?.success ? body.data : null;
+  // Events come wrapped in { success, data }; a space from /explore/:id comes as it is.
+  if (body?.success === false) return null;
+  return body?.success ? body.data : body;
+}
+
+const STAY_UNIT = { hour: 'hour', day: 'night', week: 'week', month: 'month', year: 'year' };
+const stayPrice = (currency, amount, period) =>
+  `${money(currency, amount)} / ${STAY_UNIT[period] ?? period ?? 'night'}`;
+// Stored photos can be 6 MB+, too big for WhatsApp to show, so ask Supabase for a smaller JPEG copy.
+const sharePhoto = (url) =>
+  url?.includes('/storage/v1/object/public/')
+    ? `${url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')}?width=1200&resize=contain&quality=70&format=origin`
+    : url;
+
+export function stayPreview(p, url) {
+  const name = String(p.name).trim();
+  const kind = p.sub_type ? `${p.sub_type.charAt(0).toUpperCase()}${p.sub_type.slice(1)}`.replace(/-/g, ' ') : 'Space';
+  const rooms = (p.rooms ?? []).filter((r) => !r.deleted_at && r.is_available !== false);
+  const cheapest = rooms.reduce((a, r) => (!a || r.price_per_period < a.price_per_period ? r : a), null);
+  const price =
+    p.price != null
+      ? stayPrice(p.currency, p.price, p.pricing_period)
+      : cheapest
+        ? `From ${stayPrice(cheapest.currency || p.currency, cheapest.price_per_period, cheapest.pricing_period || p.pricing_period)}`
+        : '';
+  const lead = [price, p.city && `in ${p.city}`].filter(Boolean).join(' ');
+  const about = clip(p.tagline || p.description, 110);
+  const photo = [...(p.property_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
+  return {
+    title: `${name} — ${kind} for rent${p.city ? ` in ${p.city}` : ''}`,
+    description: [lead, about].filter(Boolean).join('. ') || `${name} on Lotnis.`,
+    image: sharePhoto(photo?.public_url),
+    imageAlt: `${name}${p.city ? ` in ${p.city}` : ''}`,
+    url,
+  };
 }
 
 /** Build the preview for a request, or null to serve the app shell unchanged. */
-export async function previewFor({ slug, cat, nominee }, origin, fetchData = get) {
+export async function previewFor({ slug, cat, nominee, stay }, origin, fetchData = get) {
   const site = SITE || origin;
+  if (stay) {
+    const space = await fetchData(`/explore/${encodeURIComponent(stay)}`);
+    return space?.name ? stayPreview(space, `${site}/stays/${stay}`) : null;
+  }
   if (!slug) return null;
   if (cat) {
     const page = await fetchData(
@@ -121,7 +162,9 @@ export default async function handler(req, res) {
   }
   let html = shell;
   try {
-    const preview = API ? await previewFor({ slug: q.slug, cat: q.cat, nominee: q.nominee }, origin) : null;
+    const preview = API
+      ? await previewFor({ slug: q.slug, cat: q.cat, nominee: q.nominee, stay: q.stay }, origin)
+      : null;
     if (preview) html = applyPreview(shell, preview);
   } catch {
     /* keep the plain shell */

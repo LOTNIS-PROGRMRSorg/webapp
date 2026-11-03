@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api } from '@/lib/api';
+import { photoProps } from '@/lib/images';
 import { mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
 import { ResultsMap } from '@/components/maps/ResultsMap';
 import { useReveal } from '@/features/stays/bookingUi';
@@ -38,7 +39,7 @@ import { AboutSection } from './AboutSection';
 import { BrowseLinks } from './BrowseLinks';
 import { FilterSheet } from './FilterSheet';
 import { ResultsPagination } from './ResultsPagination';
-import { SearchBar } from './SearchBar';
+import { parseFreeText, SearchBar } from './SearchBar';
 import { areaOf, priceOf, SpaceCard } from './SpaceCard';
 import { rememberViewed, useRecentSpaces, useSavedSpaces } from './spaceMemory';
 import { MustHaves } from './MustHaves';
@@ -102,6 +103,14 @@ export function ExplorePage() {
     },
     [filters, typeSlug, citySlug, navigate, setParams],
   );
+
+  // Links from outside the search box (homepage search, Google's site search) carry plain words, e.g. ?query=Kumasi.
+  // Read them the way the search box does, so a known place lands on the same page as picking it here.
+  useEffect(() => {
+    if (!locations || !filters.query || filters.city || hasPoint || typeSlug || citySlug) return;
+    const patch = parseFreeText(filters.query, locations.cities);
+    if (patch.city || patch.subType) commit({ ...patch, query: patch.query ?? '' });
+  }, [locations, filters.query, filters.city, hasPoint, typeSlug, citySlug, commit]);
 
   useEffect(() => {
     let live = true;
@@ -251,8 +260,14 @@ export function ExplorePage() {
   for (const extra of EXTRAS)
     if (filters[extra.key])
       chips.push({ label: extra.label, clear: () => commit({ [extra.key]: false } as Partial<Filters>) });
-  // Type/intent show in the tabs and must-haves on their own button, so neither counts towards Filters.
-  const filterCount = chips.length - (space ? 1 : 0) - (filters.category ? 1 : 0) - filters.amenities.length;
+  // Type/intent show in the tabs, must-haves on their own button and places in the search box, so none count towards Filters.
+  const filterCount =
+    chips.length -
+    (space ? 1 : 0) -
+    (filters.category ? 1 : 0) -
+    filters.amenities.length -
+    (filters.query ? 1 : 0) -
+    (city ? 1 : 0);
 
   const summary = [
     filters.pricingPeriod && cap(unitWord[filters.pricingPeriod] ?? ''),
@@ -599,7 +614,11 @@ export function ExplorePage() {
                 ?.public_url;
               return (
                 <Link key={p.id} to={`/stays/${p.id}`} className="sp-recent-item">
-                  {img ? <img src={img} alt="" loading="lazy" /> : <span className="sp-recent-noimg" />}
+                  {img ? (
+                    <img {...photoProps(img, '96px')} alt="" loading="lazy" />
+                  ) : (
+                    <span className="sp-recent-noimg" />
+                  )}
                   <span>
                     <b>{p.name}</b>
                     <small>{price ? `${price.from ? 'From ' : ''}${price.amount} / ${price.per}` : p.city}</small>
