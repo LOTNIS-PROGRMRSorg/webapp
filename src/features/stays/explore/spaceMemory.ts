@@ -1,9 +1,9 @@
-// Saved spaces and recently viewed spaces, kept on this device (no account needed).
+// Recently viewed spaces, kept on this device (no account needed); saved spaces come from the account.
 // We store the search-result snapshot of each space so the lists render without another request.
 import { useCallback, useEffect, useState } from 'react';
 import type { Property } from '@/types';
+import { useFavorites } from '@/features/favorites/Favorites';
 
-const SAVED_KEY = 'lotnis_saved_spaces';
 const RECENT_KEY = 'lotnis_recent_spaces';
 const RECENT_LIMIT = 8;
 const CHANGED = 'lotnis-space-memory';
@@ -67,17 +67,12 @@ function useStored(key: string) {
   return list;
 }
 
+/** Saved spaces live on the account (see features/favorites), so they follow the person across devices. */
 export function useSavedSpaces() {
-  const saved = useStored(SAVED_KEY);
-  const isSaved = useCallback((id: string) => saved.some((p) => p.id === id), [saved]);
-  const toggle = useCallback((p: Property) => {
-    const current = read(SAVED_KEY);
-    write(
-      SAVED_KEY,
-      current.some((s) => s.id === p.id) ? current.filter((s) => s.id !== p.id) : [snapshot(p), ...current],
-    );
-  }, []);
-  return { saved, isSaved, toggle };
+  const { has, toggle, ids } = useFavorites();
+  const isSaved = useCallback((id: string) => has('property', id), [has]);
+  const toggleSaved = useCallback((p: Property) => toggle('property', p.id), [toggle]);
+  return { saved: ids('property'), isSaved, toggle: toggleSaved };
 }
 
 export function useRecentSpaces() {

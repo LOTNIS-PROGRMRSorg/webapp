@@ -63,7 +63,6 @@ export function ExplorePage() {
   const [attempt, setAttempt] = useState(0);
   const [notice, setNotice] = useState('');
   const [panelOpen, setPanelOpen] = useState(false);
-  const [showSaved, setShowSaved] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   // Desktop: the map sits beside the list unless the person hid it. Phones: a full-screen map on demand.
   const [mapOn, setMapOn] = useState(() => {
@@ -99,7 +98,6 @@ export function ExplorePage() {
       if ((typeSlug || citySlug) && leavesRoute) navigate(`/explore${q.size ? `?${q}` : ''}`);
       else if (typeSlug || citySlug) setParams(toQuery({ ...next, subType: '', city: '' }), { replace: true });
       else setParams(q, { replace: true });
-      setShowSaved(false);
     },
     [filters, typeSlug, citySlug, navigate, setParams],
   );
@@ -331,7 +329,7 @@ export function ExplorePage() {
     if (top > window.innerHeight * 0.6) resultsTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const canMap = !mapBroken && !showSaved;
+  const canMap = !mapBroken;
   const showMap = canMap && mapOn;
   const few = !loading && !error && total > 0 && total < 4;
   const none = !loading && !error && total === 0;
@@ -410,13 +408,9 @@ export function ExplorePage() {
         </nav>
         <div className="sp-tools">
           {saved.length > 0 && (
-            <button
-              type="button"
-              className={`sp-tool${showSaved ? ' on' : ''}`}
-              onClick={() => setShowSaved((s) => !s)}
-            >
+            <Link to="/favorites" className="sp-tool">
               <Heart size={16} /> <span>Saved</span> <b>{saved.length}</b>
-            </button>
+            </Link>
           )}
           <MustHaves selected={filters.amenities} onToggle={toggleAmenity} onClear={() => commit({ amenities: [] })} />
           <button type="button" className="sp-tool" onClick={() => setPanelOpen(true)}>
@@ -433,138 +427,121 @@ export function ExplorePage() {
 
       <div className="sp-split">
         <section className="sp-results" aria-live="polite" aria-busy={loading} ref={resultsTop}>
-          {showSaved ? (
-            <>
-              <div className="sp-bar">
-                <div>
-                  <strong>Saved spaces</strong>
-                  <small>Kept on this device</small>
-                </div>
-                <button type="button" className="sp-link-btn" onClick={() => setShowSaved(false)}>
-                  Back to results
+          <>
+            <div className="sp-bar" key={flash} data-flash={flash > 0 || undefined}>
+              <div>
+                <strong>
+                  {loading
+                    ? 'Searching…'
+                    : error
+                      ? 'Couldn’t load spaces'
+                      : `${total.toLocaleString()} ${noun}${where}`}
+                </strong>
+                {summary && <small>{summary}</small>}
+              </div>
+              <label className="sp-sort">
+                Sort
+                <select value={filters.sort} onChange={(e) => commit({ sort: e.target.value })}>
+                  {Object.entries(SORTS)
+                    .filter(([k]) => k !== 'nearest' || hasPoint)
+                    .map(([k, v]) => (
+                      <option key={k} value={k}>
+                        {v.label}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            </div>
+            {notice && (
+              <p className="sp-notice" role="status">
+                {notice}
+              </p>
+            )}
+            {chips.length > 0 && (
+              <div className="sp-active">
+                {chips.map((c) => (
+                  <button
+                    key={c.label}
+                    type="button"
+                    className="sp-achip"
+                    onClick={c.clear}
+                    aria-label={`Remove ${c.label}`}
+                  >
+                    {c.label} <X size={13} />
+                  </button>
+                ))}
+                <button type="button" className="sp-link-btn" onClick={reset}>
+                  Clear all
                 </button>
               </div>
-              <div className="sp-grid">{saved.map(cardFor)}</div>
-            </>
-          ) : (
-            <>
-              <div className="sp-bar" key={flash} data-flash={flash > 0 || undefined}>
-                <div>
-                  <strong>
-                    {loading
-                      ? 'Searching…'
-                      : error
-                        ? 'Couldn’t load spaces'
-                        : `${total.toLocaleString()} ${noun}${where}`}
-                  </strong>
-                  {summary && <small>{summary}</small>}
-                </div>
-                <label className="sp-sort">
-                  Sort
-                  <select value={filters.sort} onChange={(e) => commit({ sort: e.target.value })}>
-                    {Object.entries(SORTS)
-                      .filter(([k]) => k !== 'nearest' || hasPoint)
-                      .map(([k, v]) => (
-                        <option key={k} value={k}>
-                          {v.label}
-                        </option>
-                      ))}
-                  </select>
-                </label>
-              </div>
-              {notice && (
-                <p className="sp-notice" role="status">
-                  {notice}
-                </p>
-              )}
-              {chips.length > 0 && (
-                <div className="sp-active">
-                  {chips.map((c) => (
-                    <button
-                      key={c.label}
-                      type="button"
-                      className="sp-achip"
-                      onClick={c.clear}
-                      aria-label={`Remove ${c.label}`}
-                    >
-                      {c.label} <X size={13} />
-                    </button>
-                  ))}
-                  <button type="button" className="sp-link-btn" onClick={reset}>
-                    Clear all
+            )}
+
+            {error ? (
+              <div className="error-state">
+                We couldn’t load spaces just now. This is usually a brief connection problem.
+                <p>
+                  <button type="button" className="button button-primary" onClick={() => setAttempt((n) => n + 1)}>
+                    Try again
                   </button>
-                </div>
-              )}
+                </p>
+              </div>
+            ) : loading && !results.length ? (
+              <div className="sp-grid">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <div className="sp-skel" key={i} aria-hidden="true">
+                    <i />
+                    <b />
+                    <b />
+                  </div>
+                ))}
+              </div>
+            ) : results.length ? (
+              <div className={`sp-grid${loading ? ' sp-grid-busy' : ''}`}>
+                {results.map((p, i) => (
+                  <Fragment key={p.id}>
+                    {cardFor(p)}
+                    {i === 3 && results.length >= 6 && areas.length > 0 && (
+                      <section className="sp-areas sp-wide" aria-label={`Popular areas in ${city!.name}`}>
+                        <div>
+                          <h2>Popular areas in {city!.name}</h2>
+                          <p>Jump straight to a neighbourhood.</p>
+                        </div>
+                        <div className="sp-areas-list">
+                          {areas.map((a) => (
+                            <button key={a} type="button" onClick={() => commit({ query: a })}>
+                              {a}
+                            </button>
+                          ))}
+                        </div>
+                      </section>
+                    )}
+                  </Fragment>
+                ))}
+                {!few && filters.page === 1 && (
+                  <div className="sp-wide">
+                    <HostPrompt city={city?.name} space={space} />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="sp-empty">
+                <span>
+                  <Search size={26} />
+                </span>
+                <h2>{space || city ? `No ${space ? space.plural : noun}${where} match yet` : 'Nothing matches yet'}</h2>
+                <p>New spaces are listed every week. Try one of the suggestions below.</p>
+              </div>
+            )}
 
-              {error ? (
-                <div className="error-state">
-                  We couldn’t load spaces just now. This is usually a brief connection problem.
-                  <p>
-                    <button type="button" className="button button-primary" onClick={() => setAttempt((n) => n + 1)}>
-                      Try again
-                    </button>
-                  </p>
-                </div>
-              ) : loading && !results.length ? (
-                <div className="sp-grid">
-                  {Array.from({ length: 6 }, (_, i) => (
-                    <div className="sp-skel" key={i} aria-hidden="true">
-                      <i />
-                      <b />
-                      <b />
-                    </div>
-                  ))}
-                </div>
-              ) : results.length ? (
-                <div className={`sp-grid${loading ? ' sp-grid-busy' : ''}`}>
-                  {results.map((p, i) => (
-                    <Fragment key={p.id}>
-                      {cardFor(p)}
-                      {i === 3 && results.length >= 6 && areas.length > 0 && (
-                        <section className="sp-areas sp-wide" aria-label={`Popular areas in ${city!.name}`}>
-                          <div>
-                            <h2>Popular areas in {city!.name}</h2>
-                            <p>Jump straight to a neighbourhood.</p>
-                          </div>
-                          <div className="sp-areas-list">
-                            {areas.map((a) => (
-                              <button key={a} type="button" onClick={() => commit({ query: a })}>
-                                {a}
-                              </button>
-                            ))}
-                          </div>
-                        </section>
-                      )}
-                    </Fragment>
-                  ))}
-                  {!few && filters.page === 1 && (
-                    <div className="sp-wide">
-                      <HostPrompt city={city?.name} space={space} />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="sp-empty">
-                  <span>
-                    <Search size={26} />
-                  </span>
-                  <h2>
-                    {space || city ? `No ${space ? space.plural : noun}${where} match yet` : 'Nothing matches yet'}
-                  </h2>
-                  <p>New spaces are listed every week. Try one of the suggestions below.</p>
-                </div>
-              )}
+            {(few || none) && (
+              <>
+                <WidenSearch filters={filters} total={total} space={space} cities={cities} commit={commit} />
+                <HostPrompt city={city?.name} space={space} empty={none} />
+              </>
+            )}
 
-              {(few || none) && (
-                <>
-                  <WidenSearch filters={filters} total={total} space={space} cities={cities} commit={commit} />
-                  <HostPrompt city={city?.name} space={space} empty={none} />
-                </>
-              )}
-
-              <ResultsPagination filters={filters} pages={pages} pageNumbers={pageNumbers} commit={commit} />
-            </>
-          )}
+            <ResultsPagination filters={filters} pages={pages} pageNumbers={pageNumbers} commit={commit} />
+          </>
         </section>
 
         {canMap && (

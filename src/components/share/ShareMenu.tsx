@@ -64,6 +64,7 @@ export function ShareMenu({
   text,
   className,
   label,
+  heading = 'Share this space',
   onShare,
 }: {
   url: string;
@@ -72,6 +73,8 @@ export function ShareMenu({
   className?: string;
   /** Show a text label beside the icon (a pill button) instead of the icon-only overlay button. */
   label?: string;
+  /** Title of the popup menu. */
+  heading?: string;
   /** Called once per share action, e.g. to record it for the host's stats. */
   onShare?: () => void;
 }) {
@@ -140,7 +143,7 @@ export function ShareMenu({
       </button>
       {open && (
         <div className="share-menu-pop" role="menu" aria-label="Share">
-          <p>Share this space</p>
+          <p>{heading}</p>
           {TARGETS.map(({ label, icon: Icon, href }) => (
             <a
               key={label}

@@ -51,8 +51,10 @@ import { AppShell } from '@/layouts/AppShell';
 import { HostEntry } from '@/features/host/HostEntry';
 import { AuthRedirect } from '@/features/auth/AuthRedirect';
 import { AuthModalProvider } from '@/features/auth/AuthModal';
+import { FavoritesProvider } from '@/features/favorites/Favorites';
 import { AuthCallbackPage } from '@/features/auth/AuthCallbackPage';
 import { TripsPage } from '@/features/account/TripsPage';
+import { FavoritesPage } from '@/features/favorites/FavoritesPage';
 import { TransactionsPage } from '@/features/account/TransactionsPage';
 import { Protected } from '@/routes/Protected';
 import { NotFoundPage } from '@/features/info/NotFoundPage';
@@ -62,6 +64,7 @@ export default function App() {
   if (forwardAuthHash()) return null;
   return (
     <AuthModalProvider>
+    <FavoritesProvider>
     <AppShell>
       <ErrorBoundary>
         <Suspense
@@ -94,6 +97,14 @@ export default function App() {
             <Route path="/scan/:token" element={<ScanPage />} />
             <Route path="/auth" element={<AuthRedirect />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
+            <Route
+              path="/favorites"
+              element={
+                <Protected title="Favourites">
+                  <FavoritesPage />
+                </Protected>
+              }
+            />
             <Route
               path="/trips"
               element={
@@ -227,6 +238,7 @@ export default function App() {
         </Suspense>
       </ErrorBoundary>
     </AppShell>
+    </FavoritesProvider>
     </AuthModalProvider>
   );
 }

@@ -25,6 +25,7 @@ import { mapsLink } from '@/lib/maps/places';
 import { startingPrice } from '@/components/cards/ListingCard';
 import { HostCard } from '@/components/cards';
 import { ShareMenu } from '@/components/share/ShareMenu';
+import { propertyShare } from '@/lib/shareCopy';
 import { ReportSection } from '@/features/reports/ReportSection';
 import { Amenities } from '@/features/stays/Amenities';
 import { areaOf } from '@/features/stays/explore/SpaceCard';
@@ -351,6 +352,7 @@ export function StayPage() {
   const seoDesc = `Rent ${name}, ${article} ${noun} in ${where || 'Ghana'}, ${priceText}. ${blurb}Verified host, clear refunds, pay by mobile money.`;
   const citySlug = (property.city ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const saved = isSaved(property.id);
+  const share = propertyShare(property, startingPrice(property));
   const barPrice = summary.quote
     ? { main: money(summary.quote.currency, summary.quote.final_amount), sub: `Total · ${summary.quote.stay_label}` }
     : { main: startingPrice(property).replace(/\.00(?= )/, ''), sub: 'Add dates for the total' };
@@ -417,8 +419,8 @@ export function StayPage() {
         <div className="st-actions">
           <ShareMenu
             url={`${window.location.origin}/stays/${property.id}`}
-            title={name}
-            text={`${name}${place ? ` in ${place}` : ''} — ${startingPrice(property)} on Lotnis`}
+            title={share.title}
+            text={share.description}
             label="Share"
             onShare={() => track('property', property.id, 'click_share')}
           />

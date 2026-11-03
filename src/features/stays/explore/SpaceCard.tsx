@@ -7,6 +7,7 @@ import { norm } from '@/lib/maps/places';
 import { track } from '@/lib/track';
 import type { CatalogCity, Property } from '@/types';
 import { ShareMenu } from '@/components/share/ShareMenu';
+import { propertyShare } from '@/lib/shareCopy';
 
 const MAX_PHOTOS = 5;
 
@@ -100,9 +101,7 @@ export function SpaceCard({
   const units = unitsOf(p);
   const href = `/stays/${p.id}`;
   const place = [area, p.city].filter(Boolean).join(', ');
-  const shareText = `${p.name.trim()}${place ? ` in ${place}` : ''}${
-    price ? ` — ${price.from ? 'from ' : ''}${price.amount} / ${price.per}` : ''
-  } on Lotnis`;
+  const share = propertyShare(p, price ? `${price.from ? 'From ' : ''}${price.amount} / ${price.per}` : '');
 
   const go = (step: number) => {
     const el = photoRow.current;
@@ -167,8 +166,8 @@ export function SpaceCard({
         <div className="sp-actions">
           <ShareMenu
             url={`${window.location.origin}${href}`}
-            title={p.name.trim()}
-            text={shareText}
+            title={share.title}
+            text={share.description}
             onShare={() => track('property', p.id, 'click_share')}
           />
           <button

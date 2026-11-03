@@ -1,14 +1,16 @@
-// Link previews for shareable event and space pages.
+// Link previews for shareable event and space (stay) pages.
 //
 // WhatsApp, Facebook, X, Telegram and Google read a page's Open Graph tags from the raw HTML —
 // they don't run JavaScript — so the single-page app's own tags never reach them. vercel.json routes
-// /events/:slug, /events/:slug/vote/:category and /events/:slug/vote/:category/:contestant here. This
+// /events/:slug, /events/:slug/vote/:category and /events/:slug/vote/:category/:contestant and /stays/:id here. This
 // function loads the normal app shell (index.html), swaps in tags for that exact page (the contestant's
 // picture, "Vote for {name} as {category}", the price of a vote…) and returns it. Browsers then boot the
 // app as usual. If the API is slow or down the untouched shell is returned, so pages never break.
 //
-// /stays/:id comes here too, but only for link-preview bots (see `has` in vercel.json): the backend can take
-// a while to wake, and renters opening a listing shouldn't wait on it for tags they never see.
+// /stays/:id only comes here for link-preview bots (see `has` in vercel.json): the backend can take a while to
+// wake, and renters opening a listing shouldn't wait on it for tags they never see.
+
+import { eventShare, propertyShare } from '../src/lib/shareCopy.js';
 
 const API = (process.env.API_URL || process.env.VITE_API_URL || '').replace(/\/$/, '');
 const SITE = (process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
@@ -66,49 +68,36 @@ async function get(path) {
   });
   if (!res.ok) return null;
   const body = await res.json();
-  // Events come wrapped in { success, data }; a space from /explore/:id comes as it is.
-  if (body?.success === false) return null;
-  return body?.success ? body.data : body;
+  if (body?.success) return body.data;
+  return body?.id ? body : null; // /property/:id answers with the bare listing
 }
 
-const STAY_UNIT = { hour: 'hour', day: 'night', week: 'week', month: 'month', year: 'year' };
-const stayPrice = (currency, amount, period) =>
-  `${money(currency, amount)} / ${STAY_UNIT[period] ?? period ?? 'night'}`;
-// Stored photos can be 6 MB+, too big for WhatsApp to show, so ask Supabase for a smaller JPEG copy.
-const sharePhoto = (url) =>
-  url?.includes('/storage/v1/object/public/')
-    ? `${url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')}?width=1200&resize=contain&quality=70&format=origin`
-    : url;
-
-export function stayPreview(p, url) {
-  const name = String(p.name).trim();
-  const kind = p.sub_type ? `${p.sub_type.charAt(0).toUpperCase()}${p.sub_type.slice(1)}`.replace(/-/g, ' ') : 'Space';
-  const rooms = (p.rooms ?? []).filter((r) => !r.deleted_at && r.is_available !== false);
-  const cheapest = rooms.reduce((a, r) => (!a || r.price_per_period < a.price_per_period ? r : a), null);
-  const price =
-    p.price != null
-      ? stayPrice(p.currency, p.price, p.pricing_period)
-      : cheapest
-        ? `From ${stayPrice(cheapest.currency || p.currency, cheapest.price_per_period, cheapest.pricing_period || p.pricing_period)}`
-        : '';
-  const lead = [price, p.city && `in ${p.city}`].filter(Boolean).join(' ');
-  const about = clip(p.tagline || p.description, 110);
-  const photo = [...(p.property_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
-  return {
-    title: `${name} — ${kind} for rent${p.city ? ` in ${p.city}` : ''}`,
-    description: [lead, about].filter(Boolean).join('. ') || `${name} on Lotnis.`,
-    image: sharePhoto(photo?.public_url),
-    imageAlt: `${name}${p.city ? ` in ${p.city}` : ''}`,
-    url,
-  };
+/** "GH₵500 / month", or "From GH₵300 / month" when only rooms are priced. */
+function stayPrice(p) {
+  const per = (v) => ({ hour: 'hour', day: 'night', week: 'week', month: 'month', year: 'year' })[v || 'day'] || v;
+  if (p.price != null) return `${money(p.currency, p.price)} / ${per(p.pricing_period)}`;
+  const rooms = (p.rooms || []).filter((r) => !r.deleted_at);
+  if (!rooms.length) return '';
+  const r = rooms.reduce((a, b) => (b.price_per_period < a.price_per_period ? b : a));
+  return `From ${money(r.currency || p.currency, r.price_per_period)} / ${per(r.pricing_period || p.pricing_period)}`;
 }
 
 /** Build the preview for a request, or null to serve the app shell unchanged. */
 export async function previewFor({ slug, cat, nominee, stay }, origin, fetchData = get) {
   const site = SITE || origin;
   if (stay) {
-    const space = await fetchData(`/explore/${encodeURIComponent(stay)}`);
-    return space?.name ? stayPreview(space, `${site}/stays/${stay}`) : null;
+    const p = await fetchData(`/property/${encodeURIComponent(stay)}`);
+    if (!p) return null;
+    const url = `${site}/stays/${stay}`;
+    const copy = propertyShare(p, stayPrice(p), url);
+    const images = [...(p.property_images || [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    return {
+      title: copy.title,
+      description: clip(copy.description, 200),
+      image: images[0]?.public_url,
+      imageAlt: `${p.name} in ${p.city || 'Ghana'}`,
+      url,
+    };
   }
   if (!slug) return null;
   if (cat) {
@@ -138,9 +127,10 @@ export async function previewFor({ slug, cat, nominee, stay }, origin, fetchData
   }
   const ev = await fetchData(`/events/${encodeURIComponent(slug)}`);
   if (!ev) return null;
+  const copy = eventShare(ev);
   return {
     title: `${ev.title} — tickets${ev.city ? `, ${ev.city}` : ''}`,
-    description: clip(ev.summary || ev.description, 160),
+    description: clip(copy.description, 200),
     image: ev.cover_image_url,
     imageAlt: ev.title,
     url: `${site}/events/${slug}`,
