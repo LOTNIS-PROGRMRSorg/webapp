@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useEffect, useState } from 'react';
 import { cedis, fmtDate } from '@/features/events/eventUi';
 import { eventApi, PayoutItem, PayoutSummary } from '@/lib/api/events';
@@ -40,13 +41,16 @@ export function HostTransactions() {
       <p className="lead">
         Stays, event tickets and votes in one list: what the guest paid, Lotnis's fee, and what you receive.
       </p>
-      <div className="notif-toolbar">
-        {[['', 'All'], ...(summary?.by_service ?? []).map((s) => [s.service, s.label])].map(([v, l]) => (
-          <button key={v} className={`chip ${service === v ? 'chip-active' : ''}`} onClick={() => setService(v)}>
-            {l}
-          </button>
-        ))}
-      </div>
+      <PillTabs
+        role="group"
+        label="Service"
+        value={service}
+        onChange={setService}
+        tabs={[
+          { key: '', label: 'All' },
+          ...(summary?.by_service ?? []).map((s) => ({ key: s.service, label: s.label })),
+        ]}
+      />
       <div className="metric-grid metric-grid-4">
         <Stat label="Transactions" value={rows.length} />
         <Stat label="Customers paid" value={cedis(gross, c)} />

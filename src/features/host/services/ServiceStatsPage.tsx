@@ -1,10 +1,11 @@
+import { PillTabs } from '@/components/tabs';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Seo } from '@/lib/seo/seo';
 import { engagementApi, type EventEngagement, type PropertyEngagement } from '@/lib/api/engagement';
 import { cedis } from '@/lib/dates';
 import { StatCard, StatGrid, PanelCard } from '@/components/cards';
-import { ChipGroup, ErrorState, LoadingState, PageHeader } from '@/components/ui';
+import { ErrorState, LoadingState, PageHeader } from '@/components/ui';
 import { EngagementChart, Funnel } from '@/components/stats/EngagementChart';
 
 const ACTION_LABEL: Record<string, string> = {
@@ -56,11 +57,12 @@ export function ServiceStatsPage() {
         ← Services
       </Link>
       <PageHeader eyebrow={isEvent ? 'Event statistics' : 'Listing statistics'} title={name ?? 'Statistics'}>
-        <ChipGroup
+        <PillTabs
+          role="group"
           label="Period"
           value={days}
           onChange={setDays}
-          options={[
+          tabs={[
             { key: '7', label: '7 days' },
             { key: '30', label: '30 days' },
             { key: '90', label: '90 days' },

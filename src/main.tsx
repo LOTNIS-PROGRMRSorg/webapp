@@ -9,6 +9,7 @@ import '@/styles/design.css';
 import '@/styles/events.css';
 import '@/styles/event-detail.css';
 import '@/styles/components.css';
+import '@/components/tabs/tabs.css';
 import '@/styles/headers.css';
 
 async function start() {

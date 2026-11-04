@@ -345,42 +345,6 @@
 .sp-tabs::-webkit-scrollbar {
   display: none;
 }
-.sp-tabs button {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 15px 0 13px;
-  border-radius: 99px;
-  border: 1px solid var(--c-line);
-  background: var(--c-surface);
-  color: var(--c-ink-soft);
-  font-size: 0.88rem;
-  font-weight: 600;
-  white-space: nowrap;
-  transition:
-    border-color 0.15s,
-    background 0.15s,
-    color 0.15s;
-}
-.sp-tabs button svg {
-  flex: none;
-  color: var(--c-ink-muted);
-  transition: color 0.15s;
-}
-.sp-tabs button:hover {
-  border-color: var(--c-ink-muted);
-  color: var(--c-ink);
-}
-.sp-tabs button[aria-pressed='true'] {
-  background: var(--c-ink);
-  border-color: var(--c-ink);
-  color: #fff;
-}
-.sp-tabs button[aria-pressed='true'] svg {
-  color: #fff;
-}
 .sp-tools {
   display: flex;
   align-items: center;

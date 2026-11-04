@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useEffect, useState } from 'react';
 import { cedis, fmtDateTime } from '@/features/events/eventUi';
 import { eventApi } from '@/lib/api/events';
@@ -15,24 +16,20 @@ export function OrdersTab({ id, currency }: { id: string; currency: string }) {
   }, [id, kind, page]);
   return (
     <>
-      <div className="notif-toolbar">
-        {[
-          ['', 'All'],
-          ['ticket', 'Tickets'],
-          ['vote', 'Votes'],
-        ].map(([v, l]) => (
-          <button
-            key={v}
-            className={`chip ${kind === v ? 'chip-active' : ''}`}
-            onClick={() => {
-              setKind(v);
-              setPage(1);
-            }}
-          >
-            {l}
-          </button>
-        ))}
-      </div>
+      <PillTabs
+        role="group"
+        label="Order type"
+        value={kind}
+        onChange={(v) => {
+          setKind(v);
+          setPage(1);
+        }}
+        tabs={[
+          { key: '', label: 'All' },
+          { key: 'ticket', label: 'Tickets' },
+          { key: 'vote', label: 'Votes' },
+        ]}
+      />
       {!res ? (
         <div className="empty-state">Loading…</div>
       ) : res.data.length ? (

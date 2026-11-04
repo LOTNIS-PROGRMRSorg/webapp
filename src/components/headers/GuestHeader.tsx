@@ -14,7 +14,17 @@ const tabs = [
 ];
 
 /** 3D still that swaps to a short video clip (when one exists in /videos/nav) and plays it on hover / when the tab becomes active. */
-function TabMedia({ name, image, active, hovered }: { name: string; image: string; active: boolean; hovered: boolean }) {
+function TabMedia({
+  name,
+  image,
+  active,
+  hovered,
+}: {
+  name: string;
+  image: string;
+  active: boolean;
+  hovered: boolean;
+}) {
   const video = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
   const play = active || hovered;
@@ -28,7 +38,14 @@ function TabMedia({ name, image, active, hovered }: { name: string; image: strin
   }, [play, active, ready]);
   return (
     <span className="hdr-tab-media">
-      <img className={ready ? 'hdr-tab-icon hdr-tab-icon-hidden' : 'hdr-tab-icon'} src={image} alt="" width={52} height={52} draggable={false} />
+      <img
+        className={ready ? 'hdr-tab-icon hdr-tab-icon-hidden' : 'hdr-tab-icon'}
+        src={image}
+        alt=""
+        width={52}
+        height={52}
+        draggable={false}
+      />
       <video
         ref={video}
         className="hdr-tab-video"
@@ -153,7 +170,12 @@ export function GuestHeader({ session, onSignOut }: { session: AuthUser | null; 
           </AuthLink>
           {session && <NotificationBell />}
           {session ? (
-            <button className="hdr-circle" aria-label="Account" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+            <button
+              className="hdr-circle"
+              aria-label="Account"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
               <UserRound size={20} />
             </button>
           ) : (

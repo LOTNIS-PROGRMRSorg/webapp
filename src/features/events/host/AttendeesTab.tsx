@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -46,18 +47,19 @@ export function AttendeesTab({ id }: { id: string }) {
             setPage(1);
           }}
         />
-        {['', 'valid', 'used', 'refund_pending', 'refunded'].map((s) => (
-          <button
-            key={s}
-            className={`chip ${status === s ? 'chip-active' : ''}`}
-            onClick={() => {
-              setStatus(s);
-              setPage(1);
-            }}
-          >
-            {s ? s.replace('_', ' ') : 'All'}
-          </button>
-        ))}
+        <PillTabs
+          role="group"
+          label="Ticket status"
+          value={status}
+          onChange={(s) => {
+            setStatus(s);
+            setPage(1);
+          }}
+          tabs={['', 'valid', 'used', 'refund_pending', 'refunded'].map((s) => ({
+            key: s,
+            label: s ? s.replace('_', ' ') : 'All',
+          }))}
+        />
         <button className="button button-quiet" onClick={download}>
           <Download size={15} /> CSV
         </button>

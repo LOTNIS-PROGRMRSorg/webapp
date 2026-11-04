@@ -8,9 +8,7 @@ export function ReadMore({ text, limit = 320 }: { text: string; limit?: number }
   const cut = long ? text.slice(0, limit).replace(/\s+\S*$/, '') : text;
   return (
     <div className="evd-readmore">
-      <p className="evd-desc">
-        {open || !long ? text : `${cut}…`}
-      </p>
+      <p className="evd-desc">{open || !long ? text : `${cut}…`}</p>
       {long && (
         <button type="button" className="evd-more" aria-expanded={open} onClick={() => setOpen(!open)}>
           {open ? 'Show less' : 'Read more'}

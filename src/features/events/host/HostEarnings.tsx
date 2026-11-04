@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useEffect, useMemo, useState } from 'react';
 import { Check, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -112,13 +113,19 @@ export function HostEarnings() {
           )}
           <h2 className="subsection-heading">Payments</h2>
           <div className="notif-toolbar">
-            {[['', 'All'], ...(Object.keys(BUCKET_LABEL) as PayoutBucket[]).map((k) => [k, BUCKET_LABEL[k]])].map(
-              ([v, l]) => (
-                <button key={v} className={`chip ${bucket === v ? 'chip-active' : ''}`} onClick={() => setBucket(v)}>
-                  {l}
-                </button>
-              ),
-            )}
+            <PillTabs
+              role="group"
+              label="Payment status"
+              value={bucket}
+              onChange={setBucket}
+              tabs={[
+                { key: '', label: 'All' },
+                ...(Object.keys(BUCKET_LABEL) as PayoutBucket[]).map((k) => ({
+                  key: k as string,
+                  label: BUCKET_LABEL[k],
+                })),
+              ]}
+            />
             <select className="ev-mini-select" value={service} onChange={(e) => setService(e.target.value)}>
               <option value="">All services</option>
               {summary.by_service.map((s) => (

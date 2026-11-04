@@ -1,7 +1,5 @@
 export { EventHero } from './EventHero';
 export { EventNotices } from './EventNotices';
-export { SectionNav } from './SectionNav';
-export type { Section } from './SectionNav';
 export { AboutSection } from './AboutSection';
 export { EventSidebar } from './EventSidebar';
 export { ReviewsSection } from './ReviewsSection';

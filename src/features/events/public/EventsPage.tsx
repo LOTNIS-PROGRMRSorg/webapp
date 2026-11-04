@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight,
@@ -31,8 +32,14 @@ export function EventsPage() {
     free = params.get('free') === 'true';
 
   useEffect(() => {
-    eventApi.categories().then(setCategories).catch(() => {});
-    eventApi.cities().then(setCities).catch(() => {});
+    eventApi
+      .categories()
+      .then(setCategories)
+      .catch(() => {});
+    eventApi
+      .cities()
+      .then(setCities)
+      .catch(() => {});
   }, []);
   const range = useMemo(() => {
     const now = new Date();
@@ -149,30 +156,28 @@ export function EventsPage() {
           <div className="ev-filter-options">
             <span className="ev-filter-label">When and price</span>
             <div className="ev-chips" role="group" aria-label="Date and price filters">
-              {[
-                ['', 'Anytime'],
-                ['today', 'Today'],
-                ['week', 'This week'],
-                ['month', 'This month'],
-              ].map(([v, label]) => (
-                <button
-                  type="button"
-                  key={v}
-                  className={`chip ${when === v ? 'chip-active' : ''}`}
-                  aria-pressed={when === v}
-                  onClick={() => set('when', v)}
-                >
-                  {label}
-                </button>
-              ))}
-              <button
-                type="button"
-                className={`chip ${free ? 'chip-active' : ''}`}
-                aria-pressed={free}
-                onClick={() => set('free', free ? '' : 'true')}
-              >
-                Free
-              </button>
+              <PillTabs
+                role="group"
+                label="When"
+                value={when}
+                onChange={(v) => set('when', v)}
+                tabs={[
+                  { key: '', label: 'Anytime' },
+                  { key: 'today', label: 'Today' },
+                  { key: 'week', label: 'This week' },
+                  { key: 'month', label: 'This month' },
+                ]}
+                trailing={
+                  <button
+                    type="button"
+                    className={`pt ${free ? 'pt-on' : ''}`}
+                    aria-pressed={free}
+                    onClick={() => set('free', free ? '' : 'true')}
+                  >
+                    <span className="pt-label">Free</span>
+                  </button>
+                }
+              />
             </div>
           </div>
         </div>

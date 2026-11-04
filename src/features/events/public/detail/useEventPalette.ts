@@ -46,12 +46,20 @@ function readPalette(img: HTMLImageElement): Palette | null {
   const first = bins.indexOf(Math.max(...bins));
   const rest = bins.map((w, i) => (Math.min(Math.abs(i - first), 12 - Math.abs(i - first)) >= 2 ? w : 0));
   const second = rest.indexOf(Math.max(...rest));
-  return { h1: first * 30 + 15, h2: (rest[second] > bins[first] * 0.25 ? second : (first + 1) % 12) * 30 + 15, vivid: vivid / (size * size) };
+  return {
+    h1: first * 30 + 15,
+    h2: (rest[second] > bins[first] * 0.25 ? second : (first + 1) % 12) * 30 + 15,
+    vivid: vivid / (size * size),
+  };
 }
 
 /** Theme variables for an event page, taken from its cover image. */
 export function useEventPalette(cover: string | null | undefined, seed: string): CSSProperties {
-  const [palette, setPalette] = useState<Palette>(() => ({ h1: hueFromText(seed), h2: (hueFromText(seed) + 40) % 360, vivid: 0 }));
+  const [palette, setPalette] = useState<Palette>(() => ({
+    h1: hueFromText(seed),
+    h2: (hueFromText(seed) + 40) % 360,
+    vivid: 0,
+  }));
   useEffect(() => {
     const fallback = hueFromText(seed);
     setPalette({ h1: fallback, h2: (fallback + 40) % 360, vivid: 0 });

@@ -18,7 +18,10 @@ export function NomineeCard({
   showCounts: boolean;
   canVote: boolean;
 }) {
-  const medal = showCounts && nominee.rank && nominee.rank <= 3 && (nominee.votes ?? 0) > 0 ? MEDAL[nominee.rank as 1 | 2 | 3] : null;
+  const medal =
+    showCounts && nominee.rank && nominee.rank <= 3 && (nominee.votes ?? 0) > 0
+      ? MEDAL[nominee.rank as 1 | 2 | 3]
+      : null;
   return (
     <Link to={to} className={`evd-nominee ${medal ? `is-${medal.cls}` : ''}`}>
       <div className="evd-nominee-photo">

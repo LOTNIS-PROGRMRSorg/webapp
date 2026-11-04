@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useCallback, useEffect, useState } from 'react';
 import { Bell } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -105,17 +106,16 @@ export function NotificationsPage({
       <h1>Notifications</h1>
       <p className="lead">Updates on your trips, refunds and — if you host — your listings and verification.</p>
       <div className="notif-toolbar">
-        {(
-          [
-            ['all', 'All'],
-            ['user', 'My trips'],
-            ['host', 'Hosting'],
-          ] as const
-        ).map(([key, label]) => (
-          <button key={key} className={`chip ${tab === key ? 'chip-active' : ''}`} onClick={() => setTab(key)}>
-            {label}
-          </button>
-        ))}
+        <PillTabs
+          label="Notifications"
+          value={tab}
+          onChange={setTab}
+          tabs={[
+            { key: 'all', label: 'All' },
+            { key: 'user', label: 'My trips' },
+            { key: 'host', label: 'Hosting' },
+          ]}
+        />
         <span className="grow" />
         <button className="chip" onClick={readAll}>
           Mark all read
