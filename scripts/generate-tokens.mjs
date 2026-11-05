@@ -11,11 +11,11 @@ const out = join(root, 'src/theme/tokens.css');
 
 const lines = [
   '/* GENERATED from palette.json by scripts/generate-tokens.mjs — edit the palette, not this file. */',
-  ':root{',
-  ...Object.entries(palette.colors).map(([name, value]) => `  --c-${name}:${value};`),
+  ':root {',
+  ...Object.entries(palette.colors).map(([name, value]) => `  --c-${name}: ${value};`),
   '  /* short names the older stylesheets already use */',
-  ...Object.entries(palette.aliases).map(([alias, target]) => `  --${alias}:var(--c-${target});`),
-  ...Object.entries(palette.shadows).map(([name, value]) => `  --shadow-${name}:${value};`),
+  ...Object.entries(palette.aliases).map(([alias, target]) => `  --${alias}: var(--c-${target});`),
+  ...Object.entries(palette.shadows).map(([name, value]) => `  --shadow-${name}: ${value};`),
   '}',
   '',
 ];
