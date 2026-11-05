@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   BadgeCheck,
@@ -26,6 +27,7 @@ import {
   EXTRAS,
   Filters,
   INTENTS,
+  type IntentKey,
   intentOf,
   intentPatch,
   PAGE_SIZE,
@@ -378,19 +380,18 @@ export function ExplorePage() {
       </div>
 
       <div className="sp-intents">
-        <nav className="sp-tabs" aria-label="What is the space for?">
-          {INTENTS.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              type="button"
-              aria-pressed={intent === key}
-              onClick={() => commit(intentPatch(key, filters))}
-            >
-              <Icon size={17} strokeWidth={1.9} />
-              {label}
-            </button>
-          ))}
-        </nav>
+        <PillTabs<IntentKey>
+          className="sp-tabs"
+          label="What is the space for?"
+          role="group"
+          value={(intent ?? '') as IntentKey}
+          onChange={(key) => commit(intentPatch(key, filters))}
+          tabs={INTENTS.map(({ key, label, icon: Icon }) => ({
+            key,
+            label,
+            icon: <Icon size={17} strokeWidth={1.9} />,
+          }))}
+        />
         <div className="sp-tools">
           {saved.length > 0 && (
             <Link to="/favorites" className="sp-tool">

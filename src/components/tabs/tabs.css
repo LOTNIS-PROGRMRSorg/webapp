@@ -1,0 +1,160 @@
+/*
+ * Raised pill tabs — one surface for every tab, filter and category chip on the site.
+ * Resting: white with a faint top-lit gradient, a hairline edge and layered shadows (tight contact shadow +
+ * soft wide one) so it sits just above the page. Selected: the same pill, lifted further with deeper shadows.
+ * Only the surface is defined here; each control keeps its own size, spacing and icons.
+ */
+:root {
+  /* A pill is a thin physical object: lit top edge, a light-grey bottom edge for thickness, and a tight layered shadow. */
+  --pill-bg: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  --pill-edge: #e8e8e8;
+  --pill-edge-bottom: #d6d6d6;
+  --pill-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 3px rgba(0, 0, 0, 0.12),
+    0 1px 1px rgba(0, 0, 0, 0.08);
+  --pill-shadow-hover: var(--pill-shadow);
+  --pill-shadow-on:
+    inset 0 2px 4px rgba(0, 0, 0, 0.12), inset 0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ── The component: PillTabs / PillAnchorTabs ─────────────────────────────── */
+.pt-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 10px; /* room around the pills so shadows are never clipped by the scroller */
+  margin: -6px -8px -2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.pt-row::-webkit-scrollbar {
+  display: none;
+}
+.pt-sticky {
+  position: sticky;
+  top: 64px;
+  z-index: 5;
+}
+.pt {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  color: var(--c-ink);
+  font: 500 0.86rem/1.2 var(--body, inherit);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.pt:has(.pt-icon) {
+  padding-left: 10px;
+}
+.pt:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pt:focus-visible {
+  outline: 2px solid var(--c-ink);
+  outline-offset: 3px;
+}
+.pt-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--c-black) 22%, transparent));
+}
+span.pt-icon {
+  width: auto;
+  height: auto;
+  color: var(--c-ink-muted);
+  filter: none;
+}
+.pt-soon {
+  font: 700 0.6rem/1 var(--body, inherit);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  background: var(--c-surface-3);
+  padding: 3px 6px;
+  border-radius: 99px;
+}
+.pt-count {
+  font: 600 0.74rem/1 var(--body, inherit);
+  color: var(--c-muted);
+}
+.pt-on .pt-count {
+  color: var(--c-ink);
+}
+.pt-badge {
+  font: 700 0.66rem/1 var(--body, inherit);
+  font-style: normal;
+  background: var(--c-danger-solid);
+  color: var(--c-white);
+  border-radius: 99px;
+  padding: 3px 7px;
+}
+
+/* ── The shared surface: component pills, leftover chips and the event category shortcuts ──────── */
+.pt,
+.chip,
+.ev-page .ev-category-shortcut {
+  border: 1px solid var(--pill-edge);
+  border-bottom-color: var(--pill-edge-bottom);
+  border-radius: 999px;
+  background: var(--pill-bg);
+  box-shadow: var(--pill-shadow);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    color 0.12s ease;
+}
+.pt:hover:not(:disabled),
+.chip:hover:not(:disabled),
+.ev-page .ev-category-shortcut:hover {
+  box-shadow: var(--pill-shadow-hover);
+  color: var(--c-ink);
+}
+/* pressed: the button starts to sink */
+.pt:active:not(:disabled),
+.chip:active:not(:disabled),
+.ev-page .ev-category-shortcut:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 0 1px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+/* selected: pushed IN — the outer shadow is gone and the surface sits below its neighbours */
+.pt-on,
+.pt-on:hover:not(:disabled),
+.pt-on:active:not(:disabled),
+.chip-active,
+.chip-active:hover:not(:disabled),
+.chip-active:active:not(:disabled),
+.ev-page .ev-category-shortcut.is-active,
+.ev-page .ev-category-shortcut.is-active:hover {
+  transform: none;
+  border-color: #dcdcdc;
+  border-top-color: #cfcfcf;
+  border-bottom-color: #e8e8e8;
+  background: linear-gradient(180deg, #f1f1f1 0%, #f7f7f7 100%);
+  color: var(--c-ink);
+  box-shadow: var(--pill-shadow-on);
+}
+.ev-page .ev-category-shortcut.is-active svg {
+  color: var(--c-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt,
+  .chip,
+  .ev-page .ev-category-shortcut {
+    transition: none;
+  }
+}

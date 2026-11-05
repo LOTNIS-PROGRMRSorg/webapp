@@ -1,3 +1,4 @@
+import { PillAnchorTabs } from '@/components/tabs';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Seo } from '@/lib/seo/seo';
@@ -15,9 +16,7 @@ import {
   OrganiserTerms,
   eventJsonLd,
   ReviewsSection,
-  SectionNav,
 } from './detail';
-import type { Section } from './detail';
 import { useEventPalette } from './detail/useEventPalette';
 
 // ── Event page ────────────────────────────────────────────────────────────────
@@ -71,7 +70,7 @@ export function EventPage() {
 
   const cancelled = ev.status === 'cancelled';
   const ended = new Date(ev.ends_at) < new Date();
-  const sections: Section[] = [
+  const sections = [
     { id: 'about', label: 'About' },
     { id: 'tickets', label: cancelled || ended ? 'Tickets' : 'Get tickets' },
     ...(ev.voting ? [{ id: 'vote', label: 'Vote' }] : []),
@@ -96,7 +95,8 @@ export function EventPage() {
       </Link>
       <EventHero ev={ev} canBuy={!cancelled && !ended && ev.status === 'published'} />
       <EventNotices ev={ev} />
-      <SectionNav
+      <PillAnchorTabs
+        label="Event sections"
         sections={sections}
         onJump={(id) => {
           if (id === 'tickets') track('event', ev.id, 'click_tickets');

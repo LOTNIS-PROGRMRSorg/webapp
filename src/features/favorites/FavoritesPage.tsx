@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useEffect, useMemo, useState } from 'react';
 import { Heart, Home, Ticket, UtensilsCrossed, Wrench } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -48,20 +49,12 @@ export function FavoritesPage() {
         <span className="ev-page-heading-note">Spaces and events you’ve saved, all in one place</span>
       </header>
 
-      <div className="fav-tabs" role="tablist" aria-label="Favourites by service">
-        {tabs.map(([key, label, count]) => (
-          <button
-            key={key}
-            type="button"
-            role="tab"
-            aria-selected={tab === key}
-            className={`fav-tab${tab === key ? ' on' : ''}`}
-            onClick={() => setTab(key)}
-          >
-            {label} <b>{count}</b>
-          </button>
-        ))}
-      </div>
+      <PillTabs
+        label="Favourites by service"
+        value={tab}
+        onChange={setTab}
+        tabs={tabs.map(([key, label, count]) => ({ key, label, count }))}
+      />
 
       {error ? (
         <div className="error-state" role="alert">

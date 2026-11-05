@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { EventStatusPill, fmtDateTime } from '@/features/events/eventUi';
@@ -100,22 +101,16 @@ export function HostEventManage() {
         {fmtDateTime(ev.starts_at)} → {fmtDateTime(ev.ends_at)} · {ev.venue_name}, {ev.city}
       </p>
       <StatusBanner data={data} reload={reload} />
-      <div className="tabs tabs-host" role="tablist">
-        {tabs.map((t) => (
-          <button
-            key={t}
-            role="tab"
-            aria-selected={tab === t}
-            className={`tab ${tab === t ? 'tab-on' : ''}`}
-            onClick={() => setParams({ tab: t }, { replace: true })}
-          >
-            {TAB_LABEL[t]}
-            {t === 'refunds' && data.stats.refund_requests_pending ? (
-              <em className="host-link-badge">{data.stats.refund_requests_pending}</em>
-            ) : null}
-          </button>
-        ))}
-      </div>
+      <PillTabs
+        label="Event sections"
+        value={tab}
+        onChange={(t) => setParams({ tab: t }, { replace: true })}
+        tabs={tabs.map((t) => ({
+          key: t,
+          label: TAB_LABEL[t],
+          badge: t === 'refunds' ? data.stats.refund_requests_pending : undefined,
+        }))}
+      />
       {tab === 'overview' && <Overview data={data} reload={reload} />}
       {tab === 'tickets' && <TicketsTab data={data} reload={reload} />}
       {tab === 'gates' && <GatesTab data={data} />}

@@ -35,7 +35,9 @@ export function ReviewsSection({ ev, reviews }: { ev: EventDetail; reviews: Revi
           </article>
         ))
       ) : (
-        <div className="empty-state">No reviews yet. Reviews come from people whose ticket was scanned at the gate.</div>
+        <div className="empty-state">
+          No reviews yet. Reviews come from people whose ticket was scanned at the gate.
+        </div>
       )}
     </section>
   );

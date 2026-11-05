@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
@@ -36,18 +37,16 @@ export function HostBookings() {
   return (
     <section className="host-page">
       <PageHeader eyebrow="Bookings" title="Reservations" />
-      <div className="notif-toolbar">
-        {(['requests', 'upcoming', 'past', 'cancelled'] as BookingTab[]).map((key) => (
-          <button
-            key={key}
-            className={`chip ${tab === key ? 'chip-active' : ''}`}
-            onClick={() => setTab(key)}
-            style={{ textTransform: 'capitalize' }}
-          >
-            {key} ({groups[key].length})
-          </button>
-        ))}
-      </div>
+      <PillTabs
+        label="Reservations"
+        value={tab}
+        onChange={setTab}
+        tabs={(['requests', 'upcoming', 'past', 'cancelled'] as BookingTab[]).map((key) => ({
+          key,
+          label: key.charAt(0).toUpperCase() + key.slice(1),
+          count: groups[key].length,
+        }))}
+      />
       {error ? (
         <div className="error-state">{error}</div>
       ) : loading ? (

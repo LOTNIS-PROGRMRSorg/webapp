@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { useMemo, useState } from 'react';
 import { ArrowRight, Trophy, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -39,20 +40,12 @@ export function VoteShowcase({ ev }: { ev: EventDetail }) {
         </div>
       </div>
 
-      <div className="evd-cats" role="tablist" aria-label="Voting categories">
-        {v.categories.map((c) => (
-          <button
-            key={c.id}
-            role="tab"
-            aria-selected={c.id === category.id}
-            className={`evd-cat ${c.id === category.id ? 'is-on' : ''}`}
-            onClick={() => setActiveId(c.id)}
-          >
-            {c.name}
-            <small>{c.nominees.length}</small>
-          </button>
-        ))}
-      </div>
+      <PillTabs
+        label="Voting categories"
+        value={category.id}
+        onChange={setActiveId}
+        tabs={v.categories.map((c) => ({ key: c.id, label: c.name, count: c.nominees.length }))}
+      />
 
       <div className="evd-cat-panel">
         <div className="evd-cat-info">
@@ -82,7 +75,9 @@ export function VoteShowcase({ ev }: { ev: EventDetail }) {
             />
           ))}
         </div>
-        {!v.show_counts && <p className="evd-vote-note">Results stay hidden until voting closes. Votes are final once paid.</p>}
+        {!v.show_counts && (
+          <p className="evd-vote-note">Results stay hidden until voting closes. Votes are final once paid.</p>
+        )}
       </div>
     </section>
   );

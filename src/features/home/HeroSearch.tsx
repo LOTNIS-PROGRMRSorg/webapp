@@ -1,3 +1,4 @@
+import { PillTabs } from '@/components/tabs';
 import { FormEvent, useState } from 'react';
 import {
   BadgeCheck,
@@ -63,24 +64,18 @@ export function HeroSearch() {
 
   return (
     <div className="lp-container lp-search-wrap reveal">
-      <div className="lp-tabs" role="tablist" aria-label="What are you looking for?">
-        {LINES.map((l) => {
-          const Icon = LINE_ICON[l.key];
-          return (
-            <button
-              key={l.key}
-              type="button"
-              role="tab"
-              aria-selected={tab === l.key}
-              className={tab === l.key ? 'on' : ''}
-              onClick={() => setTab(l.key)}
-            >
-              <Icon size={17} /> {l.label}
-              {l.status === 'soon' && <em>Soon</em>}
-            </button>
-          );
-        })}
-      </div>
+      <PillTabs
+        className="lp-tabs"
+        label="What are you looking for?"
+        value={tab}
+        onChange={(k) => setTab(k)}
+        tabs={LINES.map((l) => ({
+          key: l.key,
+          label: l.label,
+          icon: `/images/nav/${l.key}.png`,
+          soon: l.status === 'soon',
+        }))}
+      />
       <form className="lp-search" role="search" onSubmit={submit}>
         {tab === 'spaces' ? (
           <>
