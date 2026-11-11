@@ -18,6 +18,7 @@ import {
   ReviewsSection,
 } from './detail';
 import { useEventPalette } from './detail/useEventPalette';
+import { Countdown } from './detail/Countdown';
 
 // ── Event page ────────────────────────────────────────────────────────────────
 
@@ -63,7 +64,7 @@ export function EventPage() {
     );
   if (!ev)
     return (
-      <div className="page">
+      <div className="page evd evd-loading" aria-busy="true" aria-label="Loading event details">
         <div className="skeleton-hero" />
       </div>
     );
@@ -72,7 +73,7 @@ export function EventPage() {
   const ended = new Date(ev.ends_at) < new Date();
   const sections = [
     { id: 'about', label: 'About' },
-    { id: 'tickets', label: cancelled || ended ? 'Tickets' : 'Get tickets' },
+    { id: 'tickets', label: cancelled || ended ? 'Ticket information' : 'Tickets' },
     ...(ev.voting ? [{ id: 'vote', label: 'Vote' }] : []),
     { id: 'reviews', label: `Reviews${ev.rating ? ` (${ev.rating.count})` : ''}` },
   ];
@@ -93,8 +94,8 @@ export function EventPage() {
       <Link className="back-link" to="/events">
         ← All events
       </Link>
-      <EventHero ev={ev} canBuy={!cancelled && !ended && ev.status === 'published'} />
       <EventNotices ev={ev} />
+      <EventHero ev={ev} canBuy={!cancelled && !ended && ev.status === 'published'} />
       <PillAnchorTabs
         label="Event sections"
         sections={sections}
@@ -104,17 +105,23 @@ export function EventPage() {
         }}
       />
       <div className="evd-layout">
-        <div className="evd-main">
-          <AboutSection ev={ev} />
-          <section className="evd-block" id="tickets">
-            <h2 className="evd-h2">{cancelled || ended ? 'Tickets' : 'Choose your tickets'}</h2>
+        <aside className="evd-side" aria-label="Tickets and event information">
+          <section className="evd-ticket-panel evd-card" id="tickets">
+            <div className="evd-ticket-panel-heading">
+              <span className="eyebrow">{cancelled || ended ? 'Event information' : 'Make it yours'}</span>
+              <h2>{cancelled || ended ? 'Ticket information' : 'Choose your tickets'}</h2>
+            </div>
+            <Countdown gateAt={ev.doors_open_at || ev.starts_at} endsAt={ev.ends_at} />
             <TicketBuyer ev={ev} disabled={cancelled || ended || ev.status !== 'published'} />
             <OrganiserTerms ev={ev} />
           </section>
+          <EventSidebar ev={ev} />
+        </aside>
+        <div className="evd-main">
+          <AboutSection ev={ev} />
           {ev.voting && <VoteShowcase ev={ev} />}
           <ReviewsSection ev={ev} reviews={reviews} />
         </div>
-        <EventSidebar ev={ev} />
       </div>
       <ReportSection kind="event" target={{ event_id: ev.id }} subject={ev.title} />
     </div>

@@ -1370,3 +1370,497 @@
 .evd-terms {
   margin-top: 28px;
 }
+
+/* Event destination layout: event identity and cover share the opening composition. */
+.evd {
+  gap: clamp(22px, 2.8vw, 32px);
+  padding-top: 24px;
+}
+.evd .back-link {
+  margin-bottom: -10px;
+  color: var(--c-ink-muted);
+  font-size: 0.9rem;
+}
+.evd-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  grid-template-areas: 'cover info';
+  gap: 0;
+  align-items: stretch;
+  overflow: visible;
+  border: 1px solid var(--evd-hair);
+  border-radius: 18px;
+  background: #fff;
+}
+.evd-cover-wrap {
+  grid-area: cover;
+  position: relative;
+  min-width: 0;
+  min-height: clamp(390px, 36vw, 490px);
+  height: 100%;
+  border-radius: 17px 0 0 17px;
+  background: color-mix(in srgb, var(--evd-wash) 42%, #f7f8f6);
+}
+.evd-poster {
+  position: relative;
+  inset: auto;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  border: 0;
+  border-radius: 17px 0 0 17px;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+}
+.evd-poster::after {
+  display: none;
+}
+.evd-poster img {
+  position: relative;
+  inset: auto;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+.evd-poster-ph {
+  position: relative;
+  inset: auto;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--evd-accent);
+  background: color-mix(in srgb, var(--evd-wash) 55%, #fff);
+}
+.evd-cover-wrap .fav-actions {
+  top: 16px;
+  right: 16px;
+  gap: 8px;
+}
+.evd-cover-wrap .fav-btn,
+.evd-cover-wrap .share-menu-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgb(255 255 255 / 0.72);
+  background: rgb(255 255 255 / 0.96);
+  box-shadow: 0 2px 10px rgb(20 28 27 / 0.12);
+}
+.evd-intro {
+  grid-area: info;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: 22px;
+  min-width: 0;
+  padding: clamp(28px, 3.3vw, 50px);
+}
+.evd-intro-copy {
+  display: grid;
+  justify-items: start;
+  gap: 13px;
+  min-width: 0;
+}
+.evd-intro-copy .evd-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+}
+.evd-intro-copy .evd-kicker::before {
+  display: none;
+}
+.evd-title {
+  max-width: 18ch;
+  font: 650 clamp(2rem, 3vw, 3.05rem) / 1.04 var(--display);
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.evd-lede {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.58;
+}
+.evd-intro-copy .host-card-mini {
+  gap: 10px;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.evd-intro-copy a.host-card-mini:hover {
+  border: 0;
+  color: var(--evd-accent);
+}
+.evd-intro-copy .host-card-mini strong {
+  color: var(--evd-dark);
+}
+.evd-intro-details {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.evd-intro-details .evd-facts {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--evd-hair);
+}
+.evd-intro-details .evd-facts li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: start;
+  gap: 13px;
+  padding: 13px 0;
+  border: 0;
+  border-bottom: 1px solid var(--evd-hair);
+  border-radius: 0;
+  background: transparent;
+  transition: none;
+}
+.evd-intro-details .evd-facts li:hover {
+  transform: none;
+  border-color: var(--evd-hair);
+}
+.evd-intro-details .evd-facts li > svg {
+  margin-top: 2px;
+  color: var(--evd-accent);
+}
+.evd-intro-details .evd-facts b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--evd-dark);
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+.evd-intro-details .evd-facts span {
+  display: block;
+  color: var(--c-ink-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.evd-intro-details .evd-facts a {
+  color: var(--evd-accent);
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
+.evd-cta {
+  align-items: center;
+  gap: 12px 16px;
+}
+.evd-cta .button-primary {
+  min-width: 160px;
+  justify-content: center;
+}
+.evd .button-primary,
+.evd .button-primary:hover {
+  min-height: 48px;
+  border-radius: 10px;
+  background: var(--evd-accent);
+  box-shadow: none;
+  transform: none;
+}
+.evd .button-primary:hover {
+  background: var(--evd-deep);
+}
+.evd-from,
+.evd-from b {
+  color: var(--evd-dark);
+}
+.evd-unavailable {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--c-ink-muted);
+  font-size: 0.9rem;
+}
+.evd-nav {
+  position: sticky;
+  top: 10px;
+  z-index: 20;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--evd-hair);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.96);
+  box-shadow: 0 4px 14px rgb(24 35 32 / 0.06);
+  backdrop-filter: blur(10px);
+}
+.evd-nav a {
+  padding: 9px 15px;
+  border-radius: 8px;
+}
+.evd-nav a.is-on {
+  background: var(--evd-dark);
+  color: #fff;
+}
+.evd-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+  grid-template-areas: 'main side';
+  gap: clamp(32px, 5vw, 76px);
+}
+.evd-main {
+  grid-area: main;
+  min-width: 0;
+}
+.evd-side {
+  grid-area: side;
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  gap: 16px;
+  min-width: 0;
+}
+.evd-ticket-panel {
+  padding: clamp(20px, 2vw, 26px);
+  border-radius: 14px;
+  scroll-margin-top: 92px;
+  box-shadow: 0 8px 28px -22px rgb(17 43 39 / 0.28);
+}
+.evd-ticket-panel-heading {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 17px;
+}
+.evd-ticket-panel-heading .eyebrow {
+  color: var(--evd-accent);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.evd-ticket-panel-heading h2 {
+  margin: 0;
+  color: var(--evd-dark);
+  font: 650 1.42rem/1.2 var(--display);
+  letter-spacing: -0.025em;
+}
+.evd-ticket-panel .evd-countdown {
+  margin-bottom: 18px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--evd-hair);
+}
+.evd-ticket-panel .evd-ticket {
+  --stub: 118px;
+  border-radius: 12px;
+}
+.evd-ticket-panel .evd-ticket-main {
+  gap: 7px;
+  min-width: 0;
+  padding: 16px 12px;
+}
+.evd-ticket-panel .evd-ticket-main::before,
+.evd-ticket-panel .evd-ticket-main::after {
+  display: none;
+}
+.evd-ticket-panel .evd-ticket-top {
+  justify-content: flex-start;
+}
+.evd-ticket-panel .evd-ticket-event {
+  display: none;
+}
+.evd-ticket-panel .evd-ticket-main h3 {
+  font: 650 1.12rem/1.18 var(--display);
+  overflow-wrap: anywhere;
+}
+.evd-ticket-panel .evd-ticket-stub {
+  gap: 9px;
+  padding: 10px 7px;
+}
+.evd-ticket-panel .evd-ticket-stub strong {
+  font: 650 1.02rem/1.1 var(--display);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.evd-ticket-panel .evd-stepper {
+  gap: 0;
+  padding: 2px;
+}
+.evd-ticket-panel .evd-stepper button {
+  width: 27px;
+  height: 27px;
+}
+.evd-ticket-panel .evd-stepper output {
+  min-width: 24px;
+  font-size: 0.85rem;
+}
+.evd-ticket-panel .evd-terms {
+  margin-top: 20px;
+}
+.evd-sidecard {
+  padding: 20px 22px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+.evd-sidecard h3 {
+  margin: 0 0 14px;
+  color: var(--evd-dark);
+  font: 650 1rem/1.3 var(--display);
+}
+.evd-sidecard dl {
+  gap: 12px;
+  margin: 0;
+}
+.evd-sidecard dl > div {
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--evd-hair);
+}
+.evd-sidecard dl > div:last-child {
+  padding-bottom: 0;
+  border: 0;
+}
+.evd-sidecard dt {
+  color: var(--c-ink-muted);
+  font-size: 0.69rem;
+  letter-spacing: 0.08em;
+}
+.evd-sidecard dt svg {
+  color: var(--evd-accent);
+}
+.evd-sidecard dd {
+  margin-top: 6px;
+  color: var(--c-ink);
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+.evd-h2 {
+  padding-bottom: 0;
+  font: 650 clamp(1.4rem, 2vw, 1.8rem) / 1.2 var(--display);
+  letter-spacing: -0.035em;
+}
+.evd-h2::after {
+  display: none;
+}
+.evd-block {
+  scroll-margin-top: 92px;
+}
+.evd-main > .evd-block,
+.evd-main > .evd-vote {
+  padding-block: 38px;
+}
+.evd-main > :first-child {
+  padding-top: 8px;
+}
+.evd-loading {
+  min-height: 70vh;
+}
+
+@media (max-width: 1000px) {
+  .evd-layout {
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 28px;
+  }
+}
+@media (max-width: 900px) {
+  .evd-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'info' 'cover';
+  }
+  .evd-cover-wrap {
+    min-height: 0;
+    height: clamp(220px, 48vw, 350px);
+    border-radius: 0 0 17px 17px;
+  }
+  .evd-poster {
+    border-radius: 0 0 17px 17px;
+  }
+  .evd-poster {
+    min-height: 0;
+  }
+  .evd-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'side' 'main';
+    gap: 24px;
+  }
+  .evd-side {
+    position: static;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+}
+@media (max-width: 560px) {
+  .evd {
+    gap: 20px;
+    padding-top: 16px;
+  }
+  .evd-hero {
+    border-radius: 14px;
+  }
+  .evd-intro {
+    gap: 18px;
+    padding: 22px 18px 20px;
+  }
+  .evd-intro-copy {
+    gap: 11px;
+  }
+  .evd-title {
+    max-width: 100%;
+    font-size: clamp(1.9rem, 9vw, 2.55rem);
+  }
+  .evd-lede {
+    font-size: 0.92rem;
+  }
+  .evd-intro-details {
+    gap: 14px;
+  }
+  .evd-intro-details .evd-facts li {
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 10px;
+    padding-block: 12px;
+  }
+  .evd-intro-details .evd-facts b {
+    font-size: 0.92rem;
+  }
+  .evd-intro-details .evd-facts span {
+    font-size: 0.82rem;
+  }
+  .evd-cta {
+    gap: 10px 14px;
+  }
+  .evd-cta .button-primary {
+    min-height: 46px;
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+  .evd-cover-wrap {
+    height: clamp(205px, 57vw, 280px);
+    border-radius: 0 0 13px 13px;
+  }
+  .evd-poster {
+    border-radius: 0 0 13px 13px;
+  }
+  .evd-cover-wrap .fav-actions {
+    top: 10px;
+    right: 10px;
+  }
+  .evd-cover-wrap .fav-btn,
+  .evd-cover-wrap .share-menu-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .evd-nav {
+    width: 100%;
+  }
+  .evd-nav a {
+    padding-inline: 10px;
+    font-size: 0.82rem;
+  }
+  .evd-ticket-panel {
+    padding: 20px 16px;
+    scroll-margin-top: 74px;
+  }
+  .evd-main > .evd-block,
+  .evd-main > .evd-vote {
+    padding-block: 28px;
+  }
+}
