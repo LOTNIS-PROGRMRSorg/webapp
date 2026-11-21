@@ -39,3 +39,10 @@ export const ServiceStatsPage = lazyNamed(() => import('@/features/host/services
 export const HostReportsPage = lazyNamed(() => import('@/features/host/reports'), 'HostReportsPage');
 export const HostReportPage = lazyNamed(() => import('@/features/host/reports'), 'HostReportPage');
 export const PublicHostPage = lazyNamed(() => import('@/features/hosts/PublicHostPage'), 'PublicHostPage');
+export const MapExplorePage = lazyNamed(() => import('@/features/map/MapExplorePage'), 'default');
+export const ServicesPage = lazyNamed(() => import('@/features/services/ServicesPage'), 'default');
+export const ServiceDetailPage = lazyNamed(() => import('@/features/services/ServiceDetailPage'), 'default');
+export const JobPage = lazyNamed(() => import('@/features/services/jobs/JobPage'), 'default');
+export const MyJobsPage = lazyNamed(() => import('@/features/services/jobs/MyJobsPage'), 'default');
+export const MyServices = lazyNamed(() => import('@/features/host/myservices/MyServices'), 'default');
+export const ServiceForm = lazyNamed(() => import('@/features/host/myservices/ServiceForm'), 'default');

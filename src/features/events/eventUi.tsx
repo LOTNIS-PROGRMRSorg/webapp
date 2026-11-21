@@ -37,6 +37,8 @@ export async function payWithPaystack(opts: {
   currency: string;
   reference: string;
   orderId: string;
+  /** What is being paid for — decides which webhook field Paystack carries back. */
+  kind?: 'event' | 'service';
 }): Promise<string | null> {
   const key = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string | undefined;
   if (!key) throw new Error('Payments are not configured yet. Please contact Lotnis support.');
@@ -48,10 +50,16 @@ export async function payWithPaystack(opts: {
       amount: opts.amountPesewas,
       currency: opts.currency || 'GHS',
       ref: opts.reference,
-      metadata: {
-        event_order_id: opts.orderId,
-        custom_fields: [{ display_name: 'Order', variable_name: 'event_order_id', value: opts.orderId }],
-      },
+      metadata:
+        opts.kind === 'service'
+          ? {
+              service_request_id: opts.orderId,
+              custom_fields: [{ display_name: 'Job', variable_name: 'service_request_id', value: opts.orderId }],
+            }
+          : {
+              event_order_id: opts.orderId,
+              custom_fields: [{ display_name: 'Order', variable_name: 'event_order_id', value: opts.orderId }],
+            },
       callback: (response: { reference: string }) => resolve(response.reference),
       onClose: () => resolve(null),
     });

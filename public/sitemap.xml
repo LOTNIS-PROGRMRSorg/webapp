@@ -2,145 +2,475 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://lotnis.com/</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://lotnis.com/explore</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/apartment</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/house</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/villa</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/room</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/hotel</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/office</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/shop</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/garage</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/warehouse</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/rent/venue</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/explore?pricingPeriod=day</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://lotnis.com/explore?pricingPeriod=week</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://lotnis.com/explore?pricingPeriod=month</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://lotnis.com/explore?pricingPeriod=year</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://lotnis.com/refund-policy</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lotnis.com/ticket-terms</loc>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://lotnis.com/terms</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://lotnis.com/privacy</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://lotnis.com/host-agreement</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://lotnis.com/food</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://lotnis.com/events</loc>
-    <lastmod>2026-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/services</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002600000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Airport City Parking</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Airport City Parking</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Airport City Parking</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Airport City Parking</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Airport City Parking</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Airport City Parking</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001800000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Ridge Meeting Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Ridge Meeting Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Ridge Meeting Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Ridge Meeting Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Ridge Meeting Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Ridge Meeting Rooms</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002300000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Spintex Storage Units</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Spintex Storage Units</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Spintex Storage Units</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Spintex Storage Units</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Spintex Storage Units</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Spintex Storage Units</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002500000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Osu Retail Row</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Osu Retail Row</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Osu Retail Row</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Osu Retail Row</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Osu Retail Row</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Osu Retail Row</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002000000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Osu Photo Studio</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Osu Photo Studio</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Osu Photo Studio</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Osu Photo Studio</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Osu Photo Studio</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Osu Photo Studio</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001900000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Osu Event Hall</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Osu Event Hall</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Osu Event Hall</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Osu Event Hall</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Osu Event Hall</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Osu Event Hall</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002100000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Cape Coast Conference Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Cape Coast Conference Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Cape Coast Conference Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Cape Coast Conference Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Cape Coast Conference Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Cape Coast Conference Centre</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000200000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>East Legon Penthouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>East Legon Penthouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>East Legon Penthouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>East Legon Penthouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>East Legon Penthouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>East Legon Penthouse</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000100000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Osu Studio Apartment</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Osu Studio Apartment</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Osu Studio Apartment</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Osu Studio Apartment</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Osu Studio Apartment</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Osu Studio Apartment</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000700000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Ho Weekend Cottage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Ho Weekend Cottage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Ho Weekend Cottage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Ho Weekend Cottage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Ho Weekend Cottage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Ho Weekend Cottage</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000300000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Airport Residential 2-Bed</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Airport Residential 2-Bed</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Airport Residential 2-Bed</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Airport Residential 2-Bed</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Airport Residential 2-Bed</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Airport Residential 2-Bed</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002700000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Adum Lock-up Garage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Adum Lock-up Garage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Adum Lock-up Garage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Adum Lock-up Garage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Adum Lock-up Garage</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Adum Lock-up Garage</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002400000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Madina Market Shop</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Madina Market Shop</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Madina Market Shop</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Madina Market Shop</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Madina Market Shop</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Madina Market Shop</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-002200000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Tema Industrial Warehouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Tema Industrial Warehouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Tema Industrial Warehouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Tema Industrial Warehouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Tema Industrial Warehouse</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Tema Industrial Warehouse</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000500000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Cantonments Family House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Cantonments Family House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Cantonments Family House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Cantonments Family House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Cantonments Family House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Cantonments Family House</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000400000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Labone Furnished Flat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Labone Furnished Flat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Labone Furnished Flat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Labone Furnished Flat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Labone Furnished Flat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Labone Furnished Flat</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000600000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Sunyani Family Home</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Sunyani Family Home</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Sunyani Family Home</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Sunyani Family Home</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Sunyani Family Home</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Sunyani Family Home</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000800000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Palm Grove Villa</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Palm Grove Villa</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Palm Grove Villa</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Palm Grove Villa</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Palm Grove Villa</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Palm Grove Villa</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-000900000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Kokrobite Beach House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Kokrobite Beach House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Kokrobite Beach House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Kokrobite Beach House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Kokrobite Beach House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Kokrobite Beach House</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001000000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Aburi Hills Retreat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Aburi Hills Retreat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Aburi Hills Retreat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Aburi Hills Retreat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Aburi Hills Retreat</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Aburi Hills Retreat</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001100000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Ahodwo Shared House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Ahodwo Shared House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Ahodwo Shared House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Ahodwo Shared House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Ahodwo Shared House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Ahodwo Shared House</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001200000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Legon Student Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Legon Student Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Legon Student Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Legon Student Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Legon Student Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Legon Student Rooms</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001300000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Taifa Weekly Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Taifa Weekly Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Taifa Weekly Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Taifa Weekly Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Taifa Weekly Rooms</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Taifa Weekly Rooms</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001400000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Tamale Guest House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Tamale Guest House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Tamale Guest House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Tamale Guest House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Tamale Guest House</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Tamale Guest House</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001500000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Takoradi Harbour Hotel</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Takoradi Harbour Hotel</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Takoradi Harbour Hotel</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Takoradi Harbour Hotel</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Takoradi Harbour Hotel</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Takoradi Harbour Hotel</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001600000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Busua Surf Lodge</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Busua Surf Lodge</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Busua Surf Lodge</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Busua Surf Lodge</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Busua Surf Lodge</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Busua Surf Lodge</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/stays/5eed0000-0000-4000-8000-001700000000</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-0/1200/800</image:loc><image:title>Ridge Business Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-1/1200/800</image:loc><image:title>Ridge Business Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-2/1200/800</image:loc><image:title>Ridge Business Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-3/1200/800</image:loc><image:title>Ridge Business Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-4/1200/800</image:loc><image:title>Ridge Business Centre</image:title></image:image>
+    <image:image><image:loc>https://picsum.photos/seed/lotnis-000000-5/1200/800</image:loc><image:title>Ridge Business Centre</image:title></image:image>
+  </url>
+  <url>
     <loc>https://lotnis.com/stays/e890dd25-cd2d-48cd-937a-f5002261dc2f</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/property-images/9280c155-fcc0-4852-8a80-cf1e953f386e/21b5d1c7-d8f6-463f-a984-de8f5123f7af/0f416795-9901-4e39-98f0-54933353184b.jpg</image:loc><image:title>Junia</image:title></image:image>
@@ -148,7 +478,7 @@
   </url>
   <url>
     <loc>https://lotnis.com/stays/64edae51-ade7-4460-85e5-6ab8735b041b</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/property-images/9280c155-fcc0-4852-8a80-cf1e953f386e/ad836f76-eb5d-4f98-95c1-4bf6024622ae/2d57d1ab-5db2-4d62-bd5f-0450cfd09d28.jpg</image:loc><image:title>The View</image:title></image:image>
@@ -156,7 +486,7 @@
   </url>
   <url>
     <loc>https://lotnis.com/stays/ffd24ea1-e9d3-4417-9d8f-ffb792476d00</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/property-images/9280c155-fcc0-4852-8a80-cf1e953f386e/807c1283-8f47-4a3b-bc1b-320d2c33d8c5/966ed9a9-6ed4-4c1b-944d-859e7741c59c.jpg</image:loc><image:title>The Ark </image:title></image:image>
@@ -165,38 +495,103 @@
     <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/property-images/9280c155-fcc0-4852-8a80-cf1e953f386e/807c1283-8f47-4a3b-bc1b-320d2c33d8c5/845854e4-1bf9-4f3b-bd32-64c3d014295a.jpg</image:loc><image:title>The Ark </image:title></image:image>
   </url>
   <url>
+    <loc>https://lotnis.com/events/rapperholic-2026-07f3ed</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/event-images/3f979145-76a6-42eb-b91d-cb9bbf031c38/332f78b2-73e7-480b-8780-910ca19779ea.jpg</image:loc><image:title>Rapperholic 2026</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/events/class-of-23-26-reunion-party-c38b9f</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/event-images/3f979145-76a6-42eb-b91d-cb9bbf031c38/6331abc1-8ab9-4bf1-84d5-4d849164b027.jpg</image:loc><image:title>Class of 23/26 Reunion Party</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/events/kevin-hart-acting-my-age-tour-live-in-ghana-565e35</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/event-images/3f979145-76a6-42eb-b91d-cb9bbf031c38/5ed282c7-357c-4bb8-bf5b-31b843d4a107.jpg</image:loc><image:title>Kevin Hart: Acting My Age Tour Live in Ghana</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/events/sankofa-heritage-exhibition-of-ghana-traditional-arts-f49df7</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/event-images/3f979145-76a6-42eb-b91d-cb9bbf031c38/bef4a30b-d6f5-4d7c-badc-751af0b02539.jpg</image:loc><image:title>Sankofa Heritage: Exhibition of Ghana Traditional Arts</image:title></image:image>
+  </url>
+  <url>
+    <loc>https://lotnis.com/events/western-industry-link-corporate-networking-mixer-2026-47476b</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://ektuaiotewrughwlmssu.supabase.co/storage/v1/object/public/event-images/3f979145-76a6-42eb-b91d-cb9bbf031c38/aeb4c568-61c2-4974-8d53-2ebc7bb68d56.jpg</image:loc><image:title>Western Industry Link: Corporate Networking Mixer 2026</image:title></image:image>
+  </url>
+  <url>
     <loc>https://lotnis.com/in/accra</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/in/kumasi</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/in/cape-coast</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/in/takoradi</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/in/aburi</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://lotnis.com/in/tema</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lotnis.com/in/ho</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lotnis.com/in/sunyani</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lotnis.com/in/kokrobite</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lotnis.com/in/tamale</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lotnis.com/in/busua</loc>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

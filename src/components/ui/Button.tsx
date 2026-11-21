@@ -2,9 +2,9 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
 type Variant = 'primary' | 'secondary' | 'quiet' | 'danger';
-type Size = 'md' | 'lg';
+type Size = 'sm' | 'md' | 'lg';
 const cls = (variant: Variant, size: Size, wide?: boolean) =>
-  ['button', `button-${variant}`, size === 'lg' && 'button-lg', wide && 'button-wide'].filter(Boolean).join(' ');
+  ['button', `button-${variant}`, size !== 'md' && `button-${size}`, wide && 'button-wide'].filter(Boolean).join(' ');
 
 export function Button({
   variant = 'primary',
@@ -25,8 +25,13 @@ export function Button({
   icon?: ReactNode;
 }) {
   return (
-    <button {...rest} className={`${cls(variant, size, wide)} ${rest.className ?? ''}`} disabled={disabled || loading}>
-      {icon}
+    <button
+      {...rest}
+      className={`${cls(variant, size, wide)} ${rest.className ?? ''}`}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+    >
+      {loading ? <span className="spinner" aria-hidden="true" /> : icon}
       {loading && loadingText ? loadingText : children}
     </button>
   );

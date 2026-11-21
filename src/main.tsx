@@ -11,6 +11,7 @@ import '@/styles/event-detail.css';
 import '@/styles/components.css';
 import '@/components/tabs/tabs.css';
 import '@/styles/headers.css';
+import '@/styles/system.css';
 
 async function start() {
   // Dev-only preview of signed-in screens: ?mock=<state>. Tree-shaken out of production builds.

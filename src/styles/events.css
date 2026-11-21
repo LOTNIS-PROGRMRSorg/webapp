@@ -12,7 +12,7 @@
   gap: 10px;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 7px 8px 7px 16px;
   box-shadow: var(--shadow-sm);
 }
@@ -41,7 +41,7 @@
 }
 .ev-select select {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   padding: 10px 12px;
   font: 600 0.88rem var(--body, inherit);
   text-transform: none;
@@ -63,7 +63,7 @@
 .ev-card {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -101,7 +101,7 @@
   left: 12px;
   top: 12px;
   background: var(--c-white);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 6px 11px;
   text-align: center;
   line-height: 1.05;
@@ -128,7 +128,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   padding: 6px 10px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
 }
 .ev-flag-warn {
   background: var(--c-warn);
@@ -187,7 +187,7 @@
   flex-wrap: wrap;
   margin-top: 56px;
   padding: 30px 34px;
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   background: var(--c-ink);
   color: var(--c-white);
 }
@@ -240,7 +240,7 @@
   gap: 10px;
   padding: 5px 6px 5px 15px;
   border: 1px solid var(--c-line);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   box-shadow: none;
   color: var(--c-ink-muted);
 }
@@ -260,7 +260,7 @@
 .ev-page .ev-search .button {
   min-height: 40px;
   padding-inline: 15px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   white-space: nowrap;
 }
 .ev-page .ev-filter-row {
@@ -281,7 +281,7 @@
   min-width: 0;
   min-height: 39px;
   border-color: var(--c-line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
 }
 .ev-page .ev-filter-options {
   display: flex;
@@ -361,7 +361,7 @@
   min-height: 40px;
   padding: 6px 14px;
   border: 1px solid var(--c-line);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--c-white);
   white-space: nowrap;
   color: var(--c-ink-soft);
@@ -442,11 +442,11 @@
 :is(.ev-page, .host-public) .ev-card:focus-visible {
   outline: 3px solid var(--c-good);
   outline-offset: 4px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
 }
 :is(.ev-page, .host-public) .ev-card-img {
   aspect-ratio: 1 / 0.95;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   background: var(--c-sunken);
 }
 :is(.ev-page, .host-public) .ev-card-img img {
@@ -468,7 +468,7 @@
   max-width: calc(100% - 94px);
   overflow: hidden;
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: color-mix(in srgb, var(--c-white) 92%, transparent);
   color: var(--c-ink);
   font-size: 0.72rem;
@@ -540,7 +540,7 @@
 }
 .ev-page .ev-skel-image {
   aspect-ratio: 1 / 0.95;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   background: linear-gradient(100deg, var(--c-surface-3) 30%, var(--c-surface-2) 50%, var(--c-surface-3) 70%);
   background-size: 200% 100%;
   animation: ev-shimmer 1.5s infinite;
@@ -552,7 +552,7 @@
 }
 .ev-page .ev-skel-body span {
   height: 12px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: linear-gradient(100deg, var(--c-surface-3) 30%, var(--c-surface-2) 50%, var(--c-surface-3) 70%);
   background-size: 200% 100%;
   animation: ev-shimmer 1.5s infinite;
@@ -574,7 +574,7 @@
 .ev-page .ev-skel-line {
   width: 220px;
   height: 38px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   background: linear-gradient(100deg, var(--c-surface-3) 30%, var(--c-surface-2) 50%, var(--c-surface-3) 70%);
   background-size: 200% 100%;
   animation: ev-shimmer 1.5s infinite;
@@ -586,7 +586,7 @@
   margin-top: 28px;
   padding: 34px 20px;
   border: 1px solid var(--c-danger-line);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   background: var(--c-danger-bg);
   text-align: center;
 }
@@ -599,7 +599,7 @@
   gap: 10px;
   padding: clamp(34px, 5vw, 64px) 20px;
   border: 1px solid var(--c-line);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   background: var(--c-surface);
   text-align: center;
 }
@@ -628,7 +628,7 @@
   padding: clamp(28px, 4.3vw, 54px);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--c-mint-strong) 15%, transparent);
-  border-radius: 24px;
+  border-radius: var(--r-xl);
   background: var(--c-ink);
   color: var(--c-white);
 }
@@ -669,7 +669,7 @@
 .ev-page .ev-cta .button-primary {
   min-height: 50px;
   flex: none;
-  border-radius: 11px;
+  border-radius: var(--r-sm);
   background: var(--c-white);
   color: var(--c-ink);
 }
@@ -771,7 +771,7 @@
   }
   :is(.ev-page, .host-public) .ev-card-img {
     aspect-ratio: 1;
-    border-radius: 16px;
+    border-radius: var(--r-lg);
   }
   :is(.ev-page, .host-public) .ev-card-body h3 {
     font-size: 0.9rem;
@@ -785,7 +785,7 @@
     gap: 20px;
     margin-top: 42px;
     padding: 27px 23px;
-    border-radius: 20px;
+    border-radius: var(--r-lg);
   }
   .ev-page .ev-cta .button-primary {
     justify-self: start;
@@ -837,7 +837,7 @@
 }
 .ev-hero {
   position: relative;
-  border-radius: 24px;
+  border-radius: var(--r-xl);
   overflow: hidden;
   aspect-ratio: 21/8;
   min-height: 240px;
@@ -879,7 +879,7 @@
   background: color-mix(in srgb, var(--c-white) 15%, transparent);
   backdrop-filter: blur(6px);
   padding: 5px 12px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -912,7 +912,7 @@
   top: 96px;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   padding: 22px;
   display: grid;
   gap: 14px;
@@ -976,7 +976,7 @@
 }
 .ev-review {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 16px 18px;
   display: grid;
   gap: 6px;
@@ -989,7 +989,7 @@
   margin: 6px 0 0;
   padding: 10px 14px;
   background: var(--c-tint);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   font-size: 0.88rem;
 }
 .ev-stars {
@@ -1012,7 +1012,7 @@
   align-items: center;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   padding: 18px 20px;
   transition:
     border-color 0.15s,
@@ -1039,7 +1039,7 @@
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-white);
   overflow: hidden;
 }
@@ -1074,7 +1074,7 @@
   gap: 16px;
   background: var(--c-tint);
   border: 1px solid var(--c-mint);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   padding: 22px;
 }
 .ev-lines {
@@ -1115,7 +1115,7 @@
   gap: 8px;
   padding: 12px;
   border: 1px dashed var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-white);
 }
 .ev-holder b {
@@ -1129,7 +1129,7 @@
 .ev-tier input,
 .ev-manual input {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   padding: 11px 12px;
   font: inherit;
   background: var(--c-white);
@@ -1165,7 +1165,7 @@
   align-items: center;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   padding: 14px 16px;
 }
 .ev-nominee-on {
@@ -1176,7 +1176,7 @@
 .ev-nominee-ph {
   width: 72px;
   height: 72px;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   object-fit: cover;
   background: var(--c-sunken);
 }
@@ -1211,7 +1211,7 @@
 .ev-quick button {
   border: 1px solid var(--line);
   background: var(--c-white);
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   padding: 5px 11px;
   font-size: 0.78rem;
   font-weight: 700;
@@ -1219,7 +1219,7 @@
 .ev-bar {
   position: relative;
   height: 22px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-surface-3);
   overflow: hidden;
   margin-top: 4px;
@@ -1228,7 +1228,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   background: var(--c-mint-strong);
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   transition: width 0.5s var(--ease);
 }
 .ev-bar span {
@@ -1269,7 +1269,7 @@
 .ev-ticket {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   padding: 18px;
   display: grid;
   gap: 10px;
@@ -1289,7 +1289,7 @@
   letter-spacing: 0.12em;
   background: var(--c-surface-3);
   padding: 4px 9px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
 }
 .ev-ticket-refunded,
 .ev-ticket-cancelled,
@@ -1297,7 +1297,7 @@
   opacity: 0.7;
 }
 .qr {
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-white);
   image-rendering: pixelated;
 }
@@ -1309,13 +1309,13 @@
   place-items: center;
   width: 170px;
   height: 170px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-danger-bg);
   color: var(--c-danger);
   font-weight: 700;
 }
 .ev-pass {
-  border-radius: 26px;
+  border-radius: var(--r-xl);
   overflow: hidden;
   background: var(--c-white);
   border: 1px solid var(--line);
@@ -1434,7 +1434,7 @@
   align-items: center;
   justify-content: center;
   border: 2px dashed var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 30px 16px;
   color: var(--muted);
   cursor: pointer;
@@ -1462,7 +1462,7 @@
   width: 100%;
   max-width: 260px;
   aspect-ratio: 16/10;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   overflow: hidden;
   margin-top: 8px;
 }
@@ -1538,7 +1538,7 @@
   display: block;
   width: 100%;
   background: var(--c-good);
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
   min-height: 3px;
 }
 .ev-hours small {
@@ -1572,7 +1572,7 @@
   padding: 8px 12px;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   word-break: break-all;
   font-size: 0.82rem;
 }
@@ -1582,7 +1582,7 @@
 }
 .ev-mini-select {
   border: 1px solid var(--line);
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   padding: 8px 12px;
   background: var(--c-white);
   font: 600 0.82rem inherit;
@@ -1599,7 +1599,7 @@
 }
 .modal-card {
   background: var(--c-white);
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   padding: 28px;
   width: min(560px, 100%);
   display: grid;
@@ -1648,7 +1648,7 @@ body:has(.scan) {
 }
 .scan-card {
   background: var(--c-ink);
-  border-radius: 24px;
+  border-radius: var(--r-xl);
   padding: 30px;
   display: grid;
   gap: 14px;
@@ -1674,7 +1674,7 @@ body:has(.scan) {
   gap: 10px;
   align-items: center;
   background: var(--c-ink-night);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 0 14px;
 }
 .scan-field input {
@@ -1690,7 +1690,7 @@ body:has(.scan) {
 }
 .scan-btn {
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 15px 20px;
   background: var(--c-good);
   color: var(--c-white);
@@ -1708,7 +1708,7 @@ body:has(.scan) {
 }
 .scan-error {
   background: var(--c-danger-deep);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 12px 14px;
   font-size: 0.9rem;
 }
@@ -1745,7 +1745,7 @@ body:has(.scan) {
 }
 .scan-view {
   position: relative;
-  border-radius: 24px;
+  border-radius: var(--r-xl);
   overflow: hidden;
   background: var(--c-black);
   aspect-ratio: 3/4;
@@ -1763,7 +1763,7 @@ body:has(.scan) {
   position: absolute;
   inset: 16%;
   border: 3px solid color-mix(in srgb, var(--c-white) 80%, transparent);
-  border-radius: 26px;
+  border-radius: var(--r-xl);
   box-shadow: 0 0 0 999px color-mix(in srgb, var(--c-black) 33%, transparent);
   animation: scan-pulse 2s ease-in-out infinite;
 }
@@ -1827,7 +1827,7 @@ body:has(.scan) {
 }
 .scan-manual input {
   flex: 1;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   border: 0;
   padding: 14px;
   font: 700 1.05rem inherit;
@@ -1854,7 +1854,7 @@ body:has(.scan) {
   grid-template-columns: auto 1fr auto;
   gap: 12px;
   background: color-mix(in srgb, var(--c-white) 7%, transparent);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 10px 14px;
   font-size: 0.88rem;
   align-items: center;
@@ -1966,14 +1966,14 @@ body:has(.scan) {
   align-items: end;
   padding: 14px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background: var(--c-white);
 }
 .ev-review-sum {
   display: grid;
   gap: 0;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   background: var(--c-white);
   overflow: hidden;
 }
@@ -2049,7 +2049,7 @@ body:has(.scan) {
   position: relative;
   width: 132px;
   height: 132px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   background: var(--c-sunken);
 }
@@ -2126,7 +2126,7 @@ body:has(.scan) {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   font-weight: 800;
   color: var(--c-white);
   box-shadow: 0 2px 8px color-mix(in srgb, var(--c-black) 18%, transparent);
@@ -2163,7 +2163,7 @@ body:has(.scan) {
   font-weight: 800;
   color: var(--muted);
   background: var(--c-surface-3);
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   padding: 4px 10px;
   font-size: 0.78rem;
 }
@@ -2179,7 +2179,7 @@ body:has(.scan) {
   gap: 8px;
   text-align: center;
   padding: 20px 14px;
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   border: 2px solid var(--line);
   background: var(--c-white);
   transition: transform 0.2s var(--ease);
@@ -2218,7 +2218,7 @@ body:has(.scan) {
 .ev-cat-board {
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   background: var(--c-white);
 }
 .ev-cat-board h3 a:hover {
@@ -2264,7 +2264,7 @@ body:has(.scan) {
   flex-wrap: wrap;
   background: var(--c-surface-2);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 8px 12px;
 }
 .ev-linkrow code {
@@ -2291,7 +2291,7 @@ body:has(.scan) {
   align-items: center;
   margin-top: 34px;
   padding: 22px 24px;
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   background: var(--c-tint);
   border: 1px solid var(--c-tint-line);
 }
@@ -2353,7 +2353,7 @@ body:has(.scan) {
   gap: 12px;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   padding-bottom: 16px;
 }
@@ -2412,7 +2412,7 @@ body:has(.scan) {
 .ev-nominee-photo {
   position: relative;
   aspect-ratio: 1/1;
-  border-radius: 28px;
+  border-radius: var(--r-xl);
   overflow: hidden;
   background: var(--c-sunken);
   box-shadow: var(--shadow-md);
@@ -2447,7 +2447,7 @@ body:has(.scan) {
 .ev-cat-host {
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   background: var(--c-white);
   margin-bottom: 22px;
 }
@@ -2458,7 +2458,7 @@ body:has(.scan) {
   align-items: center;
   padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background: var(--c-white);
 }
 .ev-nomrow-info {
@@ -2518,7 +2518,7 @@ body:has(.scan) {
 .host-thumb {
   width: 92px;
   height: 66px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   object-fit: cover;
   background: var(--c-sunken);
   flex: none;
@@ -2527,7 +2527,7 @@ body:has(.scan) {
 .host-thumb-sm {
   width: 52px;
   height: 40px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
 }
 .host-thumb-ph {
   display: grid;
@@ -2543,7 +2543,7 @@ body:has(.scan) {
 .host-card {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   padding: 20px;
   display: grid;
   gap: 12px;
@@ -2573,7 +2573,7 @@ body:has(.scan) {
 }
 .host-mini > div {
   background: var(--c-surface-2);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 10px 12px;
   display: grid;
   gap: 2px;
@@ -2592,7 +2592,7 @@ body:has(.scan) {
   gap: 12px;
   align-items: center;
   padding: 8px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
 }
 .host-mini-row:hover {
   background: var(--c-surface-2);
@@ -2649,7 +2649,7 @@ body:has(.scan) {
   align-items: center;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 14px 16px;
 }
 .ev-payrow div {

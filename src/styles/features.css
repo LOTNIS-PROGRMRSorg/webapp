@@ -6,7 +6,7 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   color: var(--ink);
 }
 .bell-link:hover {
@@ -19,7 +19,7 @@
   min-width: 17px;
   height: 17px;
   padding: 0 4px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--orange);
   color: var(--c-white);
   font-size: 0.65rem;
@@ -30,7 +30,7 @@
 
 .chip {
   padding: 8px 14px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--c-white);
   color: var(--ink);
@@ -68,7 +68,7 @@
   width: 100%;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 16px;
   transition: 0.2s;
 }
@@ -85,7 +85,7 @@
   width: 9px;
   height: 9px;
   margin-top: 6px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-line);
 }
 .notif-unread .notif-dot {
@@ -112,7 +112,7 @@
 .gate-card {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   padding: 24px;
   margin: 26px 0;
   display: grid;
@@ -168,7 +168,7 @@
   top: 3px;
   width: 14px;
   height: 14px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 2px solid var(--line);
   background: var(--c-white);
 }
@@ -228,7 +228,7 @@
 .dialog {
   position: relative;
   background: var(--c-white);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   padding: 30px;
   width: 100%;
   max-width: 520px;
@@ -258,7 +258,7 @@
 }
 .dialog-label textarea {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 12px;
   color: var(--ink);
   background: var(--c-white);
@@ -268,7 +268,7 @@
   display: grid;
   gap: 4px;
   background: var(--mint);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 18px;
 }
 .refund-hero strong {
@@ -287,7 +287,7 @@
 }
 .policy-detail {
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 12px 14px;
   font-size: 0.85rem;
 }
@@ -310,7 +310,7 @@
   display: grid;
   gap: 3px;
   background: var(--mint);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 14px 16px;
   font-size: 0.95rem;
 }
@@ -326,7 +326,7 @@
   gap: 12px;
   align-items: flex-start;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 14px;
   cursor: pointer;
   font-weight: 400 !important;
@@ -410,7 +410,7 @@
   align-items: center;
   gap: 11px;
   padding: 11px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   color: var(--c-ink-soft);
   font-weight: 500;
   font-size: 0.92rem;
@@ -434,7 +434,7 @@
   font-weight: 700;
   background: var(--orange);
   color: var(--c-white);
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   padding: 2px 7px;
 }
 .host-content {
@@ -478,7 +478,7 @@
   align-items: center;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 18px;
 }
 .space-row p {
@@ -529,7 +529,7 @@
   width: 100%;
   text-align: left;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: transparent;
   transition: 0.15s;
 }
@@ -545,7 +545,7 @@
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 2px solid var(--line);
   background: var(--c-white);
   font-size: 0.8rem;
@@ -566,7 +566,7 @@
 }
 .app-step-current {
   background: var(--c-white);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   box-shadow: 0 6px 18px color-mix(in srgb, var(--c-ink) 6%, transparent);
 }
 .app-step-current .app-step-dot {
@@ -587,7 +587,7 @@
 .app-card {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   padding: 0 34px 30px;
   display: grid;
   gap: 20px;
@@ -635,7 +635,7 @@
 .app-field input,
 .app-field select {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   padding: 13px;
   font: inherit;
   font-weight: 400;
@@ -658,7 +658,7 @@
   text-align: left;
   padding: 18px;
   border: 1.5px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background: var(--c-white);
   transition: 0.15s;
   color: var(--ink);
@@ -682,7 +682,7 @@
   gap: 14px;
   padding: 14px 16px;
   border: 1.5px dashed var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background: var(--c-white);
 }
 .app-file-done {
@@ -710,7 +710,7 @@
   display: flex;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-danger-bg);
   border: 1px solid var(--c-danger-line);
   color: var(--c-danger-deep);
@@ -736,7 +736,7 @@
   gap: 14px;
   padding: 14px 16px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
 }
 .app-review-row div {
   display: grid;
@@ -783,7 +783,7 @@
   display: grid;
   gap: 14px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 18px;
   background: var(--c-white);
 }
@@ -794,7 +794,7 @@
 }
 .icon-btn {
   padding: 8px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   color: var(--c-danger);
   background: transparent;
 }
@@ -816,7 +816,7 @@
 }
 .fact-chips li {
   padding: 7px 12px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--mint);
   color: var(--c-ink-hover);
   font-size: 0.78rem;
@@ -824,15 +824,21 @@
 }
 
 @media (max-width: 960px) {
+  /* minmax(0, …) lets the column shrink to the screen; a bare 1fr grows to fit the scrolling tab strip. */
   .host-shell {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .host-nav {
-    position: static;
+    position: sticky;
+    top: calc(var(--host-header-h) + 1px);
+    z-index: 20;
+    min-width: 0;
     min-height: 0;
-    padding: 14px 12px;
+    padding: 10px 0;
     border-right: 0;
     border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--c-white) 94%, transparent);
+    backdrop-filter: saturate(1.4) blur(8px);
   }
   .host-nav-title {
     display: none;
@@ -840,8 +846,14 @@
   .host-nav nav {
     display: flex;
     overflow-x: auto;
-    gap: 6px;
-    padding-bottom: 2px;
+    gap: 4px;
+    padding: 0 var(--space-4) 2px;
+    scrollbar-width: none;
+    scroll-padding-inline: var(--space-4);
+    mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent 100%);
+  }
+  .host-nav nav::-webkit-scrollbar {
+    display: none;
   }
   .host-link {
     white-space: nowrap;
@@ -900,7 +912,7 @@
   background: var(--ink);
   color: var(--c-white);
   padding: 4px 9px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
 }
 /* ── Upload previews + lightbox ───────────────────────────────────────────── */
 .app-file-thumb {
@@ -909,7 +921,7 @@
   place-items: center;
   width: 64px;
   height: 64px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   overflow: hidden;
   background: var(--c-surface-3);
   color: var(--muted);
@@ -940,7 +952,7 @@
 .lightbox img {
   max-width: min(94vw, 1100px);
   max-height: 90vh;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   box-shadow: 0 30px 80px color-mix(in srgb, var(--c-black) 53%, transparent);
   background: var(--c-white);
 }
@@ -950,7 +962,7 @@
   right: 22px;
   width: 42px;
   height: 42px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-white);
   color: var(--ink);
   font-size: 1.5rem;
@@ -977,7 +989,7 @@
 .pp-add {
   position: relative;
   aspect-ratio: 4/3;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   overflow: hidden;
   background: var(--c-surface-3);
 }
@@ -997,7 +1009,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 3px 8px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
 }
 .pp-tools {
   position: absolute;
@@ -1017,7 +1029,7 @@
   place-items: center;
   width: 28px;
   height: 28px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-white);
   color: var(--ink);
   box-shadow: 0 2px 8px color-mix(in srgb, var(--c-black) 20%, transparent);

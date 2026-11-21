@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, getSession } from '@/lib/api';
 import { BookingProgress, Photo, sortedImages } from '@/features/stays/bookingUi';
 import { money } from '@/lib/format';
+import { fmtStay } from '@/lib/dates';
 import type { Booking } from '@/types';
 
 export function loadPaystackScript(): Promise<void> {
@@ -34,9 +35,7 @@ function Summary({ booking }: { booking: Booking }) {
       <div className="sum-body">
         <small className="eyebrow">Your reservation</small>
         <h3>{booking.property?.name || 'Reservation'}</h3>
-        <p>
-          {booking.start_date} → {booking.end_date}
-        </p>
+        <p>{fmtStay(booking.start_date, booking.end_date)}</p>
         <div className="sum-lines">
           <div>
             <span>Stay</span>
@@ -236,7 +235,7 @@ export function BookedPage() {
         <p className="lead">
           {booking ? (
             <>
-              Payment received for <b>{booking.property?.name}</b>, {booking.start_date} → {booking.end_date}.
+              Payment received for <b>{booking.property?.name}</b>, {fmtStay(booking.start_date, booking.end_date)}.
             </>
           ) : (
             'Your payment was received.'

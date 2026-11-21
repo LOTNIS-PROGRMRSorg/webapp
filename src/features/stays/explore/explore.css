@@ -61,7 +61,7 @@
   gap: 6px;
   background: var(--c-surface);
   border: 1px solid var(--c-line);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   box-shadow: var(--shadow-sm);
   padding: 6px;
   transition:
@@ -108,7 +108,7 @@
   flex: none;
   width: 24px;
   height: 24px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   display: grid;
   place-items: center;
   background: var(--c-surface-3);
@@ -126,7 +126,7 @@
   gap: 8px;
   height: 50px;
   padding: 0 22px;
-  border-radius: 13px;
+  border-radius: var(--r-md);
   background: var(--c-accent-strong);
   color: #fff;
   font-weight: 700;
@@ -148,7 +148,7 @@
   top: calc(100% + 10px);
   z-index: 46;
   padding: 10px;
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
   box-shadow:
@@ -188,7 +188,7 @@
   gap: 12px;
   width: 100%;
   padding: 8px;
-  border-radius: 13px;
+  border-radius: var(--r-md);
   text-align: left;
   color: var(--c-ink);
   cursor: pointer;
@@ -202,7 +202,7 @@
 .sp-near > span:first-child {
   width: 38px;
   height: 38px;
-  border-radius: 11px;
+  border-radius: var(--r-sm);
   display: grid;
   place-items: center;
   background: var(--c-surface-3);
@@ -236,7 +236,7 @@
   text-transform: uppercase;
   color: var(--c-muted);
   padding: 3px 7px;
-  border-radius: 6px;
+  border-radius: var(--r-xs);
   background: var(--c-surface-2);
 }
 
@@ -256,7 +256,7 @@
 .sp-opt-thumb {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   object-fit: cover;
   background: var(--c-surface-3);
 }
@@ -284,7 +284,7 @@
 }
 .sp-area-chips button {
   padding: 8px 13px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--c-line);
   font-size: 0.86rem;
   font-weight: 600;
@@ -306,7 +306,7 @@
 .sp-city-grid button {
   display: grid;
   padding: 9px 10px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   text-align: left;
   color: var(--c-ink);
 }
@@ -357,7 +357,7 @@
   gap: 8px;
   height: 40px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
   font-weight: 600;
@@ -373,7 +373,7 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-ink);
   color: #fff;
   font-size: 0.72rem;
@@ -383,7 +383,7 @@
 
 /* Results count flashes after Search, so a search always visibly does something. */
 .sp-bar[data-flash] strong {
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   animation: sp-flash 1.1s ease-out;
 }
 @keyframes sp-flash {
@@ -408,7 +408,7 @@
   z-index: 45;
   width: min(300px, calc(100vw - 32px));
   padding: 14px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
   box-shadow: var(--shadow-md);
@@ -430,7 +430,7 @@
   align-items: center;
   gap: 10px;
   padding: 9px 6px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   font-size: 0.92rem;
   cursor: pointer;
 }
@@ -470,7 +470,7 @@
 }
 .sp-must-done {
   padding: 9px 16px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   background: var(--c-ink);
   color: #fff;
   font-weight: 700;
@@ -496,7 +496,7 @@
   position: sticky;
   top: calc(var(--sp-header) + 12px);
   height: calc(100vh - var(--sp-header) - 28px);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   border: 1px solid var(--c-line);
   background: var(--c-surface-3);
@@ -527,7 +527,7 @@
 }
 .sp-sort select {
   border: 1px solid var(--c-line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   padding: 8px 10px;
   background: var(--c-surface);
   color: var(--c-ink);
@@ -537,7 +537,7 @@
 .sp-notice {
   margin: 0 0 12px;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   background: var(--c-warn-bg);
   color: var(--c-warn);
   font-size: 0.86rem;
@@ -554,7 +554,7 @@
   align-items: center;
   gap: 6px;
   padding: 5px 8px 5px 11px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-tint);
   border: 1px solid var(--c-mint);
   font-size: 0.8rem;
@@ -574,8 +574,9 @@
 
 .sp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
-  gap: 28px 20px;
+  /* As many as fit at 200px or more, but never more than five on a row (the 20% term sets that ceiling) */
+  grid-template-columns: repeat(auto-fill, minmax(max(200px, calc((100% - 4 * 16px) / 5)), 1fr));
+  gap: 26px 16px;
   transition: opacity 0.2s;
 }
 .sp-grid-busy {
@@ -592,8 +593,8 @@
 }
 .sp-media {
   position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: 16px;
+  aspect-ratio: 1 / 0.95;
+  border-radius: var(--r-lg);
   background: var(--c-surface-3);
   transition: box-shadow 0.2s;
 }
@@ -640,7 +641,7 @@
   transform: translateY(-50%);
   width: 30px;
   height: 30px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.94);
   color: var(--c-ink);
   display: grid;
@@ -671,28 +672,34 @@
 .sp-dots i {
   width: 6px;
   height: 6px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.55);
 }
 .sp-dots i.on {
   background: #fff;
 }
-.sp-badge {
+.sp-kind {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  display: flex;
+  top: 10px;
+  left: 10px;
+  max-width: calc(100% - 94px);
+  display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 9px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.95);
+  overflow: hidden;
+  padding: 5px 10px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--c-white) 92%, transparent);
   color: var(--c-ink);
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   pointer-events: none;
 }
-.sp-badge svg {
+.sp-kind svg {
+  flex: none;
   color: var(--c-good);
 }
 .sp-actions {
@@ -704,7 +711,7 @@
 .sp-icon {
   width: 38px;
   height: 38px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   display: grid;
   place-items: center;
   color: #fff;
@@ -726,7 +733,7 @@
   gap: 6px;
   max-width: calc(100% - 24px);
   padding: 5px 9px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   background: var(--c-accent-strong);
   color: #fff;
   font-size: 0.74rem;
@@ -739,123 +746,65 @@
 .sp-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 3px;
-  padding-top: 12px;
+  gap: 2px;
+  padding: 12px 2px 0;
   color: var(--c-ink);
 }
-.sp-kicker {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--c-ink-muted);
-  white-space: nowrap;
+.sp-body h3 {
+  display: -webkit-box;
+  margin: 0 0 2px;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-.sp-kicker i {
-  flex: none;
-  width: 3px;
-  height: 3px;
-  border-radius: 99px;
-  background: var(--c-line-strong);
-}
-.sp-kicker b {
+  font-family: var(--display);
+  font-size: 0.95rem;
   font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.sp-meta {
+  display: block;
+  overflow: hidden;
+  color: var(--c-muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sp-meta b {
+  font-weight: 500;
   color: var(--c-good-ink);
 }
-.sp-body h3 {
-  margin: 0;
-  font-family: var(--display);
-  font-size: 1.02rem;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.sp-meta b.low {
+  color: var(--c-warn);
 }
-.sp-tagline {
-  margin: 0;
-  font-size: 0.86rem;
-  color: var(--c-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sp-foot {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 6px;
-}
-.sp-price {
-  font-size: 0.95rem;
-  font-variant-numeric: tabular-nums;
-}
-.sp-price b {
-  font-weight: 700;
-  font-size: 1.02rem;
-}
-.sp-price span {
-  color: var(--c-muted);
-}
-.sp-rating {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.86rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.sp-rating svg {
+.sp-star {
+  vertical-align: -1px;
   fill: var(--c-ink);
   stroke: none;
 }
-.sp-rating small {
+.sp-priceline {
+  color: var(--c-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.sp-priceline span {
   color: var(--c-muted);
   font-weight: 500;
-  font-size: inherit;
-}
-.sp-new {
-  flex: none;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--c-accent-strong);
-}
-.sp-units {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--c-good-ink);
-}
-.sp-units::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 99px;
-  background: currentColor;
-}
-.sp-units.low {
-  color: var(--c-warn);
 }
 
 .sp-skel i {
   display: block;
-  aspect-ratio: 4 / 3;
-  border-radius: 16px;
+  aspect-ratio: 1 / 0.95;
+  border-radius: var(--r-lg);
 }
 .sp-skel b {
   display: block;
   height: 13px;
   width: 70%;
   margin-top: 12px;
-  border-radius: 6px;
+  border-radius: var(--r-xs);
 }
 .sp-skel b + b {
   width: 45%;
@@ -881,7 +830,7 @@
   display: grid;
   gap: 14px;
   padding: 20px 22px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
 }
@@ -901,7 +850,7 @@
 }
 .sp-areas-list button {
   padding: 8px 14px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   border: 1px solid var(--c-line);
   font-weight: 600;
   font-size: 0.86rem;
@@ -920,7 +869,7 @@
   align-items: center;
   margin-top: 20px;
   padding: 26px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   background: var(--c-ink-deep);
   color: #fff;
 }
@@ -962,7 +911,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 18px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: #fff;
   color: var(--c-ink);
   font-weight: 700;
@@ -971,7 +920,7 @@
 .sp-widen {
   margin-top: 26px;
   padding: 22px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
 }
@@ -994,7 +943,7 @@
   display: grid;
   gap: 3px;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   border: 1px solid var(--c-line);
   text-align: left;
   color: var(--c-ink);
@@ -1024,7 +973,7 @@
   place-items: center;
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   background: var(--c-surface-3);
   color: var(--c-ink-muted);
 }
@@ -1064,7 +1013,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 16px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-ink);
   color: #fff;
   font-weight: 700;
@@ -1078,7 +1027,7 @@
   bottom: 12px;
   margin: 0;
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   background: rgba(255, 255, 255, 0.95);
   font-size: 0.8rem;
   color: var(--c-ink-muted);
@@ -1089,7 +1038,7 @@
   position: absolute;
   transform: translate(-50%, -50%);
   padding: 5px 9px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 0;
   background: #fff;
   color: var(--c-ink);
@@ -1127,7 +1076,7 @@
   width: 100%;
   height: 120px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
 }
 .sp-mapcard span {
   display: grid;
@@ -1159,7 +1108,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   background: var(--c-surface);
   box-shadow: var(--shadow-md);
 }
@@ -1180,7 +1129,7 @@
 .sp-sheet-x {
   width: 36px;
   height: 36px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   display: grid;
   place-items: center;
   color: var(--c-ink);
@@ -1221,7 +1170,7 @@
   align-items: center;
   gap: 5px;
   padding: 9px 16px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--c-line);
   font-weight: 600;
   font-size: 0.88rem;
@@ -1248,7 +1197,7 @@
   gap: 2px;
   padding: 8px 12px;
   border: 1px solid var(--c-line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--c-muted);
@@ -1277,7 +1226,7 @@
   justify-items: start;
   gap: 8px;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   border: 1px solid var(--c-line);
   font-weight: 600;
   font-size: 0.86rem;
@@ -1324,7 +1273,7 @@
 }
 .sp-show {
   padding: 13px 22px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-ink);
   color: #fff;
   font-weight: 700;
@@ -1359,7 +1308,7 @@
   gap: 12px;
   align-items: center;
   padding: 10px;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
   color: var(--c-ink);
@@ -1371,7 +1320,7 @@
 .sp-recent-noimg {
   width: 76px;
   height: 60px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   object-fit: cover;
   background: var(--c-surface-3);
 }
@@ -1417,7 +1366,7 @@
     align-items: center;
     gap: 8px;
     padding: 12px 20px;
-    border-radius: 99px;
+    border-radius: var(--r-pill);
     background: var(--c-ink-night);
     color: #fff;
     font-weight: 700;
@@ -1459,7 +1408,7 @@
     transform: translateX(-50%);
     width: 100%;
     max-height: 92vh;
-    border-radius: 22px 22px 0 0;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
   }
   .sp-grid {
     grid-template-columns: 1fr;

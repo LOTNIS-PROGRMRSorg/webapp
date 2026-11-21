@@ -1,11 +1,12 @@
 import { colors } from '@/theme';
 import { useEffect, useRef, useState } from 'react';
-import { loadMaps, mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
+import { createMap, htmlMarker, loadMaps, mapsAuthFailed, mapsEnabled, type MapLibre } from '@/lib/maps/maps';
 import { GHANA_CENTER } from '@/lib/maps/places';
+import { stayEmoji } from './categoryIcons';
 import { primaryImage } from '@/lib/format';
 import type { Property } from '@/types';
 
-type G = any; // Google Maps types are loaded at runtime, not bundled
+type G = any; // map objects are created at runtime
 
 /** "₵4.5k", "₵850": short enough to sit on a map pin. */
 export function pinPrice(p: Property): string {
@@ -27,35 +28,6 @@ const distanceKm = (a: { lat: number; lng: number }, b: { lat: number; lng: numb
     Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lng - a.lng) / 2) ** 2;
   return 12742 * Math.asin(Math.sqrt(h));
 };
-
-// HTML price pins drawn in an overlay, so they can be styled and highlighted without a cloud map ID.
-let PinClass: any;
-function pinClass(google: G) {
-  if (PinClass) return PinClass;
-  PinClass = class extends google.maps.OverlayView {
-    position: any;
-    el: HTMLButtonElement;
-    constructor(position: any, el: HTMLButtonElement) {
-      super();
-      this.position = position;
-      this.el = el;
-    }
-    onAdd() {
-      this.getPanes().overlayMouseTarget.appendChild(this.el);
-    }
-    draw() {
-      const point = this.getProjection()?.fromLatLngToDivPixel(this.position);
-      if (point) {
-        this.el.style.left = `${point.x}px`;
-        this.el.style.top = `${point.y}px`;
-      }
-    }
-    onRemove() {
-      this.el.remove();
-    }
-  };
-  return PinClass;
-}
 
 /** Info card built with DOM text (never HTML strings), because names and addresses are written by hosts. */
 function infoCard(p: Property) {
@@ -97,11 +69,17 @@ export function ResultsMap({
   onHover?: (id: string | null) => void;
   /** Called with the visible area when the person asks to search where they've moved the map. */
   onSearchArea?: (area: { lat: number; lng: number; radiusKm: number }) => void;
-  /** Called when Google Maps can't be used (bad key, blocked script), so the page can show the list alone. */
+  /** Called when the map can't be used (bad key, blocked script), so the page can show the list alone. */
   onUnavailable?: () => void;
 }) {
   const el = useRef<HTMLDivElement>(null);
-  const state = useRef<{ map?: G; info?: G; pins: Map<string, { overlay: G; el: HTMLButtonElement }>; auto: boolean }>({
+  const state = useRef<{
+    lib?: MapLibre;
+    map?: G;
+    info?: G;
+    pins: Map<string, { marker: G; el: HTMLButtonElement }>;
+    auto: boolean;
+  }>({
     pins: new Map(),
     auto: false,
   });
@@ -110,7 +88,7 @@ export function ResultsMap({
   const [moved, setMoved] = useState(false);
   const withCoords = properties.filter((p) => p.latitude != null && p.longitude != null);
 
-  // Google reports a rejected key after the script loads; treat it like a failed load.
+  // MapTiler reports a rejected key once tiles are requested; treat it like a failed load.
   useEffect(() => {
     const fail = () => {
       setFailed(true);
@@ -125,33 +103,27 @@ export function ResultsMap({
     if (!mapsEnabled || !el.current) return;
     let live = true;
     loadMaps()
-      .then(async (google) => {
+      .then((lib) => {
         if (!live || !el.current) return;
-        const { Map } = await google.maps.importLibrary('maps');
-        const map = new Map(el.current, {
-          center: centre ?? GHANA_CENTER,
-          zoom: centre ? 11 : 7,
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: false,
-          clickableIcons: false,
-          gestureHandling: 'greedy',
-          styles: [
-            { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
-            { featureType: 'poi', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-          ],
-        });
+        const map = createMap(lib, el.current, { center: centre ?? GHANA_CENTER, zoom: centre ? 10 : 6 });
+        map.addControl(new lib.NavigationControl({ showCompass: false }), 'bottom-right');
+        state.current.lib = lib;
         state.current.map = map;
-        state.current.info = new google.maps.InfoWindow({ disableAutoPan: false });
-        // Only moves the person makes count; our own fitBounds/setCenter calls set `auto` first.
-        map.addListener('dragstart', () => setMoved(true));
-        map.addListener('zoom_changed', () => {
-          if (!state.current.auto) setMoved(true);
+        state.current.info = new lib.Popup({
+          closeButton: false,
+          offset: 18,
+          maxWidth: '300px',
+          className: 'mm-popup',
         });
-        map.addListener('idle', () => {
+        // Only moves the person makes count; our own fitBounds/setCenter calls set `auto` first.
+        map.on('dragstart', () => setMoved(true));
+        map.on('zoomstart', (e: { originalEvent?: unknown }) => {
+          if (e.originalEvent && !state.current.auto) setMoved(true);
+        });
+        map.on('moveend', () => {
           state.current.auto = false;
         });
-        setReady(true);
+        map.once('load', () => live && setReady(true));
       })
       .catch(() => {
         if (!live) return;
@@ -165,45 +137,37 @@ export function ResultsMap({
 
   // Draw a pin per result and fit the map to them.
   useEffect(() => {
-    const { map, info, pins } = state.current;
-    if (!ready || !map) return;
-    const google = (window as any).google;
-    const Pin = pinClass(google);
-    pins.forEach(({ overlay }) => overlay.setMap(null));
+    const { map, info, pins, lib } = state.current;
+    if (!ready || !map || !lib) return;
+    pins.forEach(({ marker }) => marker.remove());
     pins.clear();
     for (const p of withCoords) {
-      const position = new google.maps.LatLng(Number(p.latitude), Number(p.longitude));
+      const lat = Number(p.latitude);
+      const lng = Number(p.longitude);
       const pin = document.createElement('button');
       pin.type = 'button';
       pin.className = 'sp-pin';
-      pin.textContent = pinPrice(p);
+      pin.textContent = `${stayEmoji(p.sub_type)} ${pinPrice(p)}`;
       pin.setAttribute('aria-label', `${p.name}, ${pinPrice(p)}`);
       pin.addEventListener('mouseenter', () => onHover?.(p.id));
       pin.addEventListener('mouseleave', () => onHover?.(null));
       pin.addEventListener('click', (e) => {
         e.stopPropagation();
-        info.setContent(infoCard(p));
-        info.setPosition(position);
-        info.setOptions({ pixelOffset: new google.maps.Size(0, -16) });
-        info.open({ map });
+        info.setDOMContent(infoCard(p)).setLngLat([lng, lat]).addTo(map);
       });
-      const overlay = new Pin(position, pin);
-      overlay.setMap(map);
-      pins.set(p.id, { overlay, el: pin });
+      pins.set(p.id, { marker: htmlMarker(lib, map, pin, lat, lng), el: pin });
     }
     state.current.auto = true;
     setMoved(false);
     if (withCoords.length > 1) {
-      const bounds = new google.maps.LatLngBounds();
-      withCoords.forEach((p) => bounds.extend({ lat: Number(p.latitude), lng: Number(p.longitude) }));
-      if (centre) bounds.extend(centre);
-      map.fitBounds(bounds, 64);
+      const bounds = new lib.LngLatBounds();
+      withCoords.forEach((p) => bounds.extend([Number(p.longitude), Number(p.latitude)]));
+      if (centre) bounds.extend([centre.lng, centre.lat]);
+      map.fitBounds(bounds, { padding: 64, maxZoom: 16, duration: 0 });
     } else if (withCoords.length === 1) {
-      map.setCenter({ lat: Number(withCoords[0].latitude), lng: Number(withCoords[0].longitude) });
-      map.setZoom(14);
+      map.jumpTo({ center: [Number(withCoords[0].longitude), Number(withCoords[0].latitude)], zoom: 13 });
     } else if (centre) {
-      map.setCenter(centre);
-      map.setZoom(12);
+      map.jumpTo({ center: [centre.lng, centre.lat], zoom: 11 });
     }
   }, [ready, properties]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -214,11 +178,11 @@ export function ResultsMap({
 
   const searchHere = () => {
     const { map } = state.current;
-    const c = map?.getCenter();
-    const ne = map?.getBounds()?.getNorthEast();
-    if (!c || !ne) return;
-    const centrePoint = { lat: c.lat(), lng: c.lng() };
-    const radiusKm = Math.min(200, Math.max(1, Math.round(distanceKm(centrePoint, { lat: ne.lat(), lng: ne.lng() }))));
+    if (!map) return;
+    const c = map.getCenter();
+    const ne = map.getBounds().getNorthEast();
+    const centrePoint = { lat: c.lat, lng: c.lng };
+    const radiusKm = Math.min(200, Math.max(1, Math.round(distanceKm(centrePoint, { lat: ne.lat, lng: ne.lng }))));
     setMoved(false);
     onSearchArea?.({ lat: Number(centrePoint.lat.toFixed(5)), lng: Number(centrePoint.lng.toFixed(5)), radiusKm });
   };

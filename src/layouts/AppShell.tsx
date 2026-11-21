@@ -4,6 +4,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getSession, setSession } from '@/lib/api';
 import { AuthLink } from '@/features/auth/AuthModal';
 import { GuestHeader, HostHeader } from '@/components/headers';
+import { LINES } from '@/lib/lines';
+
+// Lines not launched yet, for the footer's "Coming soon" strip (follows lib/lines.ts).
+const soonLines = LINES.filter((line) => line.status === 'soon');
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [session, setCurrentSession] = useState(getSession());
@@ -12,6 +16,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // A new page always starts at the top (links with #anchors scroll to the anchor instead).
   useEffect(() => {
     if (!window.location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [pathname]);
+  // On phones the host workspace tabs scroll sideways; bring the current one into view.
+  useEffect(() => {
+    if (!pathname.startsWith('/host')) return;
+    const id = requestAnimationFrame(() =>
+      document
+        .querySelector('.host-nav .host-link-active')
+        ?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' as ScrollBehavior }),
+    );
+    return () => cancelAnimationFrame(id);
   }, [pathname]);
   // Pick up sign-in/sign-out from other pages.
   useEffect(() => {
@@ -29,28 +43,39 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isHostArea) {
     return (
       <div className="app-shell app-shell-host">
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
         <HostHeader onSignOut={signOut} />
-        <main>{children}</main>
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
       </div>
     );
   }
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
       <GuestHeader session={session} onSignOut={signOut} />
-      <main>{children}</main>
+      <main id="main" tabIndex={-1}>
+        {children}
+      </main>
       <footer className="site-footer">
         <div className="site-footer-inner">
-          <div className="footer-soon">
-            <h2>Coming soon to Lotnis</h2>
-            <div className="footer-soon-list">
-              <Link to="/food">
-                <UtensilsCrossed size={16} /> Food
-              </Link>
-              <Link to="/services">
-                <Wrench size={16} /> Service providers
-              </Link>
+          {soonLines.length > 0 && (
+            <div className="footer-soon">
+              <h2>Coming soon to Lotnis</h2>
+              <div className="footer-soon-list">
+                {soonLines.map((line) => (
+                  <Link key={line.key} to={line.path}>
+                    {line.key === 'food' ? <UtensilsCrossed size={16} /> : <Wrench size={16} />} {line.label}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           <div className="footer-grid">
             <div>
               <Link className="brand" to="/">
@@ -67,6 +92,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <li>
                   <Link to="/events">Events</Link>
                 </li>
+                {!soonLines.some((l) => l.key === 'services') && (
+                  <>
+                    <li>
+                      <Link to="/services">Services</Link>
+                    </li>
+                    <li>
+                      <Link to="/map">Map</Link>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link to="/how-it-works">How it works</Link>
                 </li>

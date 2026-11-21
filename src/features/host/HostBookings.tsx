@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { CancelDialog } from '@/features/stays/CancelDialog';
 import { money } from '@/lib/format';
+import { fmtStay } from '@/lib/dates';
 import type { Booking } from '@/types';
-import { PageHeader } from '@/components/ui';
+import { Notice, PageHeader } from '@/components/ui';
 import { guestName, useHostBookings } from './hostShared';
 import { BookingRequests } from './BookingRequests';
 
@@ -14,14 +15,16 @@ export function HostBookings() {
   const { bookings, error, loading, reload } = useHostBookings();
   const [tab, setTab] = useState<BookingTab>('requests');
   const [cancelling, setCancelling] = useState<Booking | null>(null);
+  const [actionError, setActionError] = useState('');
   const navigate = useNavigate();
   const todayAccra = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Accra' });
   const startCheckout = async (bookingId: string) => {
+    setActionError('');
     try {
       const d = await api.startCheckout(bookingId);
       navigate(`/moveouts/${d.exit.id}`);
     } catch (err) {
-      window.alert(err instanceof Error ? err.message : 'Unable to start checkout');
+      setActionError(err instanceof Error ? err.message : 'Unable to start checkout');
     }
   };
   const groups = useMemo(
@@ -37,6 +40,7 @@ export function HostBookings() {
   return (
     <section className="host-page">
       <PageHeader eyebrow="Bookings" title="Reservations" />
+      {actionError && <Notice tone="danger">{actionError}</Notice>}
       <PillTabs
         label="Reservations"
         value={tab}
@@ -64,7 +68,7 @@ export function HostBookings() {
               <div>
                 <strong>{b.property?.name || 'Reservation'}</strong>
                 <p>
-                  {guestName(b)} · {b.start_date} → {b.end_date}
+                  {guestName(b)} · {fmtStay(b.start_date, b.end_date)}
                 </p>
                 <small>
                   {b.status === 'cancelled'

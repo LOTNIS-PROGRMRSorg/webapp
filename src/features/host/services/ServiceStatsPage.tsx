@@ -2,7 +2,12 @@ import { PillTabs } from '@/components/tabs';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Seo } from '@/lib/seo/seo';
-import { engagementApi, type EventEngagement, type PropertyEngagement } from '@/lib/api/engagement';
+import {
+  engagementApi,
+  type EventEngagement,
+  type PropertyEngagement,
+  type ServiceEngagement,
+} from '@/lib/api/engagement';
 import { cedis } from '@/lib/dates';
 import { StatCard, StatGrid, PanelCard } from '@/components/cards';
 import { ErrorState, LoadingState, PageHeader } from '@/components/ui';
@@ -22,12 +27,17 @@ const ACTION_LABEL: Record<string, string> = {
 export function ServiceStatsPage() {
   const { kind = 'property', id = '' } = useParams();
   const [days, setDays] = useState<'7' | '30' | '90'>('30');
-  const [data, setData] = useState<PropertyEngagement | EventEngagement | null>(null);
+  const [data, setData] = useState<PropertyEngagement | EventEngagement | ServiceEngagement | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
     setData(null);
     setError('');
-    (kind === 'event' ? engagementApi.event(id, Number(days)) : engagementApi.property(id, Number(days)))
+    (kind === 'event'
+      ? engagementApi.event(id, Number(days))
+      : kind === 'service'
+        ? engagementApi.service(id, Number(days))
+        : engagementApi.property(id, Number(days))
+    )
       .then(setData)
       .catch((e) => setError(e.message));
   }, [kind, id, days]);
@@ -35,28 +45,40 @@ export function ServiceStatsPage() {
   if (error) return <ErrorState>{error}</ErrorState>;
   if (!data) return <LoadingState />;
   const isEvent = kind === 'event';
+  const isService = kind === 'service';
   const conv = data.conversions as Record<string, number>;
-  const steps = isEvent
+  const steps = isService
     ? [
         { label: 'Viewed the page', value: data.totals.views },
-        { label: 'Clicked tickets or vote', value: data.totals.clicks },
-        { label: 'Started checkout', value: conv.checkouts_started ?? 0 },
-        { label: 'Paid for tickets', value: conv.ticket_orders_paid ?? 0 },
+        { label: 'Clicked Send request', value: data.totals.clicks },
+        { label: 'Requested a time', value: conv.requests ?? 0 },
+        { label: 'Provider accepted', value: conv.accepted ?? 0 },
+        { label: 'Customer paid', value: conv.paid ?? 0 },
       ]
-    : [
-        { label: 'Viewed the page', value: data.totals.views },
-        { label: 'Clicked Reserve', value: data.totals.clicks },
-        { label: 'Requested a booking', value: conv.requests ?? 0 },
-        { label: 'Booked & paid', value: conv.booked ?? 0 },
-      ];
-  const name = !isEvent ? (data as PropertyEngagement).listing?.name : 'this event';
+    : isEvent
+      ? [
+          { label: 'Viewed the page', value: data.totals.views },
+          { label: 'Clicked tickets or vote', value: data.totals.clicks },
+          { label: 'Started checkout', value: conv.checkouts_started ?? 0 },
+          { label: 'Paid for tickets', value: conv.ticket_orders_paid ?? 0 },
+        ]
+      : [
+          { label: 'Viewed the page', value: data.totals.views },
+          { label: 'Clicked Reserve', value: data.totals.clicks },
+          { label: 'Requested a booking', value: conv.requests ?? 0 },
+          { label: 'Booked & paid', value: conv.booked ?? 0 },
+        ];
+  const name = isEvent ? 'this event' : (data as PropertyEngagement | ServiceEngagement).listing?.name;
   return (
     <div className="host-page">
       <Seo title="Statistics" description="Views, clicks and bookings." noindex />
       <Link className="back-link" to="/host/listings">
         ← Services
       </Link>
-      <PageHeader eyebrow={isEvent ? 'Event statistics' : 'Listing statistics'} title={name ?? 'Statistics'}>
+      <PageHeader
+        eyebrow={isEvent ? 'Event statistics' : isService ? 'Service statistics' : 'Listing statistics'}
+        title={name ?? 'Statistics'}
+      >
         <PillTabs
           role="group"
           label="Period"
@@ -77,7 +99,10 @@ export function ServiceStatsPage() {
         <StatCard label="Different visitors" value={data.totals.visitors.toLocaleString()} />
         <StatCard label="Clicks" value={data.totals.clicks.toLocaleString()} />
         {!isEvent ? (
-          <StatCard label="Booking revenue" value={cedis((data as PropertyEngagement).conversions.revenue, 'GHS')} />
+          <StatCard
+            label={isService ? 'Earned (paid jobs)' : 'Booking revenue'}
+            value={cedis((data as PropertyEngagement | ServiceEngagement).conversions.revenue, 'GHS')}
+          />
         ) : (
           <StatCard label="Paid orders" value={(conv.ticket_orders_paid ?? 0) + (conv.vote_orders_paid ?? 0)} />
         )}

@@ -3,6 +3,7 @@ import { Ban, CalendarClock, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cedis, fmtDateTime, fromLocalInput } from '@/features/events/eventUi';
 import { eventApi, HostEventOverview } from '@/lib/api/events';
+import { Modal } from '@/components/modals';
 import { errText } from './hostShared';
 
 export function StatusBanner({ data, reload }: { data: HostEventOverview; reload: () => void }) {
@@ -235,28 +236,25 @@ export function CancelDialog({ ev, onClose, onDone }: { ev: any; onClose: () => 
     }
   };
   return (
-    <div className="modal" role="dialog" aria-modal="true">
-      <div className="modal-card">
-        <h2>Cancel "{ev.title}"?</h2>
-        <p>
-          Every ticket and vote is refunded in full (the payment-processing fee is not refundable), buyers are emailed,
-          and the event comes off sale. This can't be undone.
-        </p>
-        <label className="fld">
-          Reason — guests will see this
-          <textarea rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />
-        </label>
-        {error && <div className="form-error">{error}</div>}
-        <div className="form-actions">
-          <button className="button button-quiet" onClick={onClose}>
-            Keep event
-          </button>
-          <button className="button button-danger" disabled={busy || !reason.trim()} onClick={go}>
-            {busy ? 'Cancelling…' : 'Cancel and refund everyone'}
-          </button>
-        </div>
+    <Modal title={`Cancel “${ev.title}”?`} onClose={onClose}>
+      <p>
+        Every ticket and vote is refunded in full (the payment-processing fee is not refundable), buyers are emailed,
+        and the event comes off sale. This can't be undone.
+      </p>
+      <label className="fld">
+        Reason — guests will see this
+        <textarea rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />
+      </label>
+      {error && <div className="form-error">{error}</div>}
+      <div className="form-actions">
+        <button className="button button-quiet" onClick={onClose}>
+          Keep event
+        </button>
+        <button className="button button-danger" disabled={busy || !reason.trim()} onClick={go}>
+          {busy ? 'Cancelling…' : 'Cancel and refund everyone'}
+        </button>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -285,35 +283,32 @@ export function PostponeDialog({ ev, onClose, onDone }: { ev: any; onClose: () =
     }
   };
   return (
-    <div className="modal" role="dialog" aria-modal="true">
-      <div className="modal-card">
-        <h2>Postpone "{ev.title}"</h2>
-        <p>{what} Everyone who bought is emailed the new date. Your payout moves to the new date too.</p>
-        <div className="two">
-          <label className="fld">
-            New start
-            <input type="datetime-local" value={s} onChange={(x) => setS(x.target.value)} />
-          </label>
-          <label className="fld">
-            New end
-            <input type="datetime-local" value={e} onChange={(x) => setE(x.target.value)} />
-          </label>
-        </div>
+    <Modal title={`Postpone “${ev.title}”`} onClose={onClose}>
+      <p>{what} Everyone who bought is emailed the new date. Your payout moves to the new date too.</p>
+      <div className="two">
         <label className="fld">
-          Why <small>optional</small>
-          <input value={reason} onChange={(x) => setReason(x.target.value)} />
+          New start
+          <input type="datetime-local" value={s} onChange={(x) => setS(x.target.value)} />
         </label>
-        {error && <div className="form-error">{error}</div>}
-        <div className="form-actions">
-          <button className="button button-quiet" onClick={onClose}>
-            Never mind
-          </button>
-          <button className="button button-primary" disabled={busy || !s || !e} onClick={go}>
-            {busy ? 'Postponing…' : 'Postpone event'}
-          </button>
-        </div>
+        <label className="fld">
+          New end
+          <input type="datetime-local" value={e} onChange={(x) => setE(x.target.value)} />
+        </label>
       </div>
-    </div>
+      <label className="fld">
+        Why <small>optional</small>
+        <input value={reason} onChange={(x) => setReason(x.target.value)} />
+      </label>
+      {error && <div className="form-error">{error}</div>}
+      <div className="form-actions">
+        <button className="button button-quiet" onClick={onClose}>
+          Never mind
+        </button>
+        <button className="button button-primary" disabled={busy || !s || !e} onClick={go}>
+          {busy ? 'Postponing…' : 'Postpone event'}
+        </button>
+      </div>
+    </Modal>
   );
 }
 

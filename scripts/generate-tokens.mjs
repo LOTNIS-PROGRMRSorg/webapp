@@ -16,6 +16,10 @@ const lines = [
   '  /* short names the older stylesheets already use */',
   ...Object.entries(palette.aliases).map(([alias, target]) => `  --${alias}: var(--c-${target});`),
   ...Object.entries(palette.shadows).map(([name, value]) => `  --shadow-${name}: ${value};`),
+  '  /* radius, spacing, type and motion scales */',
+  ...Object.entries(palette.scale ?? {})
+    .filter(([name]) => !name.startsWith('_'))
+    .map(([name, value]) => `  --${name}: ${value};`),
   '}',
   '',
 ];

@@ -16,15 +16,25 @@ export type PropertyEngagement = EngagementSeries & {
 export type EventEngagement = EngagementSeries & {
   conversions: { checkouts_started: number; ticket_orders_paid: number; vote_orders_paid: number; [k: string]: number };
 };
+export type ServiceEngagement = EngagementSeries & {
+  listing: { id: string; name: string };
+  conversions: { requests: number; accepted: number; paid: number; revenue: number };
+};
 export type HostEngagementOverview = {
   days: number;
   per_target: Record<string, { views: number; clicks: number }>;
   properties: EngagementSeries;
   events: EngagementSeries;
+  services?: EngagementSeries;
 };
 
 export const engagementApi = {
-  track: (target_type: 'property' | 'event', target_id: string, action: EngagementAction, session_id: string) =>
+  track: (
+    target_type: 'property' | 'event' | 'service',
+    target_id: string,
+    action: EngagementAction,
+    session_id: string,
+  ) =>
     request<void>('/engagement/track', {
       method: 'POST',
       body: JSON.stringify({ target_type, target_id, action, session_id }),
@@ -32,5 +42,6 @@ export const engagementApi = {
     } as RequestInit),
   hostOverview: (days = 30) => request<HostEngagementOverview>(`/engagement/host/overview?days=${days}`),
   property: (id: string, days = 30) => request<PropertyEngagement>(`/engagement/host/properties/${id}?days=${days}`),
+  service: (id: string, days = 30) => request<ServiceEngagement>(`/engagement/host/services/${id}?days=${days}`),
   event: (id: string, days = 30) => request<EventEngagement>(`/engagement/host/events/${id}?days=${days}`),
 };

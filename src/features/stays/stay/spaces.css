@@ -1,0 +1,141 @@
+/* "Book it all, or just a room": the showcase under About this space */
+.ssc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.ssc-head h2 {
+  margin: 0 0 4px;
+}
+.ssc-head p {
+  margin: 0;
+  color: var(--c-ink-muted);
+}
+.ssc-safe {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--c-good-bg);
+  color: var(--c-good-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.ssc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 22px 16px;
+}
+.ssc-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+}
+.ssc-photo {
+  position: relative;
+  border-radius: var(--r-lg);
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+.ssc-card:hover .ssc-photo {
+  transform: translateY(-2px);
+}
+.ssc-card.on .ssc-photo {
+  box-shadow: 0 0 0 2.5px var(--c-ink);
+}
+.ssc-photo .ps {
+  border-radius: var(--r-lg);
+}
+.ssc-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--c-white) 92%, transparent);
+  color: var(--c-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  pointer-events: none;
+}
+.ssc-body {
+  display: grid;
+  gap: 2px;
+  padding: 0 2px;
+}
+.ssc-body h3 {
+  display: -webkit-box;
+  margin: 0 0 2px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.ssc-meta {
+  margin: 0;
+  overflow: hidden;
+  color: var(--c-muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ssc-priceline {
+  margin: 0;
+  color: var(--c-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ssc-priceline span {
+  color: var(--c-muted);
+  font-weight: 500;
+}
+.ssc-select {
+  margin-top: 8px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--c-ink);
+  background: var(--c-surface);
+  color: var(--c-ink);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.ssc-select:hover,
+.ssc-select.on {
+  background: var(--c-ink);
+  color: #fff;
+}
+.ssc-note {
+  margin: var(--space-4) 0 0;
+  color: var(--c-muted);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 760px) {
+  .ssc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ssc-safe {
+    display: none;
+  }
+}

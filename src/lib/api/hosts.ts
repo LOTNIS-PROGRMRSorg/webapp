@@ -1,5 +1,6 @@
 import { request } from '@/lib/api';
 import type { EventCard } from './events';
+import type { ServiceCard } from './market';
 
 export type PublicHost = {
   id: string;
@@ -24,6 +25,7 @@ export type PublicHost = {
     image: string | null;
   }>;
   events: EventCard[];
+  services?: ServiceCard[];
 };
 
 export const hostsApi = { profile: (id: string) => request<PublicHost>(`/hosts/${id}`) };

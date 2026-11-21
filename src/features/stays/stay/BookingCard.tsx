@@ -55,6 +55,8 @@ export function BookingCard({
   const room = rooms.find((r) => r.id === roomId);
   const unit = (room?.pricing_period || property.pricing_period || 'day') as RentalUnitCode;
   const nightly = unit === 'day';
+  // Hourly spaces pick their start time and hours on the next screen, so the card only needs the day.
+  const hourly = unit === 'hour';
   // The host's minimum stay is counted in the listing's own unit (nights, months…).
   const minStay = unit === (property.pricing_period || 'day') ? Math.max(1, property.minimum_stay ?? 1) : 1;
   const earliestEnd = (from: string) => endDateFor(from, 'day', minStay);
@@ -73,7 +75,7 @@ export function BookingCard({
   useEffect(() => {
     setQuote(null);
     setQuoteError('');
-    if (!start || !effectiveEnd || effectiveEnd <= start || (needsRoom && !roomId)) return;
+    if (hourly || !start || !effectiveEnd || effectiveEnd <= start || (needsRoom && !roomId)) return;
     let live = true;
     setPricing(true);
     const t = window.setTimeout(() => {
@@ -92,11 +94,11 @@ export function BookingCard({
       live = false;
       window.clearTimeout(t);
     };
-  }, [property.id, roomId, start, effectiveEnd, needsRoom]);
+  }, [property.id, roomId, start, effectiveEnd, needsRoom, hourly]);
 
   useEffect(() => {
-    onQuote?.({ quote, ready: Boolean(start && effectiveEnd) });
-  }, [quote, start, effectiveEnd]); // eslint-disable-line react-hooks/exhaustive-deps
+    onQuote?.({ quote, ready: Boolean(start && (hourly || effectiveEnd)) });
+  }, [quote, start, effectiveEnd, hourly]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const needsHost = quote?.requires_host_acceptance ?? property.requires_host_acceptance ?? false;
   const reserve = () => {
@@ -104,7 +106,7 @@ export function BookingCard({
       setNudge(true);
       return;
     }
-    if (!start || !effectiveEnd) {
+    if (!start || (!hourly && !effectiveEnd)) {
       setNudge(true);
       startInput.current?.focus();
       try {
@@ -114,6 +116,7 @@ export function BookingCard({
       }
       return;
     }
+    if (hourly) return onReserve({ roomId: roomId || undefined, start });
     onReserve({ roomId: roomId || undefined, start, end: nightly ? end : undefined, qty: nightly ? undefined : qty });
   };
 
@@ -152,7 +155,7 @@ export function BookingCard({
 
       <div className={`st-dates${nudge && !start ? ' st-field-nudge' : ''}`}>
         <label className="st-field">
-          <small>{nightly ? 'Check-in' : 'Move-in'}</small>
+          <small>{nightly ? 'Check-in' : hourly ? 'Date' : 'Move-in'}</small>
           <input
             ref={startInput}
             type="date"
@@ -164,7 +167,12 @@ export function BookingCard({
             }}
           />
         </label>
-        {nightly ? (
+        {hourly ? (
+          <div className="st-field">
+            <small>Time</small>
+            <span className="st-note">Pick your hours next</span>
+          </div>
+        ) : nightly ? (
           <label className="st-field">
             <small>Check-out</small>
             <input
@@ -196,7 +204,7 @@ export function BookingCard({
           </div>
         )}
       </div>
-      {!nightly && start && effectiveEnd && (
+      {!nightly && !hourly && start && effectiveEnd && (
         <p className="st-note">
           {prettyDate(start)} to {prettyDate(effectiveEnd)}
         </p>
@@ -241,7 +249,9 @@ export function BookingCard({
         <p className="st-note">
           {needsRoom && !roomId
             ? 'Choose a room and your dates to see the total.'
-            : 'Add your dates to see the total, including fees.'}
+            : hourly
+              ? 'Choose a day, then pick your start time and hours on the next step.'
+              : 'Add your dates to see the total, including fees.'}
         </p>
       )}
 
@@ -255,7 +265,7 @@ export function BookingCard({
           'Not taking bookings right now'
         ) : (
           <>
-            {needsHost ? 'Request to book' : 'Reserve'} <ArrowRight size={17} />
+            {hourly ? 'Choose a time' : needsHost ? 'Request to book' : 'Reserve'} <ArrowRight size={17} />
           </>
         )}
       </button>

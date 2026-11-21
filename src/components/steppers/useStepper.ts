@@ -12,10 +12,10 @@ export interface Step<K extends string = string> {
 export function useStepper<K extends string>(
   steps: Array<Step<K>>,
   validate: (key: K) => string,
-  opts: { freeJump?: boolean } = {},
+  opts: { freeJump?: boolean; initial?: number } = {},
 ) {
-  const [index, setIndex] = useState(0);
-  const [reached, setReached] = useState(0);
+  const [index, setIndex] = useState(opts.initial ?? 0);
+  const [reached, setReached] = useState(opts.initial ?? 0);
   const [error, setError] = useState('');
   const last = index === steps.length - 1;
 

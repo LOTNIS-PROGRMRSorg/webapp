@@ -25,7 +25,7 @@
 .evd-card {
   background: var(--c-white);
   border: 1px solid var(--evd-hair);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   padding: clamp(20px, 2.6vw, 28px);
   scroll-margin-top: 88px;
 }
@@ -49,7 +49,7 @@
   position: absolute;
   inset: 0;
   width: 100%;
-  border-radius: 28px;
+  border-radius: var(--r-xl);
   overflow: hidden;
   background: var(--c-surface-3);
   box-shadow:
@@ -114,7 +114,7 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-surface-3);
   color: var(--c-ink);
 }
@@ -154,7 +154,7 @@
   position: relative;
   width: clamp(60px, 6.2vw, 80px);
   height: clamp(68px, 7vw, 90px);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   overflow: hidden;
   background: var(--c-ink-deep);
   box-shadow: 0 1px 2px rgb(16 48 44 / 0.2);
@@ -213,7 +213,7 @@
   gap: 10px;
   justify-self: start;
   padding: 10px 16px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--evd-hair);
   font-weight: 600;
 }
@@ -375,7 +375,7 @@
   grid-template-columns: 1fr var(--stub);
   isolation: isolate;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   color: var(--tk-fg);
   background: #fff;
   -webkit-mask:
@@ -417,7 +417,7 @@
 }
 .evd-ticket-kind {
   padding: 4px 9px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--tk-accent);
   color: var(--tk-on-accent, #fff);
   font: 700 0.64rem/1 var(--display);
@@ -470,7 +470,7 @@
   align-items: center;
   gap: 2px;
   padding: 3px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: rgb(255 255 255 / 0.85);
   border: 1px solid var(--tk-line);
   color: var(--evd-dark);
@@ -578,7 +578,7 @@
   display: grid;
   gap: 10px;
   padding: 18px 20px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   background: var(--c-surface-2);
   font-size: 0.94rem;
 }
@@ -691,7 +691,7 @@
 .evd-nominee-photo {
   position: relative;
   aspect-ratio: 4 / 5;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   background: var(--c-surface-3);
 }
@@ -719,7 +719,7 @@
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   font: 700 0.7rem/1 var(--display);
   letter-spacing: 0.04em;
 }
@@ -754,14 +754,14 @@
 }
 .evd-bar {
   height: 4px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-surface-3);
   overflow: hidden;
 }
 .evd-bar i {
   display: block;
   height: 100%;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--c-ink);
   transition: width 0.6s var(--ease, ease);
 }
@@ -774,7 +774,7 @@
   display: grid;
   place-items: center;
   padding: 10px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   border: 1px solid var(--c-ink);
   color: var(--c-ink);
   font-weight: 700;
@@ -913,7 +913,7 @@
 .evd-card {
   background: #fff;
   border: 1px solid var(--evd-hair);
-  border-radius: 24px;
+  border-radius: var(--r-xl);
   box-shadow:
     0 1px 2px rgb(16 20 24 / 0.04),
     0 22px 40px -28px color-mix(in srgb, var(--evd-c1) 55%, transparent);
@@ -930,7 +930,7 @@
   bottom: 0;
   width: 44px;
   height: 3px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: linear-gradient(90deg, var(--evd-c1), var(--evd-c2));
 }
 
@@ -939,13 +939,13 @@
   content: '';
   position: absolute;
   inset: 18px -14px -18px 14px;
-  border-radius: 32px;
+  border-radius: var(--r-xl);
   background: linear-gradient(145deg, var(--evd-c1), var(--evd-c2));
   opacity: 0.9;
   transform: rotate(1.6deg);
 }
 .evd-poster {
-  border-radius: 28px;
+  border-radius: var(--r-xl);
   box-shadow:
     0 0 0 5px #fff,
     0 2px 4px rgb(16 20 24 / 0.12);
@@ -964,7 +964,7 @@
   top: 18px;
   left: 18px;
   padding: 8px 14px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: rgb(255 255 255 / 0.92);
   backdrop-filter: blur(8px);
   color: var(--evd-dark);
@@ -981,7 +981,7 @@
   justify-items: center;
   width: 92px;
   padding: 0 0 10px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   background: #fff;
   color: var(--evd-dark);
@@ -1021,7 +1021,7 @@
 .evd-facts li {
   padding: 14px 16px;
   border: 1px solid var(--evd-hair);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   background: #fff;
   transition:
     transform 0.25s var(--ease, ease),
@@ -1034,7 +1034,7 @@
 .evd-fact-icon {
   width: 44px;
   height: 44px;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background: linear-gradient(
     145deg,
     color-mix(in srgb, var(--evd-c1) 22%, #fff),
@@ -1141,7 +1141,7 @@
   color: var(--evd-accent);
 }
 .evd-side .host-card-mini {
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--evd-hair);
   background: #fff;
 }
@@ -1191,7 +1191,7 @@
 .evd-vote {
   padding: clamp(22px, 3vw, 34px);
   border: 1px solid var(--evd-hair);
-  border-radius: 28px;
+  border-radius: var(--r-xl);
   background: #fff;
   box-shadow:
     0 1px 2px rgb(16 20 24 / 0.04),
@@ -1207,7 +1207,7 @@
 }
 .evd-cat-price {
   padding: 7px 12px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--evd-wash);
   color: var(--evd-dark) !important;
 }
@@ -1219,7 +1219,7 @@
   gap: 0;
   padding: 8px;
   border: 1px solid var(--evd-hair);
-  border-radius: 24px;
+  border-radius: var(--r-xl);
   background: #fff;
   transition:
     transform 0.3s var(--ease, ease),
@@ -1232,7 +1232,7 @@
   box-shadow: 0 24px 36px -20px color-mix(in srgb, var(--evd-dark) 55%, transparent);
 }
 .evd-nominee-photo {
-  border-radius: 18px;
+  border-radius: var(--r-lg);
 }
 .evd-nominee-ph {
   background: linear-gradient(
@@ -1320,7 +1320,7 @@
 .evd-sidecard {
   padding: 24px;
   border: 1px solid var(--evd-hair);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
 }
 .evd-sidecard::before {
   display: none;

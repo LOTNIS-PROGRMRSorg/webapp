@@ -17,7 +17,10 @@ export function ReportDialog({
   onDone,
 }: {
   kind: ReportKind;
-  target: Pick<ReportInput, 'property_id' | 'event_id' | 'booking_id' | 'order_id' | 'host_id' | 'token'>;
+  target: Pick<
+    ReportInput,
+    'property_id' | 'event_id' | 'booking_id' | 'order_id' | 'host_id' | 'service_id' | 'service_request_id' | 'token'
+  >;
   title: string;
   audienceNote?: string;
   onClose: () => void;

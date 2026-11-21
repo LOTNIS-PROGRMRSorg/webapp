@@ -4,3 +4,4 @@ export { RowCard, RowList, Thumb } from './RowCard';
 export { EventCard } from './EventCard';
 export { HostCard } from './HostCard';
 export { PropertyCard, SpaceFacts, startingPrice, TransactionRows } from './ListingCard';
+export { ServiceCard } from './ServiceCard';

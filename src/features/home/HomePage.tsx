@@ -89,11 +89,6 @@ export function HomePage() {
             </Link>
           </div>
         </div>
-        <div className="lp-final-cta-orbit" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
       </section>
     </div>
   );

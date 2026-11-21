@@ -162,7 +162,7 @@ export const LINES: Line[] = [
   {
     key: 'services',
     label: 'Services',
-    status: 'soon',
+    status: 'live',
     path: '/services',
     tagline: 'Book anyone who can do the job.',
     summary:
@@ -198,6 +198,7 @@ export const LINES: Line[] = [
     providerText:
       'If you can do it, you can list it. Plumber, guide, photographer, tutor — set your rates and get booked by people nearby.',
     providerCta: 'Offer my service',
+    browseCta: 'Find a pro',
     providerMail: 'Offer my service on Lotnis',
     seo: {
       title: 'Book trusted service providers in Ghana — coming soon',

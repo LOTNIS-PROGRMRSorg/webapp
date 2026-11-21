@@ -1,6 +1,7 @@
 import { request } from '@/lib/api';
 
-export type ReportKind = 'property' | 'event' | 'booking' | 'ticket_order' | 'host' | 'other';
+export type ReportKind =
+  'property' | 'event' | 'booking' | 'ticket_order' | 'host' | 'service' | 'service_request' | 'other';
 export type ReportStatus = 'open' | 'in_review' | 'resolved' | 'dismissed';
 export type ReportCategory = {
   value: string;
@@ -19,6 +20,8 @@ export type ReportInput = {
   booking_id?: string;
   order_id?: string;
   host_id?: string;
+  service_id?: string;
+  service_request_id?: string;
   token?: string;
   evidence_urls?: string[];
 };
@@ -36,6 +39,7 @@ export type HostReport = {
   evidence_urls?: string[];
   property?: { id: string; name: string } | null;
   event?: { id: string; title: string } | null;
+  service?: { id: string; title: string } | null;
 };
 export type MyReport = {
   id: string;

@@ -224,7 +224,7 @@ export function ExplorePage() {
       label: cap(unitWord[filters.pricingPeriod] ?? filters.pricingPeriod),
       clear: () => commit({ pricingPeriod: '', minPrice: '', maxPrice: '' }),
     });
-  const ghs = (v: string) => `GHS ${Number(v).toLocaleString()}`;
+  const ghs = (v: string) => `GH₵${Number(v).toLocaleString()}`;
   const budgetText =
     filters.minPrice && filters.maxPrice
       ? `${ghs(filters.minPrice)} – ${Number(filters.maxPrice).toLocaleString()}`
@@ -258,8 +258,8 @@ export function ExplorePage() {
     filters.pricingPeriod && cap(unitWord[filters.pricingPeriod] ?? ''),
     (filters.minPrice || filters.maxPrice) &&
       (filters.maxPrice && !filters.minPrice
-        ? `under GHS ${Number(filters.maxPrice).toLocaleString()}`
-        : `GHS ${filters.minPrice || '0'} – ${filters.maxPrice || 'any'}`),
+        ? `under GH₵${Number(filters.maxPrice).toLocaleString()}`
+        : `GH₵${filters.minPrice || '0'} – ${filters.maxPrice || 'any'}`),
     filters.amenities.length > 0 &&
       `with ${filters.amenities.map((a) => essentialByKey(a)?.label.toLowerCase() ?? a).join(', ')}`,
   ]

@@ -1,25 +1,13 @@
 import { colors } from '@/theme';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ArrowRight,
-  BedDouble,
-  Bath,
-  ChevronLeft,
-  ChevronRight,
-  Grid3x3,
-  Heart,
-  MapPin,
-  Star,
-  Users,
-  X,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Grid3x3, Heart, MapPin, Star, X } from 'lucide-react';
 import { useAuthModal } from '@/features/auth/AuthModal';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api, getSession } from '@/lib/api';
 import { bookingMode, liveRooms, Photo, sortedImages, useReveal } from '@/features/stays/bookingUi';
-import { money, periodLabel, policyLine } from '@/lib/format';
+import { money, policyLine } from '@/lib/format';
 import { breadcrumbLd, clip, placeLd, propertyLd, Seo } from '@/lib/seo/seo';
-import { loadMaps, mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
+import { createMap, drawCircle, loadMaps, mapsAuthFailed, mapsEnabled } from '@/lib/maps/maps';
 import { mapsLink } from '@/lib/maps/places';
 import { startingPrice } from '@/components/cards/ListingCard';
 import { HostCard } from '@/components/cards';
@@ -30,11 +18,12 @@ import { Amenities } from '@/features/stays/Amenities';
 import { areaOf } from '@/features/stays/explore/SpaceCard';
 import { rememberViewed, useSavedSpaces } from '@/features/stays/explore/spaceMemory';
 import { BookingCard, QuoteSummary, ReserveChoice } from '@/features/stays/stay/BookingCard';
+import { SpacesShowcase } from '@/features/stays/stay/SpacesShowcase';
 import { Highlights } from '@/features/stays/stay/Highlights';
 import { NearbySpaces } from '@/features/stays/stay/NearbySpaces';
 import '@/features/stays/stay/stay.css';
 import { track, useTrackView } from '@/lib/track';
-import type { CatalogOptions, Property, PropertyImage, Room } from '@/types';
+import type { CatalogOptions, Property, PropertyImage } from '@/types';
 
 function useProperty(id: string, attempt = 0) {
   const [property, setProperty] = useState<Property | null>(null);
@@ -57,7 +46,7 @@ function Mosaic({ images, propertyId, name }: { images: PropertyImage[]; propert
       {shown.length === 0 && <Photo className="mosaic-cell mosaic-main" alt={name} />}
       {shown.map((img, i) => (
         <Link
-          key={img.id ?? img.public_url}
+          key={`${img.id ?? img.public_url}-${i}`}
           to={`/stays/${propertyId}/photos?i=${i}`}
           className={`mosaic-cell ${i === 0 ? 'mosaic-main' : ''}`}
           aria-label={`Open photo ${i + 1} of ${images.length}`}
@@ -74,83 +63,8 @@ function Mosaic({ images, propertyId, name }: { images: PropertyImage[]; propert
   );
 }
 
-// ── A bookable space (room or whole property) as a card with pictures ───────
-function RoomCard({
-  title,
-  subtitle,
-  images,
-  price,
-  per,
-  meta,
-  onSelect,
-  cta,
-}: {
-  title: string;
-  subtitle?: string;
-  images: PropertyImage[];
-  price: string;
-  per: string;
-  meta: Array<[React.ReactNode, string]>;
-  onSelect: () => void;
-  cta: string;
-}) {
-  const [i, setI] = useState(0);
-  const img = images[i];
-  return (
-    <article className="space-card reveal">
-      <div className="space-photo">
-        <Photo src={img?.public_url} alt={title} />
-        {images.length > 1 && (
-          <>
-            <button
-              className="space-nav space-prev"
-              aria-label="Previous photo"
-              onClick={() => setI((n) => (n - 1 + images.length) % images.length)}
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              className="space-nav space-next"
-              aria-label="Next photo"
-              onClick={() => setI((n) => (n + 1) % images.length)}
-            >
-              <ChevronRight size={18} />
-            </button>
-            <span className="space-dots">
-              {images.map((_, n) => (
-                <i key={n} className={n === i ? 'on' : ''} />
-              ))}
-            </span>
-          </>
-        )}
-      </div>
-      <div className="space-body">
-        <div>
-          <h3>{title}</h3>
-          {subtitle && <p>{subtitle}</p>}
-          <ul className="space-meta">
-            {meta.map(([icon, text]) => (
-              <li key={text}>
-                {icon}
-                {text}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="space-buy">
-          <strong>{price}</strong>
-          <small>per {per}</small>
-          <button className="button button-primary" onClick={onSelect}>
-            {cta} <ArrowRight size={16} />
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
 /** Area map with a soft circle (about 300 m) so the page shows where, without a pin on the doorstep.
- *  If Google Maps can't load (no key, rejected key), it falls back to a plain area card. */
+ *  If the map can't load (no key, rejected key), it falls back to a plain area card. */
 function StayMap({ lat, lng, label, area }: { lat: number; lng: number; label: string; area: string }) {
   const el = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(!mapsEnabled || mapsAuthFailed());
@@ -162,31 +76,19 @@ function StayMap({ lat, lng, label, area }: { lat: number; lng: number; label: s
   useEffect(() => {
     if (failed || !el.current) return;
     let live = true;
+    let map: { remove: () => void } | undefined;
     loadMaps()
-      .then(async (google) => {
+      .then((lib) => {
         if (!live || !el.current) return;
-        const { Map } = await google.maps.importLibrary('maps');
-        const map = new Map(el.current, {
-          center: { lat, lng },
-          zoom: 15,
-          streetViewControl: false,
-          mapTypeControl: false,
-          gestureHandling: 'cooperative',
-        });
-        new google.maps.Circle({
-          map,
-          center: { lat, lng },
-          radius: 300,
-          strokeColor: colors.ink,
-          strokeOpacity: 0.9,
-          strokeWeight: 2,
-          fillColor: colors.good,
-          fillOpacity: 0.22,
-        });
+        const m = createMap(lib, el.current, { center: { lat, lng }, zoom: 14, scrollZoom: false });
+        m.addControl(new lib.NavigationControl({ showCompass: false }), 'bottom-right');
+        drawCircle(m, 'stay-area', lat, lng, 300, { line: colors.ink, fill: colors.good, fillOpacity: 0.22 });
+        map = m;
       })
       .catch(() => live && setFailed(true));
     return () => {
       live = false;
+      map?.remove();
     };
   }, [lat, lng, failed]);
   return (
@@ -313,6 +215,7 @@ export function StayPage() {
     track('property', property.id, 'click_book');
     const q = new URLSearchParams();
     if (roomId) q.set('room', roomId);
+    else if (rooms.length > 0) q.set('whole', '1');
     if (start) q.set('start', start);
     if (end) q.set('end', end);
     if (qty) q.set('qty', String(qty));
@@ -326,7 +229,6 @@ export function StayPage() {
     if (window.matchMedia('(max-width: 1000px)').matches) setSheet(true);
     else document.getElementById('book')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
-  const per = periodLabel(property.pricing_period);
   const canBookWhole = mode !== 'rooms';
 
   const name = property.name.trim();
@@ -448,75 +350,17 @@ export function StayPage() {
             <Description text={property.description || property.tagline || 'A welcoming place, listed on Lotnis.'} />
           </section>
 
-          <Amenities property={property} />
-
           {rooms.length > 0 && (
-            <section id="spaces" className="stay-section">
-              <h2 className="reveal">Choose your space</h2>
-              <div className="space-list-cards">
-                {canBookWhole && (
-                  <RoomCard
-                    title={rooms.length ? 'The whole property' : name}
-                    subtitle={rooms.length ? 'Exclusive use — every room is yours for the dates.' : undefined}
-                    images={images}
-                    price={property.price != null ? money(property.currency, property.price) : 'Price on request'}
-                    per={per}
-                    meta={[
-                      [
-                        <Users size={14} key="u" />,
-                        property.max_guests ? `Up to ${property.max_guests} guests` : 'Whole place',
-                      ],
-                      ...(property.bedrooms != null
-                        ? [
-                            [
-                              <BedDouble size={14} key="b" />,
-                              `${property.bedrooms} bedroom${property.bedrooms === 1 ? '' : 's'}`,
-                            ] as [React.ReactNode, string],
-                          ]
-                        : []),
-                    ]}
-                    onSelect={() => pickRoom('')}
-                    cta="Choose whole property"
-                  />
-                )}
-                {rooms.map((room: Room) => (
-                  <RoomCard
-                    key={room.id}
-                    title={room.room_label || 'Room'}
-                    subtitle={room.description || undefined}
-                    images={sortedImages(room.room_images)}
-                    price={money(room.currency || property.currency, room.price_per_period)}
-                    per={periodLabel(room.pricing_period || property.pricing_period)}
-                    meta={[
-                      ...(room.capacity
-                        ? [[<Users size={14} key="u" />, `Sleeps ${room.capacity}`] as [React.ReactNode, string]]
-                        : []),
-                      ...(room.bed_type
-                        ? [[<BedDouble size={14} key="b" />, room.bed_type] as [React.ReactNode, string]]
-                        : []),
-                      ...(room.private_bathroom != null
-                        ? [
-                            [
-                              <Bath size={14} key="a" />,
-                              room.private_bathroom ? 'Private bathroom' : 'Shared bathroom',
-                            ] as [React.ReactNode, string],
-                          ]
-                        : []),
-                      ...(room.size_sqm ? [[null, `${room.size_sqm} m²`] as [React.ReactNode, string]] : []),
-                    ]}
-                    onSelect={() => pickRoom(room.id)}
-                    cta="Choose this room"
-                  />
-                ))}
-              </div>
-              {mode === 'both' && rooms.length > 0 && (
-                <p className="muted-inline">
-                  Booking a room blocks the whole property for those dates, and booking the whole property blocks every
-                  room.
-                </p>
-              )}
-            </section>
+            <SpacesShowcase
+              property={property}
+              rooms={rooms}
+              canBookWhole={canBookWhole}
+              selected={roomChoice}
+              onPick={pickRoom}
+            />
           )}
+
+          <Amenities property={property} />
 
           {(property.city || property.formatted_address) && (
             <section className="stay-section reveal" aria-labelledby="stay-where">
@@ -543,10 +387,12 @@ export function StayPage() {
             </section>
           )}
 
-          <section className="stay-section reveal">
-            <h2>Your host</h2>
-            <HostCard host={property.host ?? null} label="Hosted by" />
-          </section>
+          {property.host?.name && (
+            <section className="stay-section reveal">
+              <h2>Your host</h2>
+              <HostCard host={property.host} label="Hosted by" />
+            </section>
+          )}
 
           {policy && (
             <section className="stay-section reveal" id="refunds">
@@ -692,7 +538,7 @@ export function PhotosPage() {
               const idx = counter;
               return (
                 <button
-                  key={img.id ?? img.public_url}
+                  key={`${img.id ?? img.public_url}-${idx}`}
                   className="photo-tile"
                   onClick={() => setOpen(idx)}
                   aria-label={`Open photo ${idx + 1}`}

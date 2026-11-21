@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   BarChart3,
   Bell,
+  Briefcase,
   Flag,
   Building2,
   CalendarCheck,
@@ -28,6 +29,8 @@ export const NAV = [
   { to: '/host', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/host/accommodation', label: 'Accommodation', icon: Building2 },
   { to: '/host/events', label: 'Events', icon: Ticket },
+  { to: '/host/services', label: 'Services', icon: Wrench },
+  { to: '/host/jobs', label: 'Service jobs', icon: Briefcase },
   { to: '/host/listings', label: 'Pause & stats', icon: BarChart3 },
   { to: '/host/bookings', label: 'Bookings', icon: CalendarCheck },
   { to: '/host/move-outs', label: 'Move-outs', icon: LogOut },
@@ -36,10 +39,7 @@ export const NAV = [
   { to: '/host/transactions', label: 'Transactions', icon: Receipt },
   { to: '/host/notifications', label: 'Notifications', icon: Bell, badge: true },
 ];
-export const UPCOMING = [
-  { to: '/host/food', label: 'Food', icon: UtensilsCrossed },
-  { to: '/host/services', label: 'Services', icon: Wrench },
-];
+export const UPCOMING = [{ to: '/host/food', label: 'Food', icon: UtensilsCrossed }];
 
 export function HostShell() {
   const [unread, setUnread] = useState(0);

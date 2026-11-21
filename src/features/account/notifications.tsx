@@ -13,6 +13,12 @@ const POLL_MS = 45_000;
 function destination(notification: AppNotification): string {
   const exitId = notification.data?.exit_id;
   if (notification.type.startsWith('exit.') && typeof exitId === 'string') return `/moveouts/${exitId}`;
+  const requestId = notification.data?.request_id;
+  if (notification.type.startsWith('service.') && typeof requestId === 'string')
+    return notification.audience === 'host' ? `/host/jobs/${requestId}` : `/jobs/${requestId}`;
+  if (notification.type.startsWith('service.')) return notification.audience === 'host' ? '/host/services' : '/jobs';
+  const reservationId = notification.data?.reservation_id;
+  if (notification.audience !== 'host' && typeof reservationId === 'string') return `/reservation/${reservationId}`;
   if (notification.audience === 'host') return '/host';
   const area = notification.type.split('.')[0];
   return area === 'booking' || area === 'refund' ? '/trips' : '/notifications';

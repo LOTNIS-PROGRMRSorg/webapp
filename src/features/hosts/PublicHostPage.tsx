@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Seo } from '@/lib/seo/seo';
 import { hostsApi, type PublicHost } from '@/lib/api/hosts';
-import { PropertyCard, EventCard, StatCard, StatGrid } from '@/components/cards';
+import { PropertyCard, EventCard, ServiceCard, StatCard, StatGrid } from '@/components/cards';
 import { Avatar } from '@/components/ui/Photo';
 import { EmptyState, ErrorState, LoadingState, SectionHeading } from '@/components/ui';
 import { ReportDialog } from '@/components/modals';
@@ -94,6 +94,16 @@ export function PublicHostPage() {
         </div>
       ) : (
         <EmptyState>No live listings right now.</EmptyState>
+      )}
+      {host.services && host.services.length > 0 && (
+        <>
+          <SectionHeading title="Services" />
+          <div className="svc-grid">
+            {host.services.map((v) => (
+              <ServiceCard key={v.id} s={v} />
+            ))}
+          </div>
+        </>
       )}
       <SectionHeading title="Upcoming events" />
       {host.events.length ? (

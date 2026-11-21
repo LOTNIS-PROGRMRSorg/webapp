@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { BadgeCheck, Building2, ChevronLeft, ChevronRight, Heart, Star, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { periodLabel } from '@/lib/format';
+import { formatPrice, periodLabel } from '@/lib/format';
 import { norm } from '@/lib/maps/places';
 import { track } from '@/lib/track';
 import type { CatalogCity, Property } from '@/types';
@@ -38,13 +38,13 @@ export function areaOf(p: Property, cities: CatalogCity[] = []): string | undefi
 export function priceOf(p: Property): { from: boolean; amount: string; per: string } | null {
   const currency = p.currency || 'GHS';
   if (p.price != null)
-    return { from: false, amount: `${currency} ${p.price.toLocaleString()}`, per: periodLabel(p.pricing_period) };
+    return { from: false, amount: formatPrice(currency, p.price), per: periodLabel(p.pricing_period) };
   const rooms = (p.rooms ?? []).filter((r) => r.price_per_period != null);
   if (!rooms.length) return null;
   const cheapest = rooms.reduce((a, b) => (b.price_per_period < a.price_per_period ? b : a));
   return {
     from: true,
-    amount: `${cheapest.currency || currency} ${cheapest.price_per_period.toLocaleString()}`,
+    amount: formatPrice(cheapest.currency || currency, cheapest.price_per_period),
     per: periodLabel(cheapest.pricing_period || p.pricing_period),
   };
 }
@@ -151,11 +151,10 @@ export function SpaceCard({
             </span>
           </>
         )}
-        {p.verified && (
-          <span className="sp-badge">
-            <BadgeCheck size={14} /> Verified
-          </span>
-        )}
+        <span className="sp-kind">
+          {kind}
+          {p.verified && <BadgeCheck size={13} aria-label="Verified" />}
+        </span>
         <div className="sp-actions">
           <ShareMenu
             url={`${window.location.origin}${href}`}
@@ -181,39 +180,32 @@ export function SpaceCard({
       </div>
 
       <Link to={href} className="sp-body" onClick={onOpen}>
-        <span className="sp-kicker">
-          {kind}
-          {place && (
-            <>
-              <i aria-hidden="true" />
-              {place}
-            </>
-          )}
+        <h3>{p.name}</h3>
+        <span className="sp-meta">
+          {place || 'Ghana'}
           {p.distance_km != null && <b> · {p.distance_km} km away</b>}
         </span>
-        <h3>{p.name}</h3>
-        {p.tagline && <p className="sp-tagline">{p.tagline}</p>}
-        <span className="sp-foot">
-          <span className="sp-price">
-            {price ? (
-              <>
-                {price.from && <span>From </span>}
-                <b>{price.amount}</b> <span>/ {price.per}</span>
-              </>
-            ) : (
-              <b>Price on request</b>
-            )}
-          </span>
+        <span className="sp-meta">
           {p.rating ? (
-            <span className="sp-rating">
-              <Star size={13} /> {p.rating.toFixed(1)}
-              {p.review_count ? <small> ({p.review_count})</small> : null}
-            </span>
+            <>
+              <Star size={12} className="sp-star" /> {p.rating.toFixed(1)}
+              {p.review_count ? ` (${p.review_count})` : ''}
+            </>
           ) : (
-            <span className="sp-new">New listing</span>
+            'New listing'
+          )}
+          {units && <b className={units.low ? 'low' : undefined}> · {units.text}</b>}
+        </span>
+        <span className="sp-priceline">
+          {price ? (
+            <>
+              {price.from && 'From '}
+              {price.amount} <span>/ {price.per}</span>
+            </>
+          ) : (
+            'Price on request'
           )}
         </span>
-        {units && <span className={`sp-units${units.low ? ' low' : ''}`}>{units.text}</span>}
       </Link>
     </article>
   );

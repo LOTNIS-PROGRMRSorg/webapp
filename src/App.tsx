@@ -4,7 +4,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import HomePage from '@/features/home/HomePage';
 import { NotificationsPage } from '@/features/account/notifications';
 import { PayPage, BookedPage } from '@/features/stays/pay';
-import { ReservePage } from '@/features/stays/ReservePage';
+import { ReservationFlow } from '@/features/stays/book/ReservationFlow';
+import { ReservationPay } from '@/features/stays/book/ReservationPay';
 import { ExplorePage } from '@/features/stays/explore/ExplorePage';
 import { LineLanding } from '@/features/info/LineLanding';
 import { PhotosPage, StayPage } from '@/features/stays/StayPage';
@@ -46,6 +47,13 @@ import {
   HostServicesPage,
   PublicHostPage,
   ServiceStatsPage,
+  MapExplorePage,
+  ServicesPage,
+  ServiceDetailPage,
+  JobPage,
+  MyJobsPage,
+  MyServices,
+  ServiceForm,
 } from '@/routes/lazyPages';
 import { AppShell } from '@/layouts/AppShell';
 import { HostEntry } from '@/features/host/HostEntry';
@@ -149,7 +157,15 @@ export default function App() {
                   path="/reserve/:id"
                   element={
                     <Protected title="Choose your dates">
-                      <ReservePage />
+                      <ReservationFlow />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="/reservation/:id"
+                  element={
+                    <Protected title="Your reservation">
+                      <ReservationPay />
                     </Protected>
                   }
                 />
@@ -216,15 +232,11 @@ export default function App() {
                     path="food"
                     element={<HostComingSoon title="Food" text="Sell meals and food experiences to Lotnis guests." />}
                   />
-                  <Route
-                    path="services"
-                    element={
-                      <HostComingSoon
-                        title="Services"
-                        text="Offer your skills — cleaning, transport, tours and more."
-                      />
-                    }
-                  />
+                  <Route path="services" element={<MyServices />} />
+                  <Route path="services/new" element={<ServiceForm />} />
+                  <Route path="services/:id/edit" element={<ServiceForm />} />
+                  <Route path="jobs" element={<MyJobsPage as="host" />} />
+                  <Route path="jobs/:id" element={<JobPage />} />
                 </Route>
                 <Route path="/hosts/:id" element={<PublicHostPage />} />
                 <Route path="/how-it-works" element={<HowItWorksPage />} />
@@ -235,7 +247,25 @@ export default function App() {
                 <Route path="/host-agreement" element={<HostAgreementPage />} />
                 <Route path="/food" element={<LineLanding lineKey="food" />} />
                 <Route path="/events" element={<EventsPage />} />
-                <Route path="/services" element={<LineLanding lineKey="services" />} />
+                <Route path="/services" element={<ServicesPage />} />
+                <Route path="/services/:id" element={<ServiceDetailPage />} />
+                <Route path="/map" element={<MapExplorePage />} />
+                <Route
+                  path="/jobs"
+                  element={
+                    <Protected title="My jobs">
+                      <MyJobsPage as="customer" />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="/jobs/:id"
+                  element={
+                    <Protected title="Job">
+                      <JobPage />
+                    </Protected>
+                  }
+                />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>

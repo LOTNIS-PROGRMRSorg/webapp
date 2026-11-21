@@ -1,3 +1,4 @@
+import { currencySymbol } from './format';
 // Dates and cedis, formatted the Ghana way (Accra time) — used by events, stays and payouts.
 export const TZ = 'Africa/Accra';
 export const fmtDate = (
@@ -22,6 +23,21 @@ export const toLocalInput = (iso?: string | null) => {
 };
 export const fromLocalInput = (value: string) => (value ? new Date(value).toISOString() : null);
 export const cedis = (n: number | null | undefined, currency = 'GHS') =>
-  `${currency === 'GHS' ? 'GH₵' : currency + ' '}${Number(n ?? 0).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  `${currencySymbol(currency)}${Number(n ?? 0).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 export const cedisShort = (n: number | null | undefined, currency = 'GHS') =>
-  `${currency === 'GHS' ? 'GH₵' : currency + ' '}${Number(n ?? 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
+  `${currencySymbol(currency)}${Number(n ?? 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
+
+/** A stay's calendar dates (YYYY-MM-DD, no time): "5 Dec 2026 → 5 Jan 2027", or "5 → 12 Dec 2026" within a month. */
+export const fmtStay = (start?: string | null, end?: string | null) => {
+  if (!start) return '';
+  const d = (s: string) => new Date(`${s.slice(0, 10)}T00:00:00Z`);
+  const f = (s: string, o: Intl.DateTimeFormatOptions) => d(s).toLocaleDateString('en-GB', { timeZone: 'UTC', ...o });
+  if (!end) return f(start, { day: 'numeric', month: 'short', year: 'numeric' });
+  const a = d(start);
+  const b = d(end);
+  if (a.getUTCFullYear() !== b.getUTCFullYear())
+    return `${f(start, { day: 'numeric', month: 'short', year: 'numeric' })} → ${f(end, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  if (a.getUTCMonth() !== b.getUTCMonth())
+    return `${f(start, { day: 'numeric', month: 'short' })} → ${f(end, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  return `${f(start, { day: 'numeric' })} → ${f(end, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+};

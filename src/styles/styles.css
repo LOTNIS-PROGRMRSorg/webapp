@@ -39,7 +39,7 @@ button {
   justify-content: center;
   gap: 9px;
   padding: 12px 18px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   font-weight: 600;
   font-size: 0.9rem;
   transition: 0.2s;
@@ -90,7 +90,7 @@ button {
   align-items: center;
   gap: 10px;
   background: var(--c-white);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 7px 8px 7px 16px;
   margin-top: 30px;
   max-width: 650px;
@@ -146,7 +146,7 @@ button {
 .property-card {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   transition: 0.2s;
 }
@@ -163,7 +163,7 @@ button {
   display: inline-block;
   margin: 14px;
   background: color-mix(in srgb, var(--c-white) 80%, transparent);
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   padding: 7px 10px;
   font-size: 0.69rem;
   font-weight: 700;
@@ -200,7 +200,7 @@ button {
 .empty-state,
 .error-state {
   border: 1px dashed var(--line);
-  border-radius: 15px;
+  border-radius: var(--r-md);
   padding: 50px;
   text-align: center;
   color: var(--muted);
@@ -224,7 +224,7 @@ button {
 }
 .stay-hero {
   height: 450px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   background: var(--c-line)
     url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=85') center/cover;
 }
@@ -251,7 +251,7 @@ button {
 .booking-card {
   border: 1px solid var(--line);
   background: var(--c-white);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   padding: 26px;
   height: max-content;
   position: sticky;
@@ -284,7 +284,7 @@ button {
   max-width: 430px;
   width: 100%;
   padding: 40px;
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   box-shadow: 0 15px 50px color-mix(in srgb, var(--c-ink) 8%, transparent);
 }
 .auth-card h1 {
@@ -314,7 +314,7 @@ button {
 .listing-form input,
 .listing-form textarea {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 12px;
   outline-color: var(--ink);
   background: var(--c-white);
@@ -323,7 +323,7 @@ button {
 .form-error {
   background: var(--c-danger-bg);
   color: var(--c-danger);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 10px;
   font-size: 0.8rem;
 }
@@ -351,7 +351,7 @@ button {
 .metric-grid > div {
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 13px;
+  border-radius: var(--r-md);
   padding: 20px;
 }
 .metric-grid span {
@@ -375,7 +375,7 @@ button {
   align-items: center;
   background: var(--c-white);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 18px;
 }
 .booking-row p {
@@ -388,7 +388,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 7px 9px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   background: var(--mint);
 }
 .status-cancelled {
@@ -406,7 +406,7 @@ button {
   background: var(--c-white);
   border: 1px solid var(--line);
   padding: 28px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
 }
 .form-grid {
   display: grid;
@@ -439,7 +439,7 @@ button {
   background: var(--c-white);
   border: 1px solid var(--line);
   padding: 24px;
-  border-radius: 13px;
+  border-radius: var(--r-md);
 }
 .placeholder-columns svg {
   color: var(--orange);
@@ -508,7 +508,7 @@ button {
 }
 .listing-form select {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 12px;
   outline-color: var(--ink);
   background: var(--c-white);
@@ -519,7 +519,7 @@ button {
   gap: 10px;
   align-items: flex-start;
   background: var(--mint);
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   padding: 13px;
   color: var(--c-ink-muted);
   font-size: 0.8rem;
@@ -534,7 +534,7 @@ button {
   gap: 10px;
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   margin: 20px 0;
 }
 .price-breakdown > div {
@@ -581,7 +581,7 @@ button {
   width: 72px;
   height: 56px;
   flex: 0 0 auto;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   background-size: cover;
   background-position: center;
   border: 2px solid transparent;
@@ -605,7 +605,7 @@ button {
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   background: var(--ink);
   color: var(--c-white);
   font: 700 1.05rem/1 var(--display);
@@ -616,7 +616,7 @@ button {
   background: var(--c-ink-night);
   color: color-mix(in srgb, var(--c-white) 66%, transparent);
   margin: 0 12px 12px;
-  border-radius: 28px;
+  border-radius: var(--r-xl);
   font-size: 0.92rem;
 }
 .site-footer-inner {
@@ -648,7 +648,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 9px 14px;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   border: 1px solid color-mix(in srgb, var(--c-white) 16%, transparent);
   color: var(--c-white);
   font-weight: 500;
@@ -714,7 +714,7 @@ button {
 @media (max-width: 640px) {
   .site-footer {
     margin: 0 8px 8px;
-    border-radius: 22px;
+    border-radius: var(--r-xl);
   }
 }
 

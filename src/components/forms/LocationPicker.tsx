@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CheckCircle2, LocateFixed, MapPin, TriangleAlert } from 'lucide-react';
 import {
+  createMap,
   loadMaps,
   mapsAuthFailed,
   mapsEnabled,
@@ -37,7 +38,10 @@ export const emptyLocation: LocationValue = {
   formatted: '',
 };
 
-const pinRequired = () => mapsEnabled && !mapsAuthFailed();
+// The pin is only asked for while the map is actually working. With no map key (or a key MapTiler refuses), the
+// region, town and street fields are enough, so the map stays optional.
+let mapReady = false;
+const pinRequired = () => mapReady && !mapsAuthFailed();
 
 /** What the host must still fix, in plain words — or '' when the location is good. */
 export function validateLocation(v: LocationValue): string {
@@ -122,42 +126,51 @@ export function LocationPicker({
     [applyPlace],
   );
 
-  // Build the map and the search box once Google has loaded.
+  // Build the map and the search box once the map library has loaded.
   useEffect(() => {
     if (!mapsEnabled) return;
     let cancelled = false;
     let stopSearch: (() => void) | undefined;
-    const onAuthFail = () => setStatus('error');
+    const onAuthFail = () => {
+      mapReady = false;
+      setStatus('error');
+    };
     window.addEventListener('lotnis-maps-auth-failed', onAuthFail);
     loadMaps()
-      .then(async (google) => {
+      .then(async (lib) => {
         if (cancelled || !mapRef.current || !searchRef.current) return;
-        const { Map } = await google.maps.importLibrary('maps');
         const cur = latest.current.value;
-        map.current = new Map(mapRef.current, {
-          center: cur.lat !== null && cur.lng !== null ? { lat: cur.lat, lng: cur.lng } : GHANA_CENTER,
-          zoom: cur.lat !== null ? 16 : 7,
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: true,
-          gestureHandling: 'cooperative',
-          restriction: { latLngBounds: { north: 11.4, south: 4.4, west: -3.5, east: 1.4 }, strictBounds: false },
+        const has = cur.lat !== null && cur.lng !== null;
+        const m = createMap(lib, mapRef.current, {
+          center: has ? { lat: cur.lat as number, lng: cur.lng as number } : GHANA_CENTER,
+          zoom: has ? 15 : 6,
+          scrollZoom: false,
         });
-        marker.current = new google.maps.Marker({
-          map: map.current,
-          draggable: true,
-          position: cur.lat !== null && cur.lng !== null ? { lat: cur.lat, lng: cur.lng } : null,
-          title: 'Your property',
+        m.addControl(new lib.NavigationControl({ showCompass: false }), 'bottom-right');
+        map.current = m;
+        marker.current = new lib.Marker({ draggable: true, color: '#173b37' });
+        if (has) marker.current.setLngLat([cur.lng as number, cur.lat as number]).addTo(m);
+        marker.current.on('dragend', () => {
+          const p = marker.current.getLngLat();
+          placePin(p.lat, p.lng);
         });
-        marker.current.addListener('dragend', (e: any) => placePin(e.latLng.lat(), e.latLng.lng()));
-        map.current.addListener('click', (e: any) => placePin(e.latLng.lat(), e.latLng.lng()));
+        m.on('click', (e: { lngLat: { lat: number; lng: number } }) => placePin(e.lngLat.lat, e.lngLat.lng));
         stopSearch = await mountPlaceSearch(searchRef.current, latest.current.catalog.cities, applyPlace);
-        if (!cancelled) setStatus('ready');
+        if (!cancelled) {
+          mapReady = true;
+          setStatus('ready');
+        }
       })
-      .catch(() => !cancelled && setStatus('error'));
+      .catch(() => {
+        mapReady = false;
+        if (!cancelled) setStatus('error');
+      });
     return () => {
       cancelled = true;
       stopSearch?.();
+      map.current?.remove();
+      map.current = null;
+      marker.current = null;
       window.removeEventListener('lotnis-maps-auth-failed', onAuthFail);
     };
   }, [applyPlace, placePin]);
@@ -166,18 +179,12 @@ export function LocationPicker({
   useEffect(() => {
     if (!map.current || !marker.current) return;
     if (value.lat !== null && value.lng !== null) {
-      const pos = { lat: value.lat, lng: value.lng };
-      marker.current.setPosition(pos);
-      marker.current.setMap(map.current);
-      map.current.panTo(pos);
-      if ((map.current.getZoom() ?? 0) < 14) map.current.setZoom(16);
+      marker.current.setLngLat([value.lng, value.lat]).addTo(map.current);
+      map.current.easeTo({ center: [value.lng, value.lat], zoom: Math.max(map.current.getZoom(), 15) });
     } else {
       const city = catalog.cities.find((c) => c.name === value.city);
-      if (city) {
-        map.current.panTo({ lat: city.lat, lng: city.lng });
-        map.current.setZoom(12);
-      }
-      marker.current.setMap(null);
+      if (city) map.current.easeTo({ center: [city.lng, city.lat], zoom: 11 });
+      marker.current.remove();
     }
   }, [value.lat, value.lng, value.city, catalog.cities]);
 
@@ -230,11 +237,6 @@ export function LocationPicker({
             )}
           </p>
         </>
-      )}
-      {status === 'error' && mapsEnabled && (
-        <p className="loc-pin todo">
-          <TriangleAlert size={16} /> The map couldn't load, so choose the location below.
-        </p>
       )}
       {notice && (
         <p className="loc-pin todo">

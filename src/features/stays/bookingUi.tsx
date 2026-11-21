@@ -12,14 +12,18 @@ export const bookingMode = (property: Property) =>
   property.booking_mode ??
   (property.allows_individual_bookings ? (property.price == null ? 'rooms' : 'both') : 'entire');
 
-/** Reveal-on-scroll: elements with class "reveal" fade up once as they enter the viewport. */
+/**
+ * Reveal-on-scroll: elements with class "reveal" fade up once as they enter the viewport.
+ * Elements that render later (data arriving, tabs switching) are picked up too, so nothing stays hidden.
+ */
 export function useReveal(dep?: unknown) {
   useEffect(() => {
-    const items = Array.from(document.querySelectorAll<HTMLElement>('.reveal:not(.reveal-in)'));
-    if (!items.length || typeof IntersectionObserver === 'undefined') {
-      items.forEach((el) => el.classList.add('reveal-in'));
+    const pending = () => Array.from(document.querySelectorAll<HTMLElement>('.reveal:not(.reveal-in)'));
+    if (typeof IntersectionObserver === 'undefined' || typeof MutationObserver === 'undefined') {
+      pending().forEach((el) => el.classList.add('reveal-in'));
       return;
     }
+    const watched = new WeakSet<Element>();
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries)
@@ -28,10 +32,21 @@ export function useReveal(dep?: unknown) {
             io.unobserve(entry.target);
           }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+      { threshold: 0.08, rootMargin: '0px 0px -24px 0px' },
     );
-    items.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const observeNew = () =>
+      pending().forEach((el) => {
+        if (watched.has(el)) return;
+        watched.add(el);
+        io.observe(el);
+      });
+    observeNew();
+    const mo = new MutationObserver(observeNew);
+    mo.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
   }, [dep]);
 }
 

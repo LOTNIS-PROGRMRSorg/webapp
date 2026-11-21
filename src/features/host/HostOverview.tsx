@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { cedis, EventStatusPill, fmtDate, fmtDateTime } from '@/features/events/eventUi';
 import { eventApi, PayoutSummary } from '@/lib/api/events';
 import { money, periodLabel, primaryImage } from '@/lib/format';
+import { fmtStay } from '@/lib/dates';
 import { BookingRequests } from './BookingRequests';
 import { Seo } from '@/lib/seo/seo';
 import type { Booking, Property } from '@/types';
@@ -120,7 +121,16 @@ export function HostOverview() {
       </PageHeader>
       {error && <div className="error-state">{error}</div>}
 
-      <h2 className="subsection-heading">Your money</h2>
+      <div className="host-section-head">
+        <h2 className="subsection-heading">Your money</h2>
+        <nav className="host-section-links" aria-label="Money">
+          <Link to="/host/earnings">
+            Earnings <ArrowRight size={14} />
+          </Link>
+          <Link to="/host/transactions">Transactions</Link>
+          <Link to="/host/payout-settings">Payout accounts</Link>
+        </nav>
+      </div>
       <div className="metric-grid metric-grid-4">
         <Stat
           label="Waiting for release"
@@ -139,10 +149,6 @@ export function HostOverview() {
           sub="while a problem is reviewed"
         />
       </div>
-      <p className="muted-inline">
-        <Link to="/host/earnings">See all earnings</Link> · <Link to="/host/transactions">Transactions</Link> ·{' '}
-        <Link to="/host/payout-settings">Payout accounts</Link>
-      </p>
 
       <h2 className="subsection-heading">Needs your attention</h2>
       {attention.length ? (
@@ -198,12 +204,16 @@ export function HostOverview() {
           ))}
           {upcomingStays[0] && (
             <p className="muted-inline">
-              Next stay: {upcomingStays[0].property?.name || 'Reservation'} from {upcomingStays[0].start_date}.
+              Next stay: {upcomingStays[0].property?.name || 'Reservation'},{' '}
+              {fmtStay(upcomingStays[0].start_date, upcomingStays[0].end_date)}.
             </p>
           )}
           {properties && !properties.length && (
-            <div className="empty-state">
-              No listings yet. <Link to="/host/accommodation/new">Add your first space</Link>
+            <div className="empty-state empty-state-compact">
+              <p>No listings yet.</p>
+              <Link className="button button-secondary button-sm" to="/host/accommodation/new">
+                Add your first space
+              </Link>
             </div>
           )}
         </div>
@@ -243,8 +253,11 @@ export function HostOverview() {
             </p>
           )}
           {events && !events.length && (
-            <div className="empty-state">
-              No events yet. <Link to="/host/events/new">Create your first event</Link>
+            <div className="empty-state empty-state-compact">
+              <p>No events yet.</p>
+              <Link className="button button-secondary button-sm" to="/host/events/new">
+                Create your first event
+              </Link>
             </div>
           )}
         </div>

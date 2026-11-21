@@ -72,3 +72,39 @@ export function PillTabs<K extends string>({
     </div>
   );
 }
+
+/** The same pills for "show me any of these": each one switches on and off by itself. */
+export function PillToggles<K extends string>({
+  items,
+  value,
+  onChange,
+  label,
+  className = '',
+}: {
+  items: Array<PillTab<K>>;
+  value: K[];
+  onChange: (next: K[]) => void;
+  label?: string;
+  className?: string;
+}) {
+  return (
+    <div className={`pt-row ${className}`} role="group" aria-label={label}>
+      {items.map((t) => {
+        const on = value.includes(t.key);
+        return (
+          <button
+            key={t.key}
+            type="button"
+            aria-pressed={on}
+            className={`pt ${on ? 'pt-on' : ''}`}
+            onClick={() => onChange(on ? value.filter((k) => k !== t.key) : [...value, t.key])}
+          >
+            {t.icon != null && <Icon icon={t.icon} />}
+            <span className="pt-label">{t.label}</span>
+            {t.count != null && <b className="pt-count">{t.count}</b>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}

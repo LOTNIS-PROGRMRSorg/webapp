@@ -165,9 +165,9 @@ const catalog = {
       name: 'Standard',
       description: 'Fair to guests and hosts.',
       tiers: [
-        { days_before_start: 7, refund_percent: 100 },
-        { days_before_start: 2, refund_percent: 50 },
-        { days_before_start: 0, refund_percent: 0 },
+        { days_before_start: 7, refund_percentage: 100 },
+        { days_before_start: 2, refund_percentage: 50 },
+        { days_before_start: 0, refund_percentage: 0 },
       ],
       summary: [],
     },

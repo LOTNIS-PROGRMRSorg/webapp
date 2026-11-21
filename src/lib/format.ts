@@ -13,9 +13,12 @@ export function periodLabel(period?: string | null) {
   return PERIOD_LABELS[period || 'day'] || period || 'night';
 }
 
+/** "GH₵" for cedis (how Ghanaians write prices), the ISO code plus a space for anything else. */
+export const currencySymbol = (currency?: string | null) => (!currency || currency === 'GHS' ? 'GH₵' : `${currency} `);
+
 export function formatPrice(currency?: string | null, amount?: number | null) {
   if (amount == null) return 'Price on request';
-  return `${currency || 'GHS'} ${amount.toLocaleString()}`;
+  return `${currencySymbol(currency)}${amount.toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 }
 
 export function primaryImage(property: Property) {
@@ -24,7 +27,7 @@ export function primaryImage(property: Property) {
 }
 
 export const money = (currency: string | null | undefined, amount: number | null | undefined) =>
-  `${currency || 'GHS'} ${Number(amount ?? 0).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  `${currencySymbol(currency)}${Number(amount ?? 0).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export const timeAgo = (iso: string) => {
   const minutes = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000));

@@ -2,7 +2,7 @@ import { FormEvent, ReactNode, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { cedis, fmtDateTime, fromLocalInput, toLocalInput } from '@/features/events/eventUi';
 import { eventApi, HostEventOverview } from '@/lib/api/events';
-import { ConfirmDialog } from '@/components/modals';
+import { ConfirmDialog, Modal } from '@/components/modals';
 import { errText } from './hostShared';
 
 export function TicketsTab({ data, reload }: { data: HostEventOverview; reload: () => void }) {
@@ -145,116 +145,109 @@ export function TicketTypeDialog({
     }
   };
   return (
-    <div className="modal" role="dialog" aria-modal="true">
-      <form className="modal-card" onSubmit={save}>
-        <h2>{ticket ? 'Edit ticket' : 'New ticket type'}</h2>
+    <Modal title={ticket ? 'Edit ticket' : 'New ticket type'} onClose={onClose} as="form" onSubmit={save}>
+      <label className="fld">
+        Name
+        <input
+          required
+          value={f.name}
+          onChange={(e) => setF({ ...f, name: e.target.value })}
+          placeholder="Regular, VIP, Early bird, Table for 6…"
+        />
+      </label>
+      <label className="fld">
+        What's included <small>optional</small>
+        <input value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
+      </label>
+      <div className="two">
         <label className="fld">
-          Name
+          Price (GH₵)
           <input
             required
-            value={f.name}
-            onChange={(e) => setF({ ...f, name: e.target.value })}
-            placeholder="Regular, VIP, Early bird, Table for 6…"
+            type="number"
+            min={0}
+            step="0.01"
+            value={f.price}
+            onChange={(e) => setF({ ...f, price: e.target.value })}
+            placeholder="0 for free"
           />
         </label>
         <label className="fld">
-          What's included <small>optional</small>
-          <input value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
-        </label>
-        <div className="two">
-          <label className="fld">
-            Price (GH₵)
+          How many
+          {!f.unlimited && (
             <input
               required
               type="number"
-              min={0}
-              step="0.01"
-              value={f.price}
-              onChange={(e) => setF({ ...f, price: e.target.value })}
-              placeholder="0 for free"
-            />
-          </label>
-          <label className="fld">
-            How many
-            {!f.unlimited && (
-              <input
-                required
-                type="number"
-                min={1}
-                value={f.quantity}
-                onChange={(e) => setF({ ...f, quantity: e.target.value })}
-              />
-            )}
-            <span className="check">
-              <input
-                type="checkbox"
-                checked={f.unlimited}
-                onChange={(e) => setF({ ...f, unlimited: e.target.checked })}
-              />{' '}
-              Unlimited
-            </span>
-          </label>
-        </div>
-        <div className="two">
-          <label className="fld">
-            Sales open <small>optional</small>
-            <input
-              type="datetime-local"
-              value={f.sales_start}
-              onChange={(e) => setF({ ...f, sales_start: e.target.value })}
-            />
-          </label>
-          <label className="fld">
-            Sales close <small>optional</small>
-            <input
-              type="datetime-local"
-              value={f.sales_end}
-              onChange={(e) => setF({ ...f, sales_end: e.target.value })}
-            />
-          </label>
-        </div>
-        <div className="two">
-          <label className="fld">
-            Min per order
-            <input
-              type="number"
               min={1}
-              value={f.min_per_order}
-              onChange={(e) => setF({ ...f, min_per_order: Number(e.target.value) })}
+              value={f.quantity}
+              onChange={(e) => setF({ ...f, quantity: e.target.value })}
             />
-          </label>
-          <label className="fld">
-            Max per order
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={f.max_per_order}
-              onChange={(e) => setF({ ...f, max_per_order: Number(e.target.value) })}
-            />
-          </label>
-        </div>
-        {ticket && (
-          <label className="check">
+          )}
+          <span className="check">
             <input
               type="checkbox"
-              checked={f.is_active}
-              onChange={(e) => setF({ ...f, is_active: e.target.checked })}
+              checked={f.unlimited}
+              onChange={(e) => setF({ ...f, unlimited: e.target.checked })}
             />{' '}
-            On sale
-          </label>
-        )}
-        {error && <div className="form-error">{error}</div>}
-        <div className="form-actions">
-          <button type="button" className="button button-quiet" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="button button-primary" disabled={busy}>
-            {busy ? 'Saving…' : 'Save ticket'}
-          </button>
-        </div>
-      </form>
-    </div>
+            Unlimited
+          </span>
+        </label>
+      </div>
+      <div className="two">
+        <label className="fld">
+          Sales open <small>optional</small>
+          <input
+            type="datetime-local"
+            value={f.sales_start}
+            onChange={(e) => setF({ ...f, sales_start: e.target.value })}
+          />
+        </label>
+        <label className="fld">
+          Sales close <small>optional</small>
+          <input
+            type="datetime-local"
+            value={f.sales_end}
+            onChange={(e) => setF({ ...f, sales_end: e.target.value })}
+          />
+        </label>
+      </div>
+      <div className="two">
+        <label className="fld">
+          Min per order
+          <input
+            type="number"
+            min={1}
+            value={f.min_per_order}
+            onChange={(e) => setF({ ...f, min_per_order: Number(e.target.value) })}
+          />
+        </label>
+        <label className="fld">
+          Max per order
+          <input
+            type="number"
+            min={1}
+            max={50}
+            value={f.max_per_order}
+            onChange={(e) => setF({ ...f, max_per_order: Number(e.target.value) })}
+          />
+        </label>
+      </div>
+      {ticket && (
+        <label className="check">
+          <input type="checkbox" checked={f.is_active} onChange={(e) => setF({ ...f, is_active: e.target.checked })} />{' '}
+          On sale
+        </label>
+      )}
+      {error && <div className="form-error">{error}</div>}
+      <div className="form-actions">
+        <button type="button" className="button button-quiet" onClick={onClose}>
+          Cancel
+        </button>
+        <button className="button button-primary" disabled={busy}>
+          {busy ? 'Saving…' : 'Save ticket'}
+        </button>
+      </div>
+    </Modal>
   );
 }
 

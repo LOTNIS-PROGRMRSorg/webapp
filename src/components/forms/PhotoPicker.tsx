@@ -4,16 +4,19 @@ import { api } from '@/lib/api';
 
 /** Uploads straight to storage as files are chosen; the first picture is the cover. */
 export function PhotoPicker({
-  propertyId,
+  propertyId = '',
   roomId,
+  upload,
   urls,
   onChange,
   max = 12,
   label = 'Add photos',
   cover = true,
 }: {
-  propertyId: string;
+  propertyId?: string;
   roomId?: string;
+  /** Upload somewhere other than a property's photos (events, services…): returns the public URL. */
+  upload?: (file: File) => Promise<string>;
   urls: string[];
   onChange: (urls: string[]) => void;
   max?: number;
@@ -34,7 +37,7 @@ export function PhotoPicker({
     const added: string[] = [];
     for (const file of chosen) {
       try {
-        added.push((await api.uploadPropertyPhoto(propertyId, file, roomId)).publicUrl);
+        added.push(upload ? await upload(file) : (await api.uploadPropertyPhoto(propertyId, file, roomId)).publicUrl);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'A photo failed to upload');
       } finally {

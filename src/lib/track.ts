@@ -16,13 +16,13 @@ const sessionId = () => {
 };
 
 /** Fire and forget — tracking must never slow down or break a page. */
-export const track = (type: 'property' | 'event', id: string | undefined, action: EngagementAction) => {
+export const track = (type: 'property' | 'event' | 'service', id: string | undefined, action: EngagementAction) => {
   if (!id) return;
   engagementApi.track(type, id, action, sessionId()).catch(() => {});
 };
 
 /** Count a page view once when the listing/event loads. */
-export function useTrackView(type: 'property' | 'event', id: string | undefined) {
+export function useTrackView(type: 'property' | 'event' | 'service', id: string | undefined) {
   useEffect(() => {
     track(type, id, 'view');
   }, [type, id]);

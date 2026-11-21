@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Check } from 'lucide-react';
+import { CalendarDays, Check, Luggage } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { money } from '@/lib/format';
+import { fmtStay } from '@/lib/dates';
 import { CancelDialog } from '@/features/stays/CancelDialog';
 import { STATUS_LABEL } from '@/features/exits/labels';
 import { ReportDialog } from '@/components/modals';
+import { EmptyState, LoadingState, PageHeader, Pill, StatusPill } from '@/components/ui';
 import type { Booking, ExitCaseSummary } from '@/types';
 
 export const REFUND_COPY: Record<string, string> = {
@@ -16,7 +18,7 @@ export const REFUND_COPY: Record<string, string> = {
 };
 
 export function TripsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<Booking[] | null>(null);
   const [error, setError] = useState('');
   const [cancelling, setCancelling] = useState<Booking | null>(null);
   const [reporting, setReporting] = useState<Booking | null>(null);
@@ -37,9 +39,12 @@ export function TripsPage() {
     load();
   }, []);
   return (
-    <section className="section dashboard-page">
-      <span className="eyebrow">Your travel</span>
-      <h1>My trips</h1>
+    <section className="page trips-page">
+      <PageHeader eyebrow="Your travel" title="My trips">
+        <Link className="button button-secondary" to="/explore">
+          Find a space
+        </Link>
+      </PageHeader>
       {notice && (
         <div className="notice">
           <Check size={16} />
@@ -48,8 +53,10 @@ export function TripsPage() {
       )}
       {error ? (
         <div className="error-state">{error}</div>
+      ) : !bookings ? (
+        <LoadingState>Loading your trips…</LoadingState>
       ) : bookings.length ? (
-        <div className="booking-list">
+        <div className="trip-list">
           {bookings.map((booking) => {
             const needsPayment =
               booking.reservation_stage === 'awaiting_payment' ||
@@ -62,15 +69,23 @@ export function TripsPage() {
             const canReport =
               (booking.status === 'confirmed' || booking.status === 'active') && started && daysSince <= 2;
             return (
-              <div className="booking-row" key={booking.id}>
-                <div>
-                  <strong>{booking.property?.name || 'Accommodation reservation'}</strong>
-                  <p>
-                    {booking.start_date} → {booking.end_date}
+              <article className="trip-card" key={booking.id}>
+                <div className="trip-card-main">
+                  <h2>
+                    {booking.property?.id ? (
+                      <Link to={`/stays/${booking.property.id}`}>{booking.property.name || 'Your stay'}</Link>
+                    ) : (
+                      booking.property?.name || 'Accommodation reservation'
+                    )}
+                  </h2>
+                  <p className="trip-card-dates">
+                    <CalendarDays size={15} aria-hidden="true" />
+                    {fmtStay(booking.start_date, booking.end_date)}
+                    {booking.property?.city ? ` · ${booking.property.city}` : ''}
                   </p>
                   <small>
                     {booking.platform_fee != null
-                      ? `Includes ${booking.currency_snapshot} ${booking.platform_fee.toLocaleString()} Lotnis service fee`
+                      ? `Includes ${money(booking.currency_snapshot, booking.platform_fee)} Lotnis service fee`
                       : 'Price confirmed at checkout'}
                   </small>
                   {booking.refund && (
@@ -84,45 +99,56 @@ export function TripsPage() {
                     <small>Reason: {booking.cancellation_reason}</small>
                   )}
                 </div>
-                <span className={`status status-${booking.status}`}>
-                  {booking.reservation_stage === 'awaiting_host_acceptance' ? 'Awaiting host' : booking.status}
-                </span>
-                <strong>
-                  {booking.currency_snapshot} {booking.final_amount.toLocaleString()}
-                </strong>
-                <div className="form-actions">
+                <div className="trip-card-side">
+                  {booking.reservation_stage === 'awaiting_host_acceptance' ? (
+                    <Pill tone="warn">Awaiting host</Pill>
+                  ) : (
+                    <StatusPill status={booking.status} />
+                  )}
+                  <strong className="trip-card-total">{money(booking.currency_snapshot, booking.final_amount)}</strong>
+                </div>
+                <div className="trip-card-actions">
                   {needsPayment && (
-                    <Link className="button button-secondary" to={`/pay/${booking.id}`}>
+                    <Link className="button button-primary button-sm" to={`/pay/${booking.id}`}>
                       Pay now
                     </Link>
                   )}
                   {canCancel && (
-                    <button className="button button-quiet" onClick={() => setCancelling(booking)}>
+                    <button className="button button-quiet button-sm" onClick={() => setCancelling(booking)}>
                       Cancel
                     </button>
                   )}
                   {canReport && (
-                    <button className="button button-quiet" onClick={() => setReporting(booking)}>
+                    <button className="button button-quiet button-sm" onClick={() => setReporting(booking)}>
                       Report a problem
                     </button>
                   )}
                   {canLeave && (
-                    <Link className="button button-quiet" to={`/trips/${booking.id}/leave`}>
+                    <Link className="button button-quiet button-sm" to={`/trips/${booking.id}/leave`}>
                       Leave early
                     </Link>
                   )}
                   {exit && (
-                    <Link className="button button-secondary" to={`/moveouts/${exit.id}`}>
+                    <Link className="button button-secondary button-sm" to={`/moveouts/${exit.id}`}>
                       Move-out: {STATUS_LABEL[exit.status]}
                     </Link>
                   )}
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
       ) : (
-        <div className="empty-state">Your reservations will appear here.</div>
+        <EmptyState
+          icon={<Luggage />}
+          action={
+            <Link className="button button-primary" to="/explore">
+              Browse spaces
+            </Link>
+          }
+        >
+          No trips yet. When you book a space, your dates, payments and refunds show up here.
+        </EmptyState>
       )}
       {reporting && (
         <ReportDialog

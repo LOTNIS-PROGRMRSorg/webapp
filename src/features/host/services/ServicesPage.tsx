@@ -1,4 +1,4 @@
-import { BarChart3, Building2, Pause, Play, Ticket } from 'lucide-react';
+import { BarChart3, Building2, Pause, Play, Ticket, Wrench } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Seo } from '@/lib/seo/seo';
@@ -59,7 +59,17 @@ export function HostServicesPage() {
           <StatusPill status="paused" />
         ) : (
           <StatusPill
-            status={s.kind === 'event' ? s.status : s.approval_status === 'approved' ? 'live' : s.approval_status}
+            status={
+              s.kind === 'event'
+                ? s.status
+                : s.kind === 'service'
+                  ? s.status === 'published'
+                    ? 'live'
+                    : s.status
+                  : s.approval_status === 'approved'
+                    ? 'live'
+                    : s.approval_status
+            }
           />
         )
       }
@@ -82,8 +92,11 @@ export function HostServicesPage() {
     />
   );
 
-  const totals = (stats?.properties.totals.views ?? 0) + (stats?.events.totals.views ?? 0);
-  const clicks = (stats?.properties.totals.clicks ?? 0) + (stats?.events.totals.clicks ?? 0);
+  const totals =
+    (stats?.properties.totals.views ?? 0) + (stats?.events.totals.views ?? 0) + (stats?.services?.totals.views ?? 0);
+  const clicks =
+    (stats?.properties.totals.clicks ?? 0) + (stats?.events.totals.clicks ?? 0) + (stats?.services?.totals.clicks ?? 0);
+  const all = [...data.properties, ...data.events, ...(data.services ?? [])];
   return (
     <div className="host-page">
       <Seo title="Services" description="Pause or resume your listings and events." noindex />
@@ -103,8 +116,8 @@ export function HostServicesPage() {
         <StatCard label="Clicked book / tickets" value={clicks.toLocaleString()} />
         <StatCard
           label="Paused right now"
-          value={[...data.properties, ...data.events].filter((s) => s.is_paused).length}
-          tone={[...data.properties, ...data.events].some((s) => s.is_paused) ? 'warn' : undefined}
+          value={all.filter((s) => s.is_paused).length}
+          tone={all.some((s) => s.is_paused) ? 'warn' : undefined}
         />
       </StatGrid>
 
@@ -149,6 +162,26 @@ export function HostServicesPage() {
           }
         >
           No events yet.
+        </EmptyState>
+      )}
+
+      <SectionHeading title="Services" />
+      {data.services?.length ? (
+        <RowList>
+          {data.services.map((v) =>
+            row(v, `/host/listings/service/${v.id}`, `${v.category ?? 'Service'} · ${v.city ?? ''}`),
+          )}
+        </RowList>
+      ) : (
+        <EmptyState
+          icon={<Wrench size={26} />}
+          action={
+            <Link className="button button-secondary" to="/host/services/new">
+              Offer a service
+            </Link>
+          }
+        >
+          No services yet.
         </EmptyState>
       )}
 

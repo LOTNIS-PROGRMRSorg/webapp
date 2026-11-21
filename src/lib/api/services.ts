@@ -1,6 +1,6 @@
 import { request } from '@/lib/api';
 
-export type ServiceKind = 'property' | 'event';
+export type ServiceKind = 'property' | 'event' | 'service';
 export type HostService = {
   id: string;
   kind: ServiceKind;
@@ -16,6 +16,8 @@ export type HostService = {
   price?: number;
   currency?: string;
   pricing_period?: string;
+  // service
+  category?: string;
   // event
   slug?: string;
   status?: string;
@@ -27,6 +29,7 @@ export type HostServices = {
   pause_available: boolean;
   properties: HostService[];
   events: HostService[];
+  services: HostService[];
 };
 
 export const servicesApi = {

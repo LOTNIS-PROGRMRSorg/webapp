@@ -3,6 +3,7 @@ import { ArrowRight, Check, Clock, ShieldAlert, ShieldCheck } from 'lucide-react
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
 import type { HostAccess } from '@/types';
+import { fmtDateTime } from '@/lib/dates';
 
 const REQUIREMENT_LABELS: Record<string, string> = {
   identity: 'Identity (government ID & selfie)',
@@ -13,7 +14,7 @@ const REQUIREMENT_LABELS: Record<string, string> = {
   payout: 'Payout details',
 };
 
-const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '');
+const fmt = (iso: string | null) => (iso ? fmtDateTime(iso) : '');
 
 /**
  * The host dashboard is only shown to verified hosts. Everyone else sees

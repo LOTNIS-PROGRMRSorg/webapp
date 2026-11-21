@@ -370,12 +370,18 @@ function quoteFor(body: { start_date: string; end_date: string; room_id?: string
 
 import { handleEvents } from '@/dev/devMockEvents';
 import { handleHost } from '@/dev/devMockHost';
+import { handleMarket } from '@/dev/devMockMarket';
+import { handleReservations } from '@/dev/devMockReservations';
 
 function handle(path: string, method: string, init?: RequestInit): Response | undefined {
   const events = handleEvents(path, method, init);
   if (events) return events;
   const host = handleHost(path, method);
   if (host) return host;
+  const reservations = handleReservations(path, method, init);
+  if (reservations) return reservations;
+  const market = handleMarket(path, method);
+  if (market) return market;
   if (path === '/explore/featured')
     return new Response(
       JSON.stringify({

@@ -13,12 +13,12 @@ export function ReportSection({
   target,
   subject,
 }: {
-  kind: 'property' | 'event';
-  target: Pick<ReportInput, 'property_id' | 'event_id'>;
+  kind: 'property' | 'event' | 'service';
+  target: Pick<ReportInput, 'property_id' | 'event_id' | 'service_id'>;
   subject: string;
 }) {
   const [open, setOpen] = useState(false);
-  const noun = kind === 'event' ? 'event' : 'listing';
+  const noun = kind === 'event' ? 'event' : kind === 'service' ? 'service' : 'listing';
   return (
     <section className="report-section" aria-label={`Report this ${noun}`}>
       <div>

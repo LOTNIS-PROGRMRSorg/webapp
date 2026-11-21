@@ -6,7 +6,7 @@
   width: 38px;
   height: 38px;
   border: 0;
-  border-radius: 99px;
+  border-radius: var(--r-pill);
   display: grid;
   place-items: center;
   background: none;
@@ -22,7 +22,7 @@
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--c-line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--c-surface);
   color: var(--c-ink);
   font: inherit;
@@ -40,7 +40,7 @@
   z-index: 30;
   width: 210px;
   padding: 8px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--c-line);
   background: var(--c-surface);
   box-shadow:
@@ -70,7 +70,7 @@
   width: 100%;
   padding: 7px 8px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   background: none;
   font: inherit;
   font-size: 0.9rem;
@@ -89,7 +89,7 @@
 .share-ic {
   width: 30px;
   height: 30px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   display: grid;
   place-items: center;
   background: var(--c-surface-3);

@@ -1,0 +1,240 @@
+.job-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.job-head h1 {
+  margin: 4px 0;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+.job-head h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+.job-steps {
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 18px 0;
+  padding: 0;
+  overflow-x: auto;
+}
+.job-steps li {
+  flex: 1 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--r-pill);
+  background: var(--c-surface-3);
+  color: var(--c-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.job-steps li span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--c-white);
+  font-size: 0.72rem;
+}
+.job-steps li.done {
+  background: var(--c-good-bg);
+  color: var(--c-good-ink);
+}
+.job-steps li.now {
+  background: var(--c-ink);
+  color: var(--c-white);
+}
+.job-steps li.now span {
+  color: var(--c-ink);
+}
+.job-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .job-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.job-main {
+  display: grid;
+  gap: 16px;
+}
+.job-card,
+.job-chat {
+  background: var(--c-white);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  box-shadow: 0 0 0 1px var(--c-line);
+  display: grid;
+  gap: 12px;
+}
+.job-card h2,
+.job-chat h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.job-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.job-facts li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.job-facts svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--c-muted);
+}
+.job-notes {
+  margin: 0;
+  color: var(--c-ink-soft);
+  font-style: italic;
+}
+.job-price {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.job-price div {
+  display: grid;
+  padding: 12px 14px;
+  border-radius: var(--r-lg);
+  background: var(--c-surface-2);
+}
+.job-price small {
+  color: var(--c-muted);
+}
+.job-price b {
+  font-size: 1.3rem;
+}
+.job-offers {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--c-ink-soft);
+  font-size: 0.88rem;
+  display: grid;
+  gap: 4px;
+}
+.job-money {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+.job-money div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--c-ink-soft);
+}
+.job-money div.strong {
+  border-top: 1px solid var(--c-line);
+  padding-top: 8px;
+  color: var(--c-ink);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.job-money dt,
+.job-money dd {
+  margin: 0;
+}
+.job-hint {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--r-lg);
+  background: var(--c-tint);
+  border: 1px solid var(--c-tint-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.job-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.job-trust {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  color: var(--c-muted);
+  font-size: 0.82rem;
+  margin: 0;
+}
+.job-trust svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--c-good);
+}
+.job-chat {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100dvh - 120px);
+  grid-template-rows: auto 1fr auto auto;
+}
+.job-chat-list {
+  overflow-y: auto;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 160px;
+  max-height: 420px;
+  padding-right: 4px;
+}
+.job-msg {
+  max-width: 85%;
+  padding: 10px 12px;
+  border-radius: var(--r-lg) 16px 16px 4px;
+  background: var(--c-surface-3);
+}
+.job-msg.mine {
+  justify-self: end;
+  border-radius: var(--r-lg) 16px 4px 16px;
+  background: var(--c-ink);
+  color: var(--c-white);
+}
+.job-msg p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.job-msg small {
+  opacity: 0.65;
+  font-size: 0.68rem;
+}
+.job-chat-form {
+  display: flex;
+  gap: 8px;
+}
+.job-chat-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line);
+  font: inherit;
+}
+.job-chat-note {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  color: var(--c-warn);
+  font-size: 0.8rem;
+}

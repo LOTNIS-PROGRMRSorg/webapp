@@ -16,7 +16,7 @@ function candidates(f: Filters, space: SpaceCopy | undefined, cities: CatalogCit
     out.push({
       key: 'budget',
       title: 'Any budget',
-      detail: `remove the GHS ${f.minPrice || '0'} – ${f.maxPrice || 'any'} limit`,
+      detail: `remove the GH₵${f.minPrice || '0'} – ${f.maxPrice || 'any'} limit`,
       patch: { minPrice: '', maxPrice: '' },
     });
   if (f.amenities.length)

@@ -1,5 +1,5 @@
 {
-  "_readme": "The single source of truth for every colour in the web app. Edit values here, run `npm run tokens`, and they change everywhere: CSS uses var(--c-<name>), TypeScript uses `colors.<name>` from '@/theme'.",
+  "_readme": "The single source of truth for every colour and design token in the web app. Edit values here, run `npm run tokens`, and they change everywhere: CSS uses var(--c-<name>) for colours and var(--<token>) for the scales below, TypeScript uses `colors.<name>` from '@/theme'.",
   "colors": {
     "white": "#ffffff",
     "black": "#000000",
@@ -84,7 +84,49 @@
     "surface": "surface"
   },
   "shadows": {
+    "xs": "0 1px 2px rgba(16, 48, 44, 0.06)",
     "sm": "0 1px 2px rgba(16, 48, 44, 0.05), 0 6px 18px -8px rgba(16, 48, 44, 0.14)",
-    "md": "0 2px 4px rgba(16, 48, 44, 0.05), 0 22px 44px -18px rgba(16, 48, 44, 0.28)"
+    "md": "0 2px 4px rgba(16, 48, 44, 0.05), 0 22px 44px -18px rgba(16, 48, 44, 0.28)",
+    "lg": "0 4px 8px rgba(16, 48, 44, 0.06), 0 32px 64px -24px rgba(16, 48, 44, 0.32)",
+    "focus": "0 0 0 3px color-mix(in srgb, var(--c-ink) 22%, transparent)"
+  },
+  "scale": {
+    "_comment": "Radius, spacing, type and motion scales. Use these instead of one-off values so every surface agrees.",
+    "r-xs": "6px",
+    "r-sm": "10px",
+    "r-md": "14px",
+    "r-lg": "18px",
+    "r-xl": "24px",
+    "r-pill": "999px",
+    "space-1": "4px",
+    "space-2": "8px",
+    "space-3": "12px",
+    "space-4": "16px",
+    "space-5": "20px",
+    "space-6": "24px",
+    "space-8": "32px",
+    "space-10": "40px",
+    "space-12": "48px",
+    "space-16": "64px",
+    "space-20": "80px",
+    "text-xs": "0.75rem",
+    "text-sm": "0.8125rem",
+    "text-base": "0.9375rem",
+    "text-md": "1rem",
+    "text-lg": "1.125rem",
+    "text-xl": "1.375rem",
+    "text-2xl": "1.75rem",
+    "text-3xl": "clamp(1.875rem, 1.4rem + 1.6vw, 2.5rem)",
+    "text-display": "clamp(2.25rem, 1.5rem + 3vw, 3.5rem)",
+    "leading-tight": "1.15",
+    "leading-snug": "1.35",
+    "leading-normal": "1.55",
+    "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+    "dur-fast": "120ms",
+    "dur": "200ms",
+    "dur-slow": "320ms",
+    "control-h": "44px",
+    "control-h-sm": "36px",
+    "control-h-lg": "52px"
   }
 }
